@@ -34,6 +34,8 @@
     {
       packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { inherit inputs; });
 
+      mixins = builtins.listToAttrs (findModules ./mixins);
+
       nixosConfigurations = mapHosts ./hosts { };
 
       homeConfigurations = mapHomes ./homes { };

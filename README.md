@@ -1,3 +1,5 @@
+# Nix Config Flake
+### This repo host a flake which contains NixOS and Home Manager configurations
 This git repository contains a nix flake used to configure the systems I work with using home-manager and NixOS.
 
 Much of the code is borrowed from other public examples of combined home-manager and NixOS flakes, however it is important to note what is specific about this repo.
@@ -8,3 +10,17 @@ Finally, the config is broken apart into 'mixins', which contain configuration w
 
 # On Flakes and Home Manager
 A flake-based configuration of home-manager is just the result of calling the home-manager.lib.homeManagerConfiguration function.
+
+# Directory Structure
+<dl>
+  <dt>HomeConfigs</dt>
+  <dd>Each file in this sub-directory contains a named Home Manager configuration</dd>
+  <dt>NixOSConfigs</dt>
+  <dd>Each file in this sub-directory contains a named NixOS configuration</dd>
+  <dt>Mixins</dt>
+  <dd>Each file in this sub-directory contains configuration that can be imported and used in multiple configurations.</dd>
+  <dt>Packages</dt>
+  <dd>Each file or module in this directory is for a single package custom to this flake</dd>
+  <dt>Lib</dt>
+  <dd>This directory contains helper functions used by the rest of this repository.</dd>
+</dl>

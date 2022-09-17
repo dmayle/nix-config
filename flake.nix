@@ -3,11 +3,40 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
+    nixgl.url = "github:guibou/nixGL";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-colors.url = "github:misterio77/nix-colors";
+    vim-maximizer = {
+      url = "github:szw/vim-maximizer";
+      flake = false;
+    };
+    nvim-colorizer = {
+      url = "github:norcalli/nvim-colorizer.lua";
+      flake = false;
+    };
+    indent-blankline = {
+      url = "github:lukas-reineke/indent-blankline.nvim";
+      flake = false;
+    };
+    vim-glaive = {
+      url = "github:google/vim-glaive";
+      flake = false;
+    };
+    vim-syncopate = {
+      url = "github:google/vim-syncopate";
+      flake = false;
+    };
+    vim-fakeclip = {
+      url = "github:kana/vim-fakeclip";
+      flake = false;
+    };
+    conflict-marker = {
+      url = "github:rhysd/conflict-marker.vim";
+      flake = false;
+    };
   };
 
   outputs = inputs @ { self, nixpkgs, ... }:
@@ -46,12 +75,14 @@
     in
 
     {
+      overlays = {};
+
       packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { inherit inputs; });
 
       mixins = builtins.listToAttrs (findModules ./mixins);
 
       nixosConfigurations = mapHosts ./hosts { };
 
-      homeConfigurations = mapHomes ./homes { };
+      homeConfigurations = mapHomes ./homeconfigs { };
     };
 }

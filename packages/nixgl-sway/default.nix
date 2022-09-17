@@ -1,5 +1,28 @@
 { pkgs, stdenv, fetchFromGitHub, lib, inputs, ... }:
-
+let
+  nonixgl-sway = pkgs.sway.override {
+    extraSessionCommands = ''
+      # Test fix for external monitor being black
+      export WLR_DRM_NO_MODIFIERS=1
+      # Use native wayland renderer for Firefox
+      export MOZ_ENABLE_WAYLAND=1
+      # Use native wayland renderer for QT applications
+      export QT_QPA_PLATFORM=wayland
+      # Allow sway to manage window decorations
+      export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+      # Use native wayland renderer for SDL applications
+      export SDL_VIDEODRIVER=wayland
+      # Let XDG-compliant apps know they're working on wayland
+      export XDG_SESSION_TYPE=wayland
+      # Fix JAVA drawing issues in sway
+      export _JAVA_AWT_WM_NONREPARENTING=1
+      # Let sway have access to your nix profile
+      source "${pkgs.nix}/etc/profile.d/nix.sh"
+    '';
+    withBaseWrapper = true;
+    withGtkWrapper = true;
+  };
+in
 pkgs.runCommand "sway" {} ''
   mkdir $out
 
@@ -21,7 +44,7 @@ pkgs.runCommand "sway" {} ''
 
   # Create NixGL wrapper
   echo "#!${pkgs.runtimeShell} -e" > $out/bin/sway
-  echo "exec ${nixgl.auto.nixGLDefault}/bin/nixGL" ${nonixgl-sway}/bin/sway \"\$@\" >> $out/bin/sway
+  echo "exec ${inputs.nixgl.auto.nixGLDefault}/bin/nixGL" ${nonixgl-sway}/bin/sway \"\$@\" >> $out/bin/sway
   chmod +x $out/bin/sway
 
   # We make changes to the sessions, so remove that link and create a dir
@@ -38,8 +61,8 @@ pkgs.runCommand "sway" {} ''
   echo [Desktop Entry] > $out/share/wayland-sessions/sway.desktop
   echo Name=Sway \(Home-Manager\) >> $out/share/wayland-sessions/sway.desktop
   echo Comment=An i3-compatible Wayland compositor >> $out/share/wayland-sessions/sway.desktop
-  echo Exec=/nix/var/nix/profiles/per-user/${config.home.username}/profile/bin/sway >> $out/share/wayland-sessions/sway.desktop
+  echo Exec=/nix/var/nix/profiles/per-user/douglas/profile/bin/sway >> $out/share/wayland-sessions/sway.desktop
   echo Type=Application >> $out/share/wayland-sessions/sway.desktop
-'';
+''
 
 

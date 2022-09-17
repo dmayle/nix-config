@@ -21,6 +21,8 @@ A flake-based configuration of home-manager is just the result of calling the ho
   <dd>Each file in this sub-directory contains configuration that can be imported and used in multiple configurations.</dd>
   <dt>Packages</dt>
   <dd>Each file or module in this directory is for a single package custom to this flake</dd>
+  <dt>Overlays</dt>
+  <dd>This directory contains nixpkgs overlay functions inside of a default.nix file.</dd>
   <dt>Lib</dt>
   <dd>This directory contains helper functions used by the rest of this repository.</dd>
 </dl>

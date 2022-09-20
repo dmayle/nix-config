@@ -1,6 +1,8 @@
 {
   description = "dmayle's nix system configurations, both nixos and home-manager";
 
+  # This is a collection of sources to have their versions and hashes managed
+  # by this flake
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     nixgl.url = "github:guibou/nixGL";
@@ -39,35 +41,42 @@
     };
   };
 
-  outputs = inputs @ { self, nixpkgs, ... }:
+  # The output of this is my nixos configurations and home manager configurations
+  outputs = inputs @ { self, nixpkgs, home-manager, ... }:
+    # I need to setup three things in order for the code contained in this
+    # flake to work properly:
+    # 1) Import and setup library code which is used by my modules, but also by
+    #    this flake to easily setup multiple configurations
+    # 2) Import and setup code to be made available by my modules: packages,
+    #    overlays, and mixins shared by different configurations
+    # 3) Setup nixpkgs to enable unfree modules
     let
       inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
+
+      mylib = import ./lib { inherit pkgs inputs; lib = nixpkgs.lib; };
 
       # Function to recursively collect modules from directory (Refactor this)
       findModules = dir:
         builtins.concatLists (builtins.attrValues (builtins.mapAttrs
-        (name : type:
-        if type == "regular" then [{
-          name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
-          value = dir + "/${name}";
-        }] else if (builtins.readDir (dir + "/${name}"))
-        ? "default.nix" then [{
-          inherit name;
-          value = dir + "/${name}";
-        }] else
-        findModules (dir + "/${name}")) (builtins.readDir dir)));
+          (name : type:
+            if type == "regular" then [{
+              name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
+              value = dir + "/${name}";
+            }] else if (builtins.readDir (dir + "/${name}"))
+            ? "default.nix" then [{
+              inherit name;
+              value = dir + "/${name}";
+            }] else
+              findModules (dir + "/${name}")) (builtins.readDir dir)));
 
       system = "x86_64-linux";
 
       mkPkgs = pkgs: overlays: import pkgs {
-        inherit system;
+        inherit system overlays;
         config.allowUnfree = true;
-        overlays = overlays;
       };
-      pkgs = mkPkgs nixpkgs (lib.attrValues self.overlays);
+      pkgs = mkPkgs nixpkgs (nixpkgs.lib.attrValues self.overlays);
 
-      lib = nixpkgs.lib;
-      mylib = import ./lib { inherit pkgs inputs lib; };
 
       overlay = final: prev: {
         my = self.packages."${system}";
@@ -75,14 +84,56 @@
     in
 
     {
+      homeManagerModules = builtins.listToAttrs (findModules ./hm-modules);
+
+      homeManagerProfiles = builtins.listToAttrs (findModules ./hm-profiles);
+
+      nixosModules = builtins.listToAttrs (findModules ./nixos-modules);
+
+      nixosProfiles = builtins.listToAttrs (findModules ./nixos-profiles);
+
       overlays = {};
 
       packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { inherit inputs; });
 
-      mixins = builtins.listToAttrs (findModules ./mixins);
+      nixosConfigurations = with pkgs.lib;
+        let
+          configs = builtins.attrNames (builtins.readDir ./nixos-configs);
 
-      nixosConfigurations = mapHosts ./hosts { };
+          mkHost = name:
+            let
+              system = builtins.readFile (./nixos-configs + "/${name}/system");
+              pkgs = pkgsFor system;
+            in nixosSystem {
+              inherit system;
+              modules = [
+                (import (./nixos-configs + "/${name}"))
+                { nixpkgs.pkgs = pkgs; }
+                { device = name; }
+              ];
+              specialArgs = { inherit inputs; };
+            };
+        in genAttrs configs mkHost;
 
-      homeConfigurations = mapHomes ./homeconfigs { };
+      homeConfigurations = with home-manager.lib;
+        let
+          configs = builtins.attrNames (builtins.readDir ./home-configs);
+
+          mkHost = name:
+            let
+              username = builtins.readFile (./home-configs + "/${name}/username");
+              system = builtins.readFile (./home-configs + "/${name}/system");
+            in homeManagerConfiguration {
+              inherit pkgs;
+              modules = [
+                (import (./home-configs + "/${name}"))
+                { nixpkgs.pkgs = pkgs; }
+                { device = name; }
+              ];
+              extraSpecialArgs = { inherit inputs; };
+            };
+        in nixpkgs.lib.genAttrs configs mkHost;
+
+      #homeConfigurations = mapHomes ./homeconfigs { };
     };
 }

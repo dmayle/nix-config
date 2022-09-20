@@ -8,8 +8,25 @@ The code here assumes that the owner (me) works across many different kinds of c
 
 Finally, the config is broken apart into 'mixins', which contain configuration which may be used across different kinds of machines.  There is common config, shared across all hosts, code that is specific to running a user GUI (e.g. sway config), code that is specific to running GUI on non-NixOS hosts (e.g. nixGL, used to bridge between non-NixOS graphics drivers and nix binaries), etc.  Machine configurations pick and choose the mixins they use, and contain any machine-specific configuration.
 
+# Some musings on Flakes and Nix
+The end result that we care about is top-level attribute mapping to the result of calling the nixosSystem or homeManagerConfiguration function. All the rest of this structure is about refactoring and making it simple to organize code. I want to explore the loading methods available to us and write about them here (e.g. imports attribute, vs. manually merging vs. preloading code vs. overlays)
+
+The imports attribute is a list of paths that will be called, and results merged. It's a recursive mechanism for merging
+
+# Overlays
+The purpose of an overlay is to alter some part of the config tree such that other code in the config tree uses the altered part. (If we only care about changing a package, you can just create your own package and use it. If you need to have an existing module that uses an existing package to use your changed package, than you need an overlay)
+
 # On Flakes and Home Manager
 A flake-based configuration of home-manager is just the result of calling the home-manager.lib.homeManagerConfiguration function.
+
+# Docs
+<dl>
+  <dt>homeManagerConfiguration</dt>
+  <dd><a href="https://nix-community.github.io/home-manager/index.html#ch-nix-flakes">Manual</a></dd>
+  <dd><a href="https://github.com/nix-community/home-manager/blob/master/flake.nix#L42">Code</a></dd>
+  <dt>nixosSystem</dt>
+  <dd><a href="https://github.com/NixOS/nixpkgs/blob/master/flake.nix#L22">Code</a></dd>
+</dl>
 
 # Directory Structure
 <dl>

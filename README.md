@@ -23,6 +23,11 @@ used to bridge between non-NixOS graphics drivers and nix binaries), etc.
 Machine configurations pick and choose the mixins they use, and contain any
 machine-specific configuration.
 
+# Commands to run
+```
+nix path-info --derivation .#homeConfigurations.<hostname>.activationPackage
+nix path-info --derivation .#nixosConfigurations.<hostname>.config.system.build.toplevel
+```
 # Roles, profiles, and configs
 There are three basic types on parade here:
  * Configs represent a top-level configuration, either Home Manager, or NixOS,

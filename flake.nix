@@ -51,9 +51,9 @@
     #    overlays, and mixins shared by different configurations
     # 3) Setup nixpkgs to enable unfree modules
     let
-      inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
+      #inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
 
-      mylib = import ./lib { inherit pkgs inputs; lib = nixpkgs.lib; };
+      #mylib = import ./lib { inherit pkgs inputs; lib = nixpkgs.lib; };
 
       # Function to recursively collect modules from directory (Refactor this)
       findModules = dir:
@@ -69,34 +69,47 @@
             }] else
               findModules (dir + "/${name}")) (builtins.readDir dir)));
 
-      system = "x86_64-linux";
+      pkgsFor = system:
+        import inputs.nixpkgs {
+          #overlays = [ self.overlay ];
+          localSystem = { inherit system; };
+          config = {
+            android_sdk.accept_license = true;
+          };
+        };
+      #system = "x86_64-linux";
 
-      mkPkgs = pkgs: overlays: import pkgs {
-        inherit system overlays;
-        config.allowUnfree = true;
-      };
-      pkgs = mkPkgs nixpkgs (nixpkgs.lib.attrValues self.overlays);
+      #mkPkgs = pkgs: overlays: import pkgs {
+        #inherit system overlays;
+        #config.allowUnfree = true;
+      #};
+      #pkgs = mkPkgs nixpkgs (nixpkgs.lib.attrValues self.overlays);
 
 
-      overlay = final: prev: {
-        my = self.packages."${system}";
-      } // (import ./overlays { inherit inputs; }) final prev;
+      #overlay = final: prev: {
+        #my = self.packages."${system}";
+      #} // (import ./overlays { inherit inputs; }) final prev;
     in
 
     {
-      homeManagerModules = builtins.listToAttrs (findModules ./hm-modules);
+      homeManagerModules = builtins.listToAttrs (findModules ./home-modules);
 
-      homeManagerProfiles = builtins.listToAttrs (findModules ./hm-profiles);
+      homeManagerProfiles = builtins.listToAttrs (findModules ./home-profiles);
+
+      homeManagerRoles = import ./home-roles;
 
       nixosModules = builtins.listToAttrs (findModules ./nixos-modules);
 
       nixosProfiles = builtins.listToAttrs (findModules ./nixos-profiles);
 
-      overlays = {};
+      nixosRoles = import ./nixos-roles;
 
-      packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { inherit inputs; });
+      #overlay = {};
+      #overlays = {};
 
-      nixosConfigurations = with pkgs.lib;
+      #packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { inherit inputs; });
+
+      nixosConfigurations = with nixpkgs.lib;
         let
           configs = builtins.attrNames (builtins.readDir ./nixos-configs);
 
@@ -104,7 +117,7 @@
             let
               system = builtins.readFile (./nixos-configs + "/${name}/system");
               pkgs = pkgsFor system;
-            in nixosSystem {
+            in nixpkgs.lib.nixosSystem {
               inherit system;
               modules = [
                 (import (./nixos-configs + "/${name}"))
@@ -114,6 +127,8 @@
               specialArgs = { inherit inputs; };
             };
         in genAttrs configs mkHost;
+
+      legacyPackages.x86_64-linux = pkgsFor "x86_64-linux";
 
       homeConfigurations = with home-manager.lib;
         let
@@ -127,8 +142,7 @@
               inherit pkgs;
               modules = [
                 (import (./home-configs + "/${name}"))
-                { nixpkgs.pkgs = pkgs; }
-                { device = name; }
+                { home = { inherit username; stateVersion = "22.05"; }; }
               ];
               extraSpecialArgs = { inherit inputs; };
             };

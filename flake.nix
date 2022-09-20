@@ -77,13 +77,13 @@
             android_sdk.accept_license = true;
           };
         };
-      #system = "x86_64-linux";
+      system = "x86_64-linux";
 
-      #mkPkgs = pkgs: overlays: import pkgs {
-        #inherit system overlays;
-        #config.allowUnfree = true;
-      #};
-      #pkgs = mkPkgs nixpkgs (nixpkgs.lib.attrValues self.overlays);
+      mkPkgs = pkgs: overlays: import pkgs {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
+      pkgs = mkPkgs nixpkgs (nixpkgs.lib.attrValues self.overlays);
 
 
       #overlay = final: prev: {
@@ -105,7 +105,7 @@
       nixosRoles = import ./nixos-roles;
 
       #overlay = {};
-      #overlays = {};
+      overlays = {};
 
       #packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { inherit inputs; });
 
@@ -142,7 +142,7 @@
               inherit pkgs;
               modules = [
                 (import (./home-configs + "/${name}"))
-                { home = { inherit username; stateVersion = "22.05"; }; }
+                { home = { inherit username; stateVersion = "22.05"; homeDirectory = "/home/douglas"; }; }
               ];
               extraSpecialArgs = { inherit inputs; };
             };

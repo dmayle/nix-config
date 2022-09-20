@@ -124,6 +124,7 @@
                 { nixpkgs.pkgs = pkgs; }
                 { device = name; }
               ];
+              # TODO: migrate from specialArgs to _module.args
               specialArgs = { inherit inputs; };
             };
         in genAttrs configs mkHost;

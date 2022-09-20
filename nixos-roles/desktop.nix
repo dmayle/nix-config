@@ -3,5 +3,5 @@
     ./base.nix
 
     sound
-  ]
+  ];
 }

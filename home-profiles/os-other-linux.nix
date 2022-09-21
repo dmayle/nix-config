@@ -1,7 +1,5 @@
 { config, pkgs, inputs, ... }:
-let
-  nixgl = import <nixgl> {};
-in
+
 {
   # Tree-sitter parsers for languages
   home.file."${config.xdg.configHome}/nvim/parser/bash.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-bash}/parser";
@@ -32,7 +30,5 @@ in
     rnix-lsp                          # .nix files
     nodePackages.vim-language-server  # .vim files
     nodePackages.bash-language-server # .sh files
-
-    nixgl.nixGLIntel
   ];
 }

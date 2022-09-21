@@ -137,13 +137,13 @@
 
           mkHost = name:
             let
-              username = builtins.readFile (./home-configs + "/${name}/username");
+              username = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./home-configs + "/${name}/username"));
               system = builtins.readFile (./home-configs + "/${name}/system");
             in homeManagerConfiguration {
               inherit pkgs;
               modules = [
                 (import (./home-configs + "/${name}"))
-                { home = { inherit username; stateVersion = "22.05"; homeDirectory = "/home/douglas"; }; }
+                { home = { inherit username; stateVersion = "22.05"; homeDirectory = "/home/${username}"; }; }
               ];
               extraSpecialArgs = { inherit inputs; };
             };

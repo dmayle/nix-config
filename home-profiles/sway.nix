@@ -1,10 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 let
   # NixGL is a tool that enables graphics hardware accelerated Nix programs to
   # run on non-NixOS systems like debian.  This config wraps sway (which is
   # itself hardware accelerated) and allows all programs launched from sway to
   # also support hardware acceleration without further configuration
-  nixgl = import <nixgl> {};
+  nixgl = import inputs.nixgl { inherit pkgs; };
   # This is just a default background image for the lock screen
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
@@ -126,7 +126,7 @@ let
 
     # Create NixGL wrapper
     echo "#!${pkgs.runtimeShell} -e" > $out/bin/sway
-    echo "exec ${nixgl.auto.nixGLDefault}/bin/nixGL" ${nonixgl-sway}/bin/sway \"\$@\" >> $out/bin/sway
+    echo "exec ${nixgl.nixGLIntel}/bin/nixGL" ${nonixgl-sway}/bin/sway \"\$@\" >> $out/bin/sway
     chmod +x $out/bin/sway
 
     # We make changes to the sessions, so remove that link and create a dir
@@ -377,107 +377,105 @@ in
           "custom/left-base3-base03"
           "clock#time"
         ];
-        modules = {
-          "clock#date" = {
-            interval = 20;
-            format = "{:%e %b %Y}";
-            tooltip = false;
+        "clock#date" = {
+          interval = 20;
+          format = "{:%e %b %Y}";
+          tooltip = false;
+        };
+        "clock#time" = {
+          interval = 10;
+          format = "{:%H:%M}";
+          tooltip = false;
+        };
+        "idle_inhibitor" = {
+          format = "{icon}";
+          format-icons = {
+            activated = "☕";
+            deactivated = "🥱";
           };
-          "clock#time" = {
-            interval = 10;
-            format = "{:%H:%M}";
-            tooltip = false;
-          };
-          "idle_inhibitor" = {
-            format = "{icon}";
-            format-icons = {
-              activated = "☕";
-              deactivated = "🥱";
+        };
+        battery = {
+            states = {
+                # "good" = 95;
+                warning = 30;
+                critical = 15;
             };
+            format = "{icon} {capacity}%";
+            format-charging = " {capacity}%";
+            format-plugged = " {capacity}%";
+            format-alt = "{time} {icon}";
+            # "format-good" = "", # An empty format will hide the module
+            # "format-full" = "";
+            format-icons = ["" "" "" "" ""];
+        };
+        "battery#bat2" = {
+          bat = "BAT2";
+        };
+        "network" = {
+          interval = 5;
+          format-wifi = "📶 {essid} ({signalStrength}%)";
+          format-ethernet = "🛰️ {ifname}: {ipaddr}/{cidr}";
+          format-disconnected = "DISCONNECTED";
+          tooltip = false;
+        };
+        "sway/mode" = {
+          format = "⚠️ <span style=\"italic\">{}</span>";
+          tooltip = false;
+        };
+        "sway/window" = {
+          format = "{}";
+          max-length = 30;
+          tooltip = false;
+        };
+        "sway/workspaces" = {
+          all-outputs = false;
+          disable-scroll = false;
+          format = " {name} ";
+        };
+        "pulseaudio" = {
+          scroll-step = 2;
+          format = "{icon} {volume}% {format_source}";
+          format-bluetooth = "{icon} {volume}%";
+          format-muted = "🔇 ❌ {format_source}";
+          format-source = "🎙️ {volume}%";
+          format-source-muted = "🎙️ ❌";
+          format-icons = {
+            headphones = "🎧";
+            handsfree = "";
+            headset = "";
+            phone = "";
+            portable = "";
+            car = "";
+            default = [ "🔈" "🔉" "🔊" ];
           };
-          battery = {
-              states = {
-                  # "good" = 95;
-                  warning = 30;
-                  critical = 15;
-              };
-              format = "{icon} {capacity}%";
-              format-charging = " {capacity}%";
-              format-plugged = " {capacity}%";
-              format-alt = "{time} {icon}";
-              # "format-good" = "", # An empty format will hide the module
-              # "format-full" = "";
-              format-icons = ["" "" "" "" ""];
-          };
-          "battery#bat2" = {
-            bat = "BAT2";
-          };
-          "network" = {
-            interval = 5;
-            format-wifi = "📶 {essid} ({signalStrength}%)";
-            format-ethernet = "🛰️ {ifname}: {ipaddr}/{cidr}";
-            format-disconnected = "DISCONNECTED";
-            tooltip = false;
-          };
-          "sway/mode" = {
-            format = "⚠️ <span style=\"italic\">{}</span>";
-            tooltip = false;
-          };
-          "sway/window" = {
-            format = "{}";
-            max-length = 30;
-            tooltip = false;
-          };
-          "sway/workspaces" = {
-            all-outputs = false;
-            disable-scroll = false;
-            format = " {name} ";
-          };
-          "pulseaudio" = {
-            scroll-step = 2;
-            format = "{icon} {volume}% {format_source}";
-            format-bluetooth = "{icon} {volume}%";
-            format-muted = "🔇 ❌ {format_source}";
-            format-source = "🎙️ {volume}%";
-            format-source-muted = "🎙️ ❌";
-            format-icons = {
-              headphones = "🎧";
-              handsfree = "";
-              headset = "";
-              phone = "";
-              portable = "";
-              car = "";
-              default = [ "🔈" "🔉" "🔊" ];
-            };
-            on-click = "pavucontrol";
-          };
-          tray = {
-            icon-size = 21;
-          };
-          "custom/right-blue-background" = {
-            format = "";
-            tooltip = false;
-          };
-          # "custom/right-cyan-background" = {
-          #   format = "";
-          #   tooltip = false;
-          # };
-          "custom/left-base3-base03" = {
-            format = "";
-            tooltip = false;
-          };
-          "custom/left-base03-magenta" = {
-            format = "";
-            tooltip = false;
-          };
-          "custom/left-magenta-yellow" = {
-            format = "";
-            tooltip = false;
-          };
-          "custom/left-yellow-background" = {
-            format = "";
-            tooltip = false;
-          };
+          on-click = "pavucontrol";
+        };
+        tray = {
+          icon-size = 21;
+        };
+        "custom/right-blue-background" = {
+          format = "";
+          tooltip = false;
+        };
+        # "custom/right-cyan-background" = {
+        #   format = "";
+        #   tooltip = false;
+        # };
+        "custom/left-base3-base03" = {
+          format = "";
+          tooltip = false;
+        };
+        "custom/left-base03-magenta" = {
+          format = "";
+          tooltip = false;
+        };
+        "custom/left-magenta-yellow" = {
+          format = "";
+          tooltip = false;
+        };
+        "custom/left-yellow-background" = {
+          format = "";
+          tooltip = false;
         };
       }
     ];
@@ -844,6 +842,6 @@ in
     qownnotes
     xdg-desktop-portal-gtk
     xdg-desktop-portal-wlr
-    nixgl.auto.nixGLDefault
+    nixgl.nixGLIntel
   ];
 }

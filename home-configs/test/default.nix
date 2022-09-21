@@ -2,9 +2,9 @@
 {
   imports = [
     #inputs.self.homeRoles.desktop
-    inputs.self.homeProfiles.fonts
-    inputs.self.homeProfiles.neovim
-    inputs.self.homeProfiles.sway
-    inputs.self.homeProfiles.tmux
+    inputs.self.homeManagerProfiles.fonts
+    inputs.self.homeManagerProfiles.neovim
+    inputs.self.homeManagerProfiles.sway
+    inputs.self.homeManagerProfiles.tmux
   ];
 }

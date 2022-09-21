@@ -1,4 +1,18 @@
-# Nix Config Flake
+# Douglas Mayle's Nix Config Flake
+## About This Flake
+### Contained in this flake:
+ * NixOS configurations
+ * Home Manager configurations
+ * Development shells for projects I work on that don't have their own flakes
+### Properties of this flake:
+ * Configs support `roles` and `profiles`, where profiles are logical groupings of configuration, and roles are logical groupings of profiles.
+ * Shared package repo for my custom packages
+ * Shared modules repo for my custom modules
+ * Custom lib used in this flake
+ * Separation of concerns:
+   * Main flake loads lib and uses it to load configs (TODO)
+   * Separate directories for configs, roles, modules, packages, etc.
+
 ### This repo host a flake which contains NixOS and Home Manager configurations
 This git repository contains a nix flake used to configure the systems I work
 with using home-manager and NixOS.
@@ -49,8 +63,9 @@ merged. It's a recursive mechanism for merging
 The purpose of an overlay is to alter some part of the config tree such that
 other code in the config tree uses the altered part. (If we only care about
 changing a package, you can just create your own package and use it. If you
-need to have an existing module that uses an existing package to use your
-changed package, than you need an overlay)
+need to make a change such that an existing module or an existing package that
+uses a specific package now uses your changed package, than you need an
+overlay)
 
 # On Flakes and Home Manager
 A flake-based configuration of home-manager is just the result of calling the

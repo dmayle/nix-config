@@ -1,10 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 {
   imports = [
-
-  ];
-
-  home.packages = with pkgs; [
-    neovim
+    #inputs.self.homeRoles.desktop
+    inputs.self.homeProfiles.fonts
+    inputs.self.homeProfiles.neovim
+    inputs.self.homeProfiles.sway
+    inputs.self.homeProfiles.tmux
   ];
 }

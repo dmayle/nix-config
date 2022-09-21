@@ -149,7 +149,7 @@ let
 in
 {
   nixpkgs.config.allowUnfree = true;
-  xdg.configFile."sway/keymap_backtick.xkb".source = ./keymap_backtick.xkb;
+  xdg.configFile."sway/keymap_backtick.xkb".source = ./../keymap_backtick.xkb;
   services.network-manager-applet.enable = true;
   xsession.preferStatusNotifierItems = true;
   systemd.user.targets.tray = {

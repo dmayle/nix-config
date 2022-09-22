@@ -52,18 +52,15 @@
     # 3) Setup nixpkgs to enable unfree modules
     let
       #inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
-      inherit (flib) findModules;
+      inherit (flib) findModules configurePackagesFor;
 
       flib = import ./lib { inherit pkgs inputs; lib = nixpkgs.lib; };
 
-      pkgsFor = system:
-        import inputs.nixpkgs {
-          #overlays = [ self.overlay ];
-          localSystem = { inherit system; };
-          config = {
-            android_sdk.accept_license = true;
-          };
-        };
+      pkgsFor = configurePackagesFor inputs.nixpkgs {
+        android_sdk.accept_license = true;
+        allowUnfree = true;
+      };
+
       system = "x86_64-linux";
 
       mkPkgs = pkgs: overlays: import pkgs {

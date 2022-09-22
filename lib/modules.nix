@@ -23,6 +23,12 @@ rec {
         }] else
           findModules (dir + "/${name}")) (builtins.readDir dir)));
 
+    configurePackagesFor = pkgs: config: system:
+      import pkgs {
+        localSystem = { inherit system; };
+        inherit config;
+      };
+
   # For a given directory, return a set of key, value pairs where each key is
   # either the name of a nix file in that directory, or a sub-directory with
   # a 'default.nix' file inside of it, excluding 'default.nix' in the given

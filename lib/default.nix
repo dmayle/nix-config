@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, lib, ... }:
 
 let
   inherit (lib) makeExtensible attrValues foldr;
@@ -13,7 +13,7 @@ let
   # Load the modules in this directory, using mapModules
   mylib = makeExtensible (self:
     with self; mapModules ./.
-      (file: import file { inherit self lib pkgs inputs; mylib = self; }));
+      (file: import file { inherit self lib inputs; mylib = self; }));
 in
 # Take the existing mylib attribute set, which is roughly a map of submodule
 # names to submodules (such that mylib.attrs contains the module code from

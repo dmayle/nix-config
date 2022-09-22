@@ -54,7 +54,7 @@
       #inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
       inherit (flib) findModules configurePackagesFor;
 
-      flib = import ./lib { inherit pkgs inputs; lib = nixpkgs.lib; };
+      flib = import ./lib { inherit inputs; lib = nixpkgs.lib; };
 
       pkgsFor = configurePackagesFor inputs.nixpkgs {
         android_sdk.accept_license = true;
@@ -62,13 +62,6 @@
       };
 
       system = "x86_64-linux";
-
-      mkPkgs = pkgs: overlays: import pkgs {
-        inherit system overlays;
-        config.allowUnfree = true;
-      };
-      pkgs = mkPkgs nixpkgs (nixpkgs.lib.attrValues self.overlays);
-
 
       #overlay = final: prev: {
         #my = self.packages."${system}";
@@ -123,9 +116,9 @@
           mkHost = name:
             let
               username = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./home-configs + "/${name}/username"));
-              system = builtins.readFile (./home-configs + "/${name}/system");
+              system = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./home-configs + "/${name}/system"));
             in homeManagerConfiguration {
-              inherit pkgs;
+              pkgs = pkgsFor system;
               modules = [
                 { _module.args = { inherit flib; }; }
                 (import (./home-configs + "/${name}"))

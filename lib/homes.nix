@@ -1,15 +1,15 @@
-{ inputs, lib, mylib, pkgs, ... }:
+{ inputs, lib, mylib, ... }:
 
 with lib;
 with mylib;
 let sys = "x86_64-linux";
 in
 {
-  mkHome = path: attrs @ { system ? sys, ... }:
+  mkHome = pkgs: path: attrs @ { system ? sys, ... }:
     let
       username = removeSuffix ".nix" (baseNameOf path);
       homeDirectory = "/home/${username}";
-      defaults = { config, pkgs, lib, ... }: {
+      defaults = { config, lib, ... }: {
         programs.home-manager.enable = true;
         xdg.enable = true;
         xdg.mime.enable = true;

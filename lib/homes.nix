@@ -1,7 +1,7 @@
-{ inputs, lib, mylib, ... }:
+{ inputs, lib, flib, ... }:
 
 with lib;
-with mylib;
+with flib;
 let sys = "x86_64-linux";
 in
 {
@@ -27,8 +27,22 @@ in
         (import path)
       ];
       extraSpecialArgs = {
-        inherit inputs system mylib;
+        inherit inputs system flib;
       };
+    };
+
+  mkHomeConfig = defaults: systemPackages: path:
+    let
+      system = lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
+    in inputs.home-manager.lib.homeManagerConfiguration {
+      pkgs = systemPackages.${system};
+      modules = [
+        { _module.args = { inherit flib; }; }
+        (import (path))
+        defaults
+      ];
+      # Only used for importable arguments
+      extraSpecialArgs = { inherit inputs; };
     };
 
   mapHomes = dir: attrs @ { system ? system, ... }:

@@ -11,14 +11,14 @@ let
   };
 
   # Load the modules in this directory, using mapModules
-  mylib = makeExtensible (self:
+  flib = makeExtensible (self:
     with self; mapModules ./.
-      (file: import file { inherit self lib inputs; mylib = self; }));
+      (file: import file { inherit self lib inputs; flib = self; }));
 in
-# Take the existing mylib attribute set, which is roughly a map of submodule
-# names to submodules (such that mylib.attrs contains the module code from
+# Take the existing flib attribute set, which is roughly a map of submodule
+# names to submodules (such that flib.attrs contains the module code from
 # attrs.nix), and promote all of the submodule properties so that
-# they're directly available on mylib
-mylib.extend
+# they're directly available on flib
+flib.extend
   (self: super:
     foldr (a: b: a // b) { } (attrValues super))

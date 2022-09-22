@@ -51,8 +51,7 @@
     #    overlays, and mixins shared by different configurations
     # 3) Setup nixpkgs to enable unfree modules
     let
-      #inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
-      inherit (flib) findModules configurePackagesFor mapModules;
+      inherit (flib) findModules configurePackagesFor mapModules mkHomeConfig;
 
       flib = import ./lib { inherit inputs; lib = nixpkgs.lib; };
 
@@ -69,11 +68,6 @@
             in
               nixpkgs.lib.unique (builtins.attrValues (mapModules ./home-configs fn) ++ builtins.attrValues (mapModules ./nixos-configs fn));
         in nixpkgs.lib.genAttrs system_types (system: pkgsFor system);
-
-
-      #overlay = final: prev: {
-        #my = self.packages."${system}";
-      #} // (import ./overlays { inherit inputs; }) final prev;
     in
 
     {
@@ -89,13 +83,11 @@
 
       nixosRoles = import ./nixos-roles;
 
-      #overlays = {};
-
       nixosConfigurations = with nixpkgs.lib;
         let
           configs = builtins.attrNames (builtins.readDir ./nixos-configs);
 
-          mkHost = name:
+          mkNixosConfig = name:
             let
               system = builtins.readFile (./nixos-configs + "/${name}/system");
               pkgs = systemPackages.${system};
@@ -110,7 +102,7 @@
               # Only used for importable arguments
               specialArgs = { inherit inputs; };
             };
-        in nixpkgs.lib.genAttrs configs mkHost;
+        in nixpkgs.lib.genAttrs configs mkNixosConfig;
 
       homeConfigurations = with home-manager.lib;
         let
@@ -120,19 +112,6 @@
             homeDirectory = "/home/${username}";
           };
 
-          mkHost = defaults: path:
-            let
-              system = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
-            in homeManagerConfiguration {
-              pkgs = systemPackages.${system};
-              modules = [
-                { _module.args = { inherit flib; }; }
-                (import (path))
-                defaults
-              ];
-              # Only used for importable arguments
-              extraSpecialArgs = { inherit inputs; };
-            };
-        in mapModules ./home-configs (mkHost defaultHomeConfig);
+        in mapModules ./home-configs (mkHomeConfig defaultHomeConfig systemPackages);
     };
 }

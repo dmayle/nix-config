@@ -61,7 +61,15 @@
         allowUnfree = true;
       };
 
-      system = "x86_64-linux";
+      systemPackages =
+        let
+          system_types =
+            let
+              fn = path: nixpkgs.lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
+            in
+              nixpkgs.lib.unique (builtins.attrValues (mapModules ./home-configs fn) ++ builtins.attrValues (mapModules ./nixos-configs fn));
+        in nixpkgs.lib.genAttrs system_types (system: pkgsFor system);
+
 
       #overlay = final: prev: {
         #my = self.packages."${system}";
@@ -81,10 +89,7 @@
 
       nixosRoles = import ./nixos-roles;
 
-      #overlay = {};
-      overlays = {};
-
-      #packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { inherit inputs; });
+      #overlays = {};
 
       nixosConfigurations = with nixpkgs.lib;
         let
@@ -93,7 +98,7 @@
           mkHost = name:
             let
               system = builtins.readFile (./nixos-configs + "/${name}/system");
-              pkgs = pkgsFor system;
+              pkgs = systemPackages.${system};
             in nixpkgs.lib.nixosSystem {
               inherit system;
               modules = [
@@ -105,9 +110,7 @@
               # Only used for importable arguments
               specialArgs = { inherit inputs; };
             };
-        in genAttrs configs mkHost;
-
-      legacyPackages.x86_64-linux = pkgsFor "x86_64-linux";
+        in nixpkgs.lib.genAttrs configs mkHost;
 
       homeConfigurations = with home-manager.lib;
         let
@@ -121,7 +124,7 @@
             let
               system = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
             in homeManagerConfiguration {
-              pkgs = pkgsFor system;
+              pkgs = systemPackages.${system};
               modules = [
                 { _module.args = { inherit flib; }; }
                 (import (path))

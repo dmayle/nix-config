@@ -52,7 +52,7 @@
     # 3) Setup nixpkgs to enable unfree modules
     let
       #inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
-      inherit (flib) findModules configurePackagesFor;
+      inherit (flib) findModules configurePackagesFor mapModules;
 
       flib = import ./lib { inherit inputs; lib = nixpkgs.lib; };
 
@@ -111,24 +111,25 @@
 
       homeConfigurations = with home-manager.lib;
         let
-          configs = builtins.attrNames (builtins.readDir ./home-configs);
+          defaultHomeConfig.home = rec {
+            username = "douglas";
+            stateVersion = "22.05";
+            homeDirectory = "/home/${username}";
+          };
 
-          mkHost = name:
+          mkHost = defaults: path:
             let
-              username = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./home-configs + "/${name}/username"));
-              system = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./home-configs + "/${name}/system"));
+              system = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
             in homeManagerConfiguration {
               pkgs = pkgsFor system;
               modules = [
                 { _module.args = { inherit flib; }; }
-                (import (./home-configs + "/${name}"))
-                { home = { inherit username; stateVersion = "22.05"; homeDirectory = "/home/${username}"; }; }
+                (import (path))
+                defaults
               ];
               # Only used for importable arguments
               extraSpecialArgs = { inherit inputs; };
             };
-        in nixpkgs.lib.genAttrs configs mkHost;
-
-      #homeConfigurations = mapHomes ./homeconfigs { };
+        in mapModules ./home-configs (mkHost defaultHomeConfig);
     };
 }

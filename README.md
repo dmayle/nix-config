@@ -13,6 +13,10 @@
    * Main flake loads lib and uses it to load configs (TODO)
    * Separate directories for configs, roles, modules, packages, etc.
 
+### On NixPkgs in Configurations
+At this point, for flakes there is no such thing as system, instead there is just a set of packages (which is itself system-dependent).
+
+Since I want to be able to support home-manager for a MacOS system (or an arm one), then there needs to be a way to select a different set of nixpkgs
 ### This repo host a flake which contains NixOS and Home Manager configurations
 This git repository contains a nix flake used to configure the systems I work
 with using home-manager and NixOS.

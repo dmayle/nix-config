@@ -9,6 +9,20 @@ rec {
   # Convert a string object to a path object
   asPath = str: ./. + str;
 
+  # Function to recursively collect modules from directory (Refactor this)
+  findModules = dir:
+    builtins.concatLists (builtins.attrValues (builtins.mapAttrs
+      (name : type:
+        if type == "regular" then [{
+          name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
+          value = dir + "/${name}";
+        }] else if (builtins.readDir (dir + "/${name}"))
+        ? "default.nix" then [{
+          inherit name;
+          value = dir + "/${name}";
+        }] else
+          findModules (dir + "/${name}")) (builtins.readDir dir)));
+
   # For a given directory, return a set of key, value pairs where each key is
   # either the name of a nix file in that directory, or a sub-directory with
   # a 'default.nix' file inside of it, excluding 'default.nix' in the given

@@ -128,7 +128,7 @@
     set -g history-limit 50000
 
     # Remove escape time delay for vim
-    set -s escape-time 0
+    set -s escape-time 10
 
     # I use vi-mode always
     setw -g mode-keys vi

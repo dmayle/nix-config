@@ -1,11 +1,11 @@
 { config, pkgs, inputs, ... }:
 {
-  imports = [
-    inputs.self.homeManagerRoles.desktop
-    inputs.self.homeManagerProfiles.fonts
-    inputs.self.homeManagerProfiles.neovim
-    inputs.self.homeManagerProfiles.os-other-linux
-    inputs.self.homeManagerProfiles.sway
-    inputs.self.homeManagerProfiles.tmux
+  imports = with inputs.self; [
+    homeManagerRoles.desktop
+    homeManagerProfiles.fonts
+    homeManagerProfiles.neovim
+    homeManagerProfiles.os-other-linux
+    homeManagerProfiles.sway
+    homeManagerProfiles.tmux
   ];
 }

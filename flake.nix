@@ -53,7 +53,7 @@
     let
       #inherit (mylib) mapModules mapModulesRec mapHosts mapHomes;
 
-      #mylib = import ./lib { inherit pkgs inputs; lib = nixpkgs.lib; };
+      flib = import ./lib { inherit pkgs inputs; lib = nixpkgs.lib; };
 
       # Function to recursively collect modules from directory (Refactor this)
       findModules = dir:
@@ -121,10 +121,11 @@
               inherit system;
               modules = [
                 (import (./nixos-configs + "/${name}"))
+                { _module.args = { inherit flib; }; }
                 { nixpkgs.pkgs = pkgs; }
                 { device = name; }
               ];
-              # TODO: migrate from specialArgs to _module.args
+              # Only used for importable arguments
               specialArgs = { inherit inputs; };
             };
         in genAttrs configs mkHost;
@@ -142,9 +143,11 @@
             in homeManagerConfiguration {
               inherit pkgs;
               modules = [
+                { _module.args = { inherit flib; }; }
                 (import (./home-configs + "/${name}"))
                 { home = { inherit username; stateVersion = "22.05"; homeDirectory = "/home/${username}"; }; }
               ];
+              # Only used for importable arguments
               extraSpecialArgs = { inherit inputs; };
             };
         in nixpkgs.lib.genAttrs configs mkHost;

@@ -53,9 +53,6 @@
 
     # Volume control used when clicking waybar
     pavucontrol
-
-    # Android studio for... android development
-    android-studio
   ];
 
   programs.dircolors = {

@@ -89,7 +89,7 @@
 
           mkNixosConfig = name:
             let
-              system = builtins.readFile (./nixos-configs + "/${name}/system");
+              system = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./nixos-configs + "/${name}/system"));
               pkgs = systemPackages.${system};
             in nixpkgs.lib.nixosSystem {
               inherit system;

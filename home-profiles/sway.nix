@@ -821,8 +821,7 @@ in
   };
   home.packages = with pkgs; [
     kitty
-    google-chrome-wrapper
-    google-chrome-stable-wrapper
+    google-chrome
     dmenu
     wofi
     waybar

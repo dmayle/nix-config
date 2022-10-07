@@ -97,7 +97,6 @@
                 (import (./nixos-configs + "/${name}"))
                 { _module.args = { inherit flib; }; }
                 { nixpkgs.pkgs = pkgs; }
-                { device = name; }
               ];
               # Only used for importable arguments
               specialArgs = { inherit inputs; };

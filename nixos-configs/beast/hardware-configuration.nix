@@ -15,6 +15,7 @@
 
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
+  boot.blacklistedKernelModules = [ "cdc_ether" ];
   boot.extraModulePackages = [ ];
   boot.kernelParams = [
     "nvme_core.default_ps_max_latency_us=0"

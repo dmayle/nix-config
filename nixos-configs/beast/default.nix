@@ -17,6 +17,8 @@
     font = "Lat2-Terminus16";
     useXkbConfig = true; # use xkbOptions in tty.
   };
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.opengl.enable = true;
   services.xserver.layout = "gb";
   services.xserver.xkbOptions = "caps:swapescape";
   services.xserver.xkbVariant = "extd";

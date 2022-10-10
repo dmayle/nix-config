@@ -1,10 +1,11 @@
 { pkgs, config, inputs, lib, ... }:
 
 {
-  imports = [
+  imports = with inputs.self; [
     ./hardware-configuration.nix
     inputs.self.nixosRoles.desktop
     inputs.self.nixosProfiles.sound
+    inputs.self.nixosProfiles.games
   ];
 
   boot.loader.systemd-boot.enable = true;

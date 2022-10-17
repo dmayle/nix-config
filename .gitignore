@@ -1,3 +1,5 @@
 result
 result-*
 .tags
+tags.lock
+tags.temp

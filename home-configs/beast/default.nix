@@ -15,5 +15,11 @@
       sleep-inactive-ac-timeout = 0;
       sleep-inactive-battery-timeout = 0;
     };
+    "org/gnome/desktop/wm/keybindings" = {
+      switch-applications = [];
+      switch-applications-backwards = [];
+      switch-windows = ['<Alt>Tab'];
+      switch-windows-backwards = ['<Shift><Alt>Tab'];
+    }
   };
 }

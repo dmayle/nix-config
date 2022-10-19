@@ -13,7 +13,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Set your time zone.
-  time.timeZone = "Americas/Los_Angeles";
+  time.timeZone = "America/Los_Angeles";
   networking.hostName = "beast";
   i18n.defaultLocale = "en_US.UTF-8";
   console = {

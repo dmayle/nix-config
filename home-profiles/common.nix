@@ -24,8 +24,10 @@
   };
 
   home.packages = with pkgs; [
-    # List of packages that may need to be inherited from a non-nixos OS
-    # git # Has custom protocol
+    # Basic utilities
+    file
+
+    git
 
     # Easier to read diffs
     colordiff

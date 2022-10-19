@@ -3,5 +3,6 @@
     ./base.nix
 
     common
+    gui-common
   ];
 }

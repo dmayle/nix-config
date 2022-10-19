@@ -47,6 +47,7 @@
   environment.systemPackages = with pkgs; [
     wget
     git
+    file
   ];
   programs.neovim = {
     enable = true;

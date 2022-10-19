@@ -59,7 +59,10 @@
     set keymap vi
   '';
   environment.variables.EDITOR = "nvim";
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    forwardX11 = true;
+  };
 
   networking.firewall.enable = false;
 

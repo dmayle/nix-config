@@ -20,15 +20,16 @@
   boot.kernelParams = [
     "nvme_core.default_ps_max_latency_us=0"
     "pci_aspm=performance"
+    "iommu=soft"
   ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/926123e8-1385-4dab-8a9f-5a18b4421501";
+    { device = "/dev/disk/by-uuid/6dc293e3-affa-4945-a23e-5799d20c4d24";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/1552-D9E7";
+    { device = "/dev/disk/by-uuid/5E58-662C";
       fsType = "vfat";
     };
 
@@ -47,4 +48,6 @@
   # networking.interfaces.enp42s0f3u5u3c2.useDHCP = lib.mkDefault true;
 
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  # high-resolution display
+  hardware.video.hidpi.enable = lib.mkDefault true;
 }

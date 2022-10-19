@@ -88,7 +88,7 @@
     Service = {
       type = "Simple";
       Environment = [ "SSH_AUTH_SOCK=%t/ssh-agent.socket" ];
-      ExecStart = "ssh-agent -D -a $SSH_AUTH_SOCK";
+      ExecStart = "${pkgs.openssh}/bin/ssh-agent -D -a $SSH_AUTH_SOCK";
       Restart = "always";
       RestartSec = 3;
     };

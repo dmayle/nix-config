@@ -71,6 +71,8 @@
     in
 
     {
+      devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
+
       homeManagerModules = builtins.listToAttrs (findModules ./home-modules);
 
       homeManagerProfiles = builtins.listToAttrs (findModules ./home-profiles);

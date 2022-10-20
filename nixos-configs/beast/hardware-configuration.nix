@@ -19,8 +19,7 @@
   boot.extraModulePackages = [ ];
   boot.kernelParams = [
     "nvme_core.default_ps_max_latency_us=0"
-    "pci_aspm=performance"
-    "iommu=soft"
+    "pcie_aspm=off"
   ];
 
   fileSystems."/" =

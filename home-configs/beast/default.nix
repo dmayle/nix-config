@@ -3,6 +3,7 @@
   imports = with inputs.self; [
     homeManagerRoles.desktop
     homeManagerProfiles.fonts
+    homeManagerProfiles.games
     homeManagerProfiles.neovim
     homeManagerProfiles.sway
     homeManagerProfiles.tmux

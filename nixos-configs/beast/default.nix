@@ -21,7 +21,11 @@
     useXkbConfig = true; # use xkbOptions in tty.
   };
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl.enable = true;
+  hardware.opengl = {
+    enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
+  };
   # Configure keymap in X11
   services.xserver.layout = "gb";
   services.xserver.xkbOptions = "caps:swapescape";
@@ -34,6 +38,12 @@
     enable = true;
     autoSuspend = false;
   };
+  #services.xserver.extraConfig = "";
+  #services.xserver.extraDisplaySettings = "";
+  #services.xserver.extraLayouts.foo = {};
+  services.xserver.deviceSection = ''
+    Option "SidebandSocketPath" "/tmp"
+  '';
   systemd.targets.sleep.enable = false;
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
@@ -45,6 +55,7 @@
   };
   nix.settings.allowed-users = [ "@wheel" ];
   environment.systemPackages = with pkgs; [
+    xorg.libpciaccess
     wget
     git
     file

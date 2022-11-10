@@ -825,7 +825,7 @@ in
     dmenu
     wofi
     waybar
-    brightnessctl
+    #brightnessctl
     ddcutil
     tree-sitter
     flameshot

@@ -71,7 +71,13 @@
     in
 
     {
-      devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
+      #devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
+      devShells.x86_64-linux = with nixpkgs.lib;
+        let
+          shells = builtins.attrNames (builtins.readDir ./dev-shells);
+          myFunc = name:
+            import (./dev-shells + "/${name}") { pkgs = systemPackages.x86_64-linux; };
+        in nixpkgs.lib.genAttrs shells myFunc;
 
       homeManagerModules = builtins.listToAttrs (findModules ./home-modules);
 

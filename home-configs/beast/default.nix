@@ -2,6 +2,7 @@
 {
   imports = with inputs.self; [
     homeManagerRoles.desktop
+    homeManagerProfiles.3d-printing
     homeManagerProfiles.fonts
     homeManagerProfiles.games
     homeManagerProfiles.neovim

@@ -16,10 +16,6 @@
   home.file."${config.xdg.configHome}/nvim/parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-python}/parser";
   home.file."${config.xdg.configHome}/nvim/parser/vim.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-vim}/parser";
 
-  systemd.user.sessionVariables = {
-    LD_PRELOAD = "/usr/lib/x86_64-linux-gnu/libnss_cache.so.2";
-  };
-
   targets.genericLinux.enable = true;
 
   home.packages = with pkgs; with inputs; [

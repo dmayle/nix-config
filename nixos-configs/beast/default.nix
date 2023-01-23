@@ -4,6 +4,7 @@
   imports = with inputs.self; [
     ./hardware-configuration.nix
     inputs.self.nixosRoles.desktop
+    inputs.self.nixosProfiles.docker
     inputs.self.nixosProfiles.sound
     inputs.self.nixosProfiles.games
   ];
@@ -52,7 +53,7 @@
 
   users.users.douglas = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "sway" "video" "i2c" ];
+    extraGroups = [ "wheel" "audio" "sway" "video" "i2c" "docker" ];
   };
   nix.settings.allowed-users = [ "@wheel" ];
   environment.systemPackages = with pkgs; [

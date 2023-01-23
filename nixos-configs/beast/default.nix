@@ -34,6 +34,7 @@
   services.xserver.libinput.enable = true;
   services.xserver.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.resolutions = [{ x = 7680; y = 4320; }{ x = 3840; y = 2160; }];
   services.xserver.displayManager.gdm = {
     enable = true;
     autoSuspend = false;

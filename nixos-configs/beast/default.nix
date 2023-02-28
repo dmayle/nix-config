@@ -14,6 +14,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Add NTFS support
+  boot.supportedFilesystems = [ "ntfs" ];
+
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
   networking.hostName = "beast";

@@ -55,6 +55,12 @@
 
     # Volume control used when clicking waybar
     pavucontrol
+
+    # Compression tools
+    unzip
+
+    # Kubernetes tools
+    kubectx
   ];
 
   programs.dircolors = {

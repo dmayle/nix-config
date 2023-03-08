@@ -58,6 +58,8 @@
 
     # Compression tools
     unzip
+    p7zip
+    unrar
 
     # Kubernetes tools
     kubectx

@@ -2,6 +2,7 @@
   environment.systemPackages = with pkgs; [
     pstree #Test
   ];
+  services.joycond.enable = true;
   hardware.steam-hardware.enable = true;
   programs.steam = {
     enable = true;

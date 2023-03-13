@@ -55,11 +55,12 @@
 
       flib = import ./lib { inherit inputs; lib = nixpkgs.lib; };
 
+      injectPackages = mapModules ./packages (p: systemPackages.x86_64-linux.callPackage p {});
+
       pkgsFor = configurePackagesFor inputs.nixpkgs {
         android_sdk.accept_license = true;
         allowUnfree = true;
-        overlays = [ nixgl.overlay ];
-      };
+      } [ nixgl.overlay (final: prev: {inherit (injectPackages) joycond_cemuhook;})];
 
       systemPackages =
         let

@@ -23,10 +23,10 @@ rec {
         }] else
           findModules (dir + "/${name}")) (builtins.readDir dir)));
 
-    configurePackagesFor = pkgs: config: system:
+    configurePackagesFor = pkgs: config: overlays: system:
       import pkgs {
         localSystem = { inherit system; };
-        inherit config;
+        inherit config overlays;
       };
 
   # For a given directory, return a set of key, value pairs where each key is

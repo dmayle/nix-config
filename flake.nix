@@ -42,7 +42,7 @@
   };
 
   # The output of this is my nixos configurations and home manager configurations
-  outputs = inputs @ { self, nixpkgs, home-manager, ... }:
+  outputs = inputs @ { self, nixpkgs, home-manager, nixgl, ... }:
     # I need to setup three things in order for the code contained in this
     # flake to work properly:
     # 1) Import and setup library code which is used by my modules, but also by
@@ -58,6 +58,7 @@
       pkgsFor = configurePackagesFor inputs.nixpkgs {
         android_sdk.accept_license = true;
         allowUnfree = true;
+        overlays = [ nixgl.overlay ];
       };
 
       systemPackages =
@@ -72,6 +73,8 @@
 
     {
       #devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
+      # flakeSystems is a function that takes a list of shells and makes them available for each supported system
+      # devShells = flakeSystems (findModules ./dev-shells);
       devShells.x86_64-linux = with nixpkgs.lib;
         let
           shells = builtins.attrNames (builtins.readDir ./dev-shells);
@@ -120,5 +123,10 @@
           };
 
         in mapModules ./home-configs (mkHomeConfig defaultHomeConfig systemPackages);
+
+      # packages = mergePackages (fundModules ./packages)
+      # mergePackages takes a list of attributes sets, where each set is a mapping of supported systems to a single package
+      #builtins.listToAttrs (findModules ./packages);packages.x86_64-linux = builtins.listToAttrs (findModules ./packages);
+      packages.x86_64-linux = mapModules ./packages (p: systemPackages.x86_64-linux.callPackage p {});
     };
 }

@@ -1,4 +1,4 @@
-{ pkgs, stdenv, fetchFromGitHub, lib, inputs, ... }:
+{ pkgs, stdenv, fetchFromGitHub, lib, ... }:
 let
   nonixgl-sway = pkgs.sway.override {
     extraSessionCommands = ''
@@ -23,7 +23,7 @@ let
     withGtkWrapper = true;
   };
 in
-pkgs.runCommand "sway" {} ''
+pkgs.runCommand "sway" {meta = {platforms = ["x86_64-linux"];};} ''
   mkdir $out
 
   # By default, link all top-level directories
@@ -44,7 +44,7 @@ pkgs.runCommand "sway" {} ''
 
   # Create NixGL wrapper
   echo "#!${pkgs.runtimeShell} -e" > $out/bin/sway
-  echo "exec ${inputs.nixgl.auto.nixGLDefault}/bin/nixGL" ${nonixgl-sway}/bin/sway \"\$@\" >> $out/bin/sway
+  echo "exec ${pkgs.nixgl.auto.nixGLDefault}/bin/nixGL" ${nonixgl-sway}/bin/sway \"\$@\" >> $out/bin/sway
   chmod +x $out/bin/sway
 
   # We make changes to the sessions, so remove that link and create a dir

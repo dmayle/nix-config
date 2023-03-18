@@ -8,6 +8,7 @@
     inputs.self.nixosProfiles.virtualbox
     inputs.self.nixosProfiles.sound
     inputs.self.nixosProfiles.games
+    inputs.self.nixosProfiles.cachix-cuda
   ];
 
   # Use the systemd-boot EFI boot loader.

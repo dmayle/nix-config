@@ -1,5 +1,8 @@
 { stdenv
 , lib
+, openexr
+, jemalloc
+, c-blosc
 , binutils
 , fetchFromGitHub
 , cmake
@@ -23,32 +26,65 @@
 , mpfr
 , nlopt
 , opencascade-occt
-, openvdb
 , pcre
 , qhull
-, tbb
+, tbb_2021_8
 , wxGTK31
+, wxGTK32
 , xorg
 , fetchpatch
 , withSystemd ? lib.meta.availableOn stdenv.hostPlatform systemd, systemd
 }:
 let
-  wxGTK-prusa = wxGTK31.overrideAttrs (old: rec {
+  wxGTK-prusa = wxGTK32.overrideAttrs (old: rec {
     pname = "wxwidgets-prusa3d-patched";
-    version = "3.1.4";
+    version = "3.2.0";
+    cmakeFlags = [ "-DDwxUSE_GLCANVAS_EGL=OFF" ];
     src = fetchFromGitHub {
       owner = "prusa3d";
       repo = "wxWidgets";
-      rev = "489f6118256853cf5b299d595868641938566cdb";
-      hash = "sha256-xGL5I2+bPjmZGSTYe1L7VAmvLHbwd934o/cxg9baEvQ=";
+      rev = "4fd2120c913c20c3bb66ee9d01d8ff5087a8b90a";
+      sha256 = "sha256-heWjXXlxWo7xBxh0A0Q141NrPTZplaUNZsUtvlRCvBw=";
       fetchSubmodules = true;
     };
   });
-  nanosvg-source = fetchFromGitHub {
-    owner = "fltk";
-    repo = "nanosvg";
-    rev = "abcd277ea45e9098bed752cf9c6875b533c0892f";
-    sha256 = "sha256-WNdAYu66ggpSYJ8Kt57yEA4mSTv+Rvzj9Rm1q765HpY=";
+  nanosvg-fltk = stdenv.mkDerivation {
+    pname = "nanosvg-fltk";
+    version = "unstable-2022-12-22";
+
+    src = fetchFromGitHub {
+      owner = "fltk";
+      repo = "nanosvg";
+      rev = "abcd277ea45e9098bed752cf9c6875b533c0892f";
+      sha256 = "sha256-WNdAYu66ggpSYJ8Kt57yEA4mSTv+Rvzj9Rm1q765HpY=";
+    };
+
+    nativeBuildInputs = [
+      cmake
+    ];
+  };
+  openvdb_tbb_2021_8 = stdenv.mkDerivation rec {
+    pname = "openvdb";
+    version = "9.1.0";
+
+    src = fetchFromGitHub {
+      owner = "dreamworksanimation";
+      repo = "openvdb";
+      rev = "v${version}";
+      sha256 = "sha256-OP1xCR1YW60125mhhrW5+8/4uk+EBGIeoWGEU9OiIGY=";
+    };
+
+    nativeBuildInputs = [ cmake ];
+
+    buildInputs = [ openexr boost tbb_2021_8 jemalloc c-blosc ilmbase ];
+
+    meta = with lib; {
+      description = "An open framework for voxel";
+      homepage = "https://www.openvdb.org";
+      maintainers = [ maintainers.guibou ];
+      platforms = platforms.unix;
+      license = licenses.mpl20;
+    };
   };
 in
 stdenv.mkDerivation rec {
@@ -78,12 +114,13 @@ stdenv.mkDerivation rec {
     ilmbase
     libpng
     mpfr
+    nanosvg-fltk
     nlopt
     opencascade-occt
-    openvdb
+    openvdb_tbb_2021_8
     pcre
     qhull
-    tbb
+    tbb_2021_8
     wxGTK-prusa
     xorg.libX11
   ] ++ lib.optionals withSystemd [
@@ -127,13 +164,15 @@ stdenv.mkDerivation rec {
       substituteInPlace src/libslic3r/Format/STEP.cpp \
         --replace 'libpath /= "OCCTWrapper.so";' 'libpath = "OCCTWrapper.so";'
     fi
-
-    cp -r ${nanosvg-source}/* deps/NanoSVG
-    mv deps/NanoSVG/NanoSVG.cmake deps/NanoSVG/nanosvg-config.cmake
+    #
+    # https://github.com/prusa3d/PrusaSlicer/issues/9581
+    rm cmake/modules/FindEXPAT.cmake
 
     # Fix resources folder location on macOS
     substituteInPlace src/PrusaSlicer.cpp \
       --replace "#ifdef __APPLE__" "#if 0"
+    # Disable segfault tests
+    sed -i '/libslic3r/d' tests/CMakeLists.txt
   '' + lib.optionalString (stdenv.isDarwin && stdenv.isx86_64) ''
     # Disable segfault tests
     sed -i '/libslic3r/d' tests/CMakeLists.txt
@@ -147,7 +186,6 @@ stdenv.mkDerivation rec {
   };
 
   cmakeFlags = [
-    "-DNanoSVG_DIR=deps/NanoSVG"
     "-DSLIC3R_STATIC=0"
     "-DSLIC3R_FHS=1"
     "-DSLIC3R_GTK=3"

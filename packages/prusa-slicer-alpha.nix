@@ -39,14 +39,8 @@ let
   wxGTK-prusa = wxGTK32.overrideAttrs (old: rec {
     pname = "wxwidgets-prusa3d-patched";
     version = "3.2.0";
-    cmakeFlags = [ "-DDwxUSE_GLCANVAS_EGL=OFF" ];
-    src = fetchFromGitHub {
-      owner = "prusa3d";
-      repo = "wxWidgets";
-      rev = "4fd2120c913c20c3bb66ee9d01d8ff5087a8b90a";
-      sha256 = "sha256-heWjXXlxWo7xBxh0A0Q141NrPTZplaUNZsUtvlRCvBw=";
-      fetchSubmodules = true;
-    };
+    #cmakeFlags = [ "-DwxUSE_GLCANVAS_EGL=OFF" ];
+    configureFlags = old.configureFlags ++ [ "--disable-glcanvasegl" ];
   });
   nanosvg-fltk = stdenv.mkDerivation {
     pname = "nanosvg-fltk";

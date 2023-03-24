@@ -60,7 +60,20 @@
       pkgsFor = configurePackagesFor inputs.nixpkgs {
         android_sdk.accept_license = true;
         allowUnfree = true;
-      } [ nixgl.overlay (final: prev: {inherit (injectPackages) joycond_cemuhook;})];
+      } [
+        nixgl.overlay (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer;})
+        # (final: prev: { prusa-slicer = prev.prusa-slicer.overrideAttrs (old: rec {
+        #   version = "2.6.0-alpha5";
+        #   patches = [];
+        #   buildInputs = old.buildInputs ++ [ prev.pkgs.qhull ];
+        #   src = prev.fetchFromGitHub {
+        #     owner = "prusa3d";
+        #     repo = "PrusaSlicer";
+        #     sha256 = "sha256-sIbwuB1Ai2HrzN7tYm6gDL4aCppRcgjsdkuqQTTD3d0=";
+        #     rev = "version_${version}";
+        #   };
+        # });})
+      ];
 
       systemPackages =
         let

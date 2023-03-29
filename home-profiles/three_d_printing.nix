@@ -8,6 +8,6 @@
     # 3D slizing software
     cura
     super-slicer-latest
-    prusa-slicer
+    prusa-slicer-alpha
   ];
 }

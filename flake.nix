@@ -61,7 +61,7 @@
         android_sdk.accept_license = true;
         allowUnfree = true;
       } [
-        nixgl.overlay (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer;})
+        nixgl.overlay (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer-alpha;})
         # (final: prev: { prusa-slicer = prev.prusa-slicer.overrideAttrs (old: rec {
         #   version = "2.6.0-alpha5";
         #   patches = [];

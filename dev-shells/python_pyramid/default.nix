@@ -1,9 +1,6 @@
 { pkgs ? import <nixpkgs> {} }:
 let
-  pyAppEnv = pkgs.poetry2nix.mkPoetryEnv {
+  pyAppEnv = pkgs.poetry2nix.mkPoetryApplication {
     projectDir = ./.;
-    editablePackageSources = {
-      my-app = ./src;
-    };
   };
 in pyAppEnv.env

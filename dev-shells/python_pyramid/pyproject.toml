@@ -2,13 +2,17 @@
 name = "writers_blocks"
 version = "0.1.0"
 description = ""
-authors = ["Douglas Mayle <dougle@google.com>"]
+authors = ["Douglas Mayle <douglas@mayle.org>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 Django = "^4.1.7"
+django-treebeard = "^4.6.1"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+writers_blocks = 'writers_blocks:main'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

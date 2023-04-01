@@ -1,6 +1,16 @@
 { pkgs ? import <nixpkgs> {} }:
 let
-  pyAppEnv = pkgs.poetry2nix.mkPoetryApplication {
+  pythonEnv = pkgs.poetry2nix.mkPoetryEnv {
     projectDir = ./.;
   };
-in pyAppEnv.env
+in pkgs.mkShell rec {
+  LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath packages;
+  buildInputs = [
+    pkgs.poetry
+    pythonEnv
+  ];
+  packages = with pkgs; [
+    poetry
+    pkg-config
+  ];
+}

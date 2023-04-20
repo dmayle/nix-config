@@ -40,7 +40,9 @@
   services.xserver.libinput.enable = true;
   services.xserver.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.resolutions = [{ x = 7680; y = 4320; }{ x = 3840; y = 2160; }];
+  # Temporarily remove 8k because of issue booting with 530.41.03
+  #services.xserver.resolutions = [{ x = 7680; y = 4320; }{ x = 3840; y = 2160; }];
+  services.xserver.resolutions = [{ x = 3840; y = 2160; }];
   services.xserver.displayManager.gdm = {
     enable = true;
     autoSuspend = false;
@@ -73,6 +75,11 @@
     vimAlias = true;
     defaultEditor = true;
   };
+  # Ensure that nix-* (e.g. nix-shell) use the same nixpkgs as this flake
+  environment.etc."nixpath/nixpkgs".source = inputs.nixpkgs;
+  nix.nixPath = [
+    "nixpkgs=/etc/nixpath/nixpkgs"
+  ];
   environment.etc.inputrc.text = lib.mkAfter ''
     set editing-mode vi
     set keymap vi

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
 
@@ -21,6 +21,9 @@
   nix = {
     package = pkgs.nix;
     settings.experimental-features = "nix-command flakes";
+    registry = {
+      nixpkgs.flake = inputs.nixpkgs;
+    };
   };
 
   home.packages = with pkgs; [

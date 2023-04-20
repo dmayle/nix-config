@@ -7,6 +7,9 @@
 
     # Volume control used when clicking waybar
     pavucontrol
+
+    # pipe to and from X clipboard
+    xsel
   ];
 
   # Speed up the mouse movement on my laptop

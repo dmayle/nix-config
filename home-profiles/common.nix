@@ -83,7 +83,7 @@
     enable = true;
     package = pkgs.writeTextDir "/git" "";
     userName = "Douglas Mayle";
-    userEmail = "dougle@google.com";
+    userEmail = "douglas@mayle.org";
   };
 
   #

@@ -17,6 +17,6 @@ pkgs.stdenv.mkDerivation rec {
     homepage = "https://github.com/r-c-f/waynergy";
     licenses = license.mit;
     platforms = platforms.linux;
-    maintainers = [ "dougle@google.com" ];
+    maintainers = [ "douglas@mayle.org" ];
   };
 }

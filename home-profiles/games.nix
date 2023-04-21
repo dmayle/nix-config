@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     joycond_cemuhook
+    yuzu-early-access
     (lutris.override {
       extraLibraries = pkgs: [
         SDL2_net

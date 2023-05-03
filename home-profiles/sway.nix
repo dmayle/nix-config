@@ -215,7 +215,7 @@ in
       bars = [];
       focus = {
         mouseWarping = true;
-        forceWrapping = true;
+        wrapping = "force";
       };
       input = {
         "4369:4369:Matias_Ergo_Pro_Keyboard" = {
@@ -709,7 +709,7 @@ in
     '';
   };
   # Mako is a DBUS-activated desktop notifications daemon for wayland
-  programs.mako = {
+  services.mako = {
     enable = true;
   };
   systemd.user.services.mako = {

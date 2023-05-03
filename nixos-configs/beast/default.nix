@@ -68,6 +68,7 @@
     wget
     git
     file
+    canon-cups-ufr2
   ];
   programs.neovim = {
     enable = true;

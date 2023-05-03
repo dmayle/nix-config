@@ -87,7 +87,7 @@
   environment.variables.EDITOR = "nvim";
   services.openssh = {
     enable = true;
-    forwardX11 = true;
+    settings.X11Forwarding = true;
   };
 
   networking.firewall.enable = false;

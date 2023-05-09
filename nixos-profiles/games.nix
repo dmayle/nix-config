@@ -3,7 +3,7 @@
     pstree #Test
   ];
   #joycond is necessary for gyro with cemu, but prevents gyro in Steam
-  #services.joycond.enable = true;
+  services.joycond.enable = true;
   hardware.steam-hardware.enable = true;
   programs.steam = {
     enable = true;

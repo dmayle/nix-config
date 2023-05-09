@@ -62,15 +62,15 @@
         allowUnfree = true;
       } [
         nixgl.overlay
-        (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer-alpha;}) #yuzu-ea;})
+        (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer-alpha yuzu-ea; }) #yuzu-ea;})
         (final: prev: {
           ryujinx = prev.ryujinx.overrideAttrs (old: let oldConfigureHook = (builtins.head (builtins.filter (p: p.name == "dotnet-configure-hook") old.nativeBuildInputs)); in rec {
             pname = "ryujinx";
-            version = "1.1.743";
+            version = "1.1.772";
             src = prev.fetchFromGitHub {
               owner = "Ryujinx";
               repo = "Ryujinx";
-              sha256 = "sha256-GM3q3InlKKtLrucVm9KUEuRSWcfLS7yLtOAOEytfJE0=";
+              sha256 = "sha256-ddNirtqb5ANnuX3Ec8EL6K6JRM53e9yPmpF6wQsks0w=";
               rev = "${version}";
             };
             testProjectFile = "src/" + old.testProjectFile; # Source was moved inside of src/ subdirectory

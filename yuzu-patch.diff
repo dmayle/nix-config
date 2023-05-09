@@ -1,0 +1,44 @@
+diff --git a/src/shader_recompiler/backend/spirv/emit_spirv_context_get_set.cpp b/src/shader_recompiler/backend/spirv/emit_spirv_context_get_set.cpp
+index fee510f..07c2b7b 100644
+--- a/src/shader_recompiler/backend/spirv/emit_spirv_context_get_set.cpp
++++ b/src/shader_recompiler/backend/spirv/emit_spirv_context_get_set.cpp
+@@ -339,9 +339,7 @@ Id EmitGetAttribute(EmitContext& ctx, IR::Attribute attr, Id vertex) {
+         if (ctx.profile.support_vertex_instance_id) {
+             return ctx.OpBitcast(ctx.F32[1], ctx.OpLoad(ctx.U32[1], ctx.vertex_id));
+         } else {
+-            const Id index{ctx.OpLoad(ctx.U32[1], ctx.vertex_index)};
+-            const Id base{ctx.OpLoad(ctx.U32[1], ctx.base_vertex)};
+-            return ctx.OpBitcast(ctx.F32[1], ctx.OpISub(ctx.U32[1], index, base));
++            return ctx.OpBitcast(ctx.F32[1], ctx.OpLoad(ctx.U32[1], ctx.vertex_index));
+         }
+     case IR::Attribute::BaseInstance:
+         return ctx.OpBitcast(ctx.F32[1], ctx.OpLoad(ctx.U32[1], ctx.base_instance));
+@@ -386,9 +384,7 @@ Id EmitGetAttributeU32(EmitContext& ctx, IR::Attribute attr, Id) {
+         if (ctx.profile.support_vertex_instance_id) {
+             return ctx.OpLoad(ctx.U32[1], ctx.vertex_id);
+         } else {
+-            const Id index{ctx.OpLoad(ctx.U32[1], ctx.vertex_index)};
+-            const Id base{ctx.OpLoad(ctx.U32[1], ctx.base_vertex)};
+-            return ctx.OpISub(ctx.U32[1], index, base);
++            return ctx.OpLoad(ctx.U32[1], ctx.vertex_index);
+         }
+     case IR::Attribute::BaseInstance:
+         return ctx.OpLoad(ctx.U32[1], ctx.base_instance);
+diff --git a/src/shader_recompiler/frontend/maxwell/translate/impl/texture_mipmap_level.cpp b/src/shader_recompiler/frontend/maxwell/translate/impl/texture_mipmap_level.cpp
+index 639da1e..eeb4944 100644
+--- a/src/shader_recompiler/frontend/maxwell/translate/impl/texture_mipmap_level.cpp
++++ b/src/shader_recompiler/frontend/maxwell/translate/impl/texture_mipmap_level.cpp
+@@ -102,12 +102,7 @@ void Impl(TranslatorVisitor& v, u64 insn, bool is_bindless) {
+         }
+         IR::F32 value{v.ir.CompositeExtract(sample, element)};
+         if (element < 2) {
+-            IR::U32 casted_value;
+-            if (element == 0) {
+-                casted_value = v.ir.ConvertFToU(32, value);
+-            } else {
+-                casted_value = v.ir.ConvertFToS(16, value);
+-            }
++            IR::U32 casted_value = v.ir.ConvertFToU(32, value);
+             v.X(dest_reg, v.ir.ShiftLeftLogical(casted_value, v.ir.Imm32(8)));
+         } else {
+             v.F(dest_reg, value);

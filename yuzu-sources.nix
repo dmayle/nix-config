@@ -12,8 +12,8 @@
   };
 
   ea = {
-    version = "3575";
-    distHash = "sha256-D1O8ao6W4QRvgTJrQ10Mf18XnHHJVISPoqCm/sphkFY=";
-    fullHash = "sha256-4fGw+IWV+1D/GecqIz8y7vBBMyunUl0xUYLexgKePKk=";
+    version = "3602";
+    distHash = "sha256-krDqqYbH0UjoQxM4HCIm1njSylqubwV0CMn9by1cTMY=";
+    fullHash = "sha256-4j5ri9Ne9YbtrXK0DEdb6xNkzSBX6ov0nK47fxrm4mc=";
   };
 }

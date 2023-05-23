@@ -148,8 +148,6 @@ stdenv.mkDerivation {
     ln -sf ${compat-list} ./dist/compatibility_list/compatibility_list.json
   '';
 
-  patches = [ ./yuzu-patch.diff ];
-
   passthru.updateScript = ./yuzu-update.sh;
 
   meta = with lib; {

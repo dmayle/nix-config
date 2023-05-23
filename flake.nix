@@ -66,11 +66,11 @@
         (final: prev: {
           ryujinx = prev.ryujinx.overrideAttrs (old: let oldConfigureHook = (builtins.head (builtins.filter (p: p.name == "dotnet-configure-hook") old.nativeBuildInputs)); in rec {
             pname = "ryujinx";
-            version = "1.1.772";
+            version = "1.1.810";
             src = prev.fetchFromGitHub {
               owner = "Ryujinx";
               repo = "Ryujinx";
-              sha256 = "sha256-ddNirtqb5ANnuX3Ec8EL6K6JRM53e9yPmpF6wQsks0w=";
+              sha256 = "sha256-Gi8Qk/XiDeD9lOr8SRT+xuM0JeJ+2EEtwqmsukn0B+o=";
               rev = "${version}";
             };
             testProjectFile = "src/" + old.testProjectFile; # Source was moved inside of src/ subdirectory
@@ -85,11 +85,12 @@
                   && p.name != "Microsoft.IdentityModel.Abstractions.6.29.0.nupkg"
                 ) (import old.nugetDeps args))
               ++ [
-                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.JsonWebTokens"; version = "6.30.0"; sha256 = "sha256-n1pPDnp30tEY90NfvVKUIKJik+2NJZLWZs1TSmQ7i/Q="; })
-                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.Tokens"; version = "6.30.0"; sha256 = "sha256-H8LpCuW8gVV3H1jYBS/Hr6+vzbnw2y+iqFPO9HnVEqI="; })
-                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.Logging"; version = "6.30.0"; sha256 = "sha256-xNiZDcuKaXSIBW6x8p3Qz2lyLHT2CKfhuRbEvUWKaI0="; })
-                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.Abstractions"; version = "6.30.0"; sha256 = "sha256-x3AirIVNzwaMPL9Mc2pDfNYYFpMXYWcjnVLk3gm8cHY="; })
-                  (args.fetchNuGet { pname = "System.IdentityModel.Tokens.Jwt"; version = "6.30.0"; sha256 = "sha256-MiijECyyI8QagGCMgvfVjxJjYo6FP9VgCOwLPEQfa6U="; })
+                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.JsonWebTokens"; version = "6.30.1"; sha256 = "sha256-m0q6wyQX2erKahaq3NtLAdrZ2Mk+AHlz2zfTny3QMLA="; })
+                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.Tokens"; version = "6.30.1"; sha256 = "sha256-war/sY+itGgV1cLryaA/ct5BUbNCcu0pLZcfan3YA4k="; })
+                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.Logging"; version = "6.30.1"; sha256 = "sha256-+jtOwuYMKiy3jGp08pH1BC1U7H4O3Q+3V04LhgGsswk="; })
+                  (args.fetchNuGet { pname = "Microsoft.IdentityModel.Abstractions"; version = "6.30.1"; sha256 = "sha256-4UZ4RDhTC+LMS+taMtYBZOG/BZG+Xqc26T8QNo/6Z8k="; })
+                  (args.fetchNuGet { pname = "System.IdentityModel.Tokens.Jwt"; version = "6.30.1"; sha256 = "sha256-gt222dwY9IPCOyyFsJIeyLP527eAQkYLInNenrgunbg="; })
+                  (args.fetchNuGet { pname = "DynamicData"; version = "7.13.8"; sha256 = "sha256-pBh8mIeCUNs3Dm7LQrQKYYea1F0+p7b0m4YAVOZf3IM="; })
                 ]
               );
             };

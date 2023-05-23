@@ -2,7 +2,7 @@
 { pkgs ? import <nixpkgs> {} }:
 let
   my-packages = p: with p; [
-    torch
+    torchWithCuda
     matplotlib
     jupyter
     graphviz

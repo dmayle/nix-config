@@ -32,6 +32,9 @@
 
     git
 
+    # Try out obsidian notes
+    obsidian
+
     # Easier to read diffs
     colordiff
 

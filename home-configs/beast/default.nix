@@ -7,6 +7,7 @@
     homeManagerProfiles.games
     homeManagerProfiles.neovim
     homeManagerProfiles.sway
+    homeManagerProfiles.syncthing
     homeManagerProfiles.tmux
   ];
 

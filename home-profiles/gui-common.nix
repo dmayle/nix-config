@@ -10,6 +10,8 @@
 
     # pipe to and from X clipboard
     xsel
+
+    libreoffice
   ];
 
   # Speed up the mouse movement on my laptop

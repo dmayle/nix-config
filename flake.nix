@@ -4,8 +4,11 @@
   # This is a collection of sources to have their versions and hashes managed
   # by this flake
   inputs = {
-    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
-    nixgl.url = "github:guibou/nixGL";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixgl = {
+      url = "github:guibou/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";

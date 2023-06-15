@@ -71,7 +71,11 @@
     git
     file
     canon-cups-ufr2
+    gnomeExtensions.gtile
   ];
+
+  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+
   programs.neovim = {
     enable = true;
     viAlias = true;

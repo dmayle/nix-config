@@ -27,6 +27,7 @@
     useXkbConfig = true; # use xkbOptions in tty.
   };
   services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
   hardware.opengl = {
     enable = true;
     driSupport = true;
@@ -42,7 +43,8 @@
   services.xserver.desktopManager.gnome.enable = true;
   # Temporarily remove 8k because of issue booting with 530.41.03
   #services.xserver.resolutions = [{ x = 7680; y = 4320; }{ x = 3840; y = 2160; }];
-  services.xserver.resolutions = [{ x = 3840; y = 2160; }];
+  #services.xserver.resolutions = [{ x = 3840; y = 2160; }];
+  services.xserver.resolutions = [{ x = 7680; y = 4320; }];
   services.xserver.displayManager.gdm = {
     enable = true;
     autoSuspend = false;

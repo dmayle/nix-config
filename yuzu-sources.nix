@@ -12,9 +12,9 @@
   };
 
   ea = {
-    version = "3699";
-    distHash = "sha256-dZP/gQENLrzTxRaROtbYKMvg4I8cd7FFK7VdjW/nOO4=";
-    fullHash = "sha256-zXcV54FFIQ3mNLwDklOn6u3KgSuhdZ6IUCJYLc2MeAc=";
+    version = "3709";
+    distHash = "sha256-30nyH4nZ5XsUyQ1+GMLXBdcu4Om6Xt9WSCGmnc2fEHg=";
+    fullHash = "sha256-AxlPov3JquUCLmMZI32bFQ/JK+f6e3kpxneuBqvO+bU=";
     timezoneHash = "sha256-yv8ykEYPu9upeXovei0u16iqQ7NasH6873KnQy4+KwI=";
   };
 }

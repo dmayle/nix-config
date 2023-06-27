@@ -12,8 +12,9 @@
   };
 
   ea = {
-    version = "3657";
-    distHash = "sha256-0Lk7fJ6lZWEXg2PTzQoXOXKbudNf8AubdmCfk4PNgGw=";
-    fullHash = "sha256-AXdmSeF/b61WsTL1M5nC0sUdua/jcPm0gLkfEeH10KE=";
+    version = "3699";
+    distHash = "sha256-dZP/gQENLrzTxRaROtbYKMvg4I8cd7FFK7VdjW/nOO4=";
+    fullHash = "sha256-zXcV54FFIQ3mNLwDklOn6u3KgSuhdZ6IUCJYLc2MeAc=";
+    timezoneHash = "sha256-yv8ykEYPu9upeXovei0u16iqQ7NasH6873KnQy4+KwI=";
   };
 }

@@ -25,6 +25,13 @@ let
     fetchSubmodules = true;
   };
 
+  switch-timezone-data = fetchurl {
+    name = "switch-timezone-data";
+    url = "https://github.com/lat9nq/tzdb_to_nx/releases/download/220816/220816.zip";
+    hash = sources.ea.timezoneHash;
+  };
+
+
   # The mirror repo for early access builds is missing submodule info,
   # but the Windows distributions include a source tarball, which in turn
   # includes the full git metadata. So, grab that and rehydrate it.
@@ -63,6 +70,6 @@ in {
     branch = "early-access";
     version = sources.ea.version;
     src = eaSrcRehydrated;
-    inherit compat-list;
+    inherit compat-list switch-timezone-data;
   };
 }.${branch}

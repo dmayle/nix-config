@@ -2,7 +2,7 @@
 , src
 , branch ? "early-access"
 , compat-list
-
+, switch-timezone-data
 , lib
 , stdenv
 , wrapQtAppsHook
@@ -124,6 +124,9 @@ stdenv.mkDerivation {
     "-DYUZU_USE_QT_MULTIMEDIA=ON"
     "-DUSE_DISCORD_PRESENCE=ON"
 
+    # don't download external timezone data
+    "-DYUZU_DOWNLOAD_TIME_ZONE_DATA=OFF"
+
     # We dont want to bother upstream with potentially outdated compat reports
     "-DYUZU_ENABLE_COMPATIBILITY_REPORTING=OFF"
     "-DENABLE_COMPATIBILITY_LIST_DOWNLOAD=OFF" # We provide this deterministically
@@ -136,6 +139,10 @@ stdenv.mkDerivation {
   ];
 
   preConfigure = ''
+    # Make timezone data available to CMake
+    mkdir -p build/externals/nx_tzdb
+    cp ${switch-timezone-data} build/externals/nx_tzdb/220816.zip
+
     # see https://github.com/NixOS/nixpkgs/issues/114044, setting this through cmakeFlags does not work.
     cmakeFlagsArray+=(
       "-DTITLE_BAR_FORMAT_IDLE=yuzu | ${branch} ${version} (nixpkgs) {}"

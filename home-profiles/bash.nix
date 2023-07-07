@@ -5,6 +5,10 @@
     enable = true;
     historyControl = [ "ignoredups" "ignorespace" "erasedups" ];
     historyFileSize = 20000;
+    shellAliases = {
+      set4k = "xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1";
+      set8k = "xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75";
+    };
     # Still need to setup prompt.rc
     initExtra = ''
       # Command hashing is used by various shell scripts, so enable it

@@ -66,69 +66,6 @@
       } [
         nixgl.overlay
         (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer-alpha yuzu-ea; }) #yuzu-ea;})
-        # (final: prev: {
-        #   ryujinx = prev.ryujinx.overrideAttrs (old: let oldConfigureHook = (builtins.head (builtins.filter (p: p.name == "dotnet-configure-hook") old.nativeBuildInputs)); in rec {
-        #     pname = "ryujinx";
-        #     version = "1.1.810";
-        #     src = prev.fetchFromGitHub {
-        #       owner = "Ryujinx";
-        #       repo = "Ryujinx";
-        #       sha256 = "sha256-Gi8Qk/XiDeD9lOr8SRT+xuM0JeJ+2EEtwqmsukn0B+o=";
-        #       rev = "${version}";
-        #     };
-        #     nugetDeps = prev.mkNugetDeps {
-        #       name = "${pname}-${version}";
-        #       nugetDeps = (args:
-        #       (builtins.filter (p:
-        #           p.name != "System.IdentityModel.Tokens.Jwt.6.29.0.nupkg"
-        #           && p.name != "Microsoft.IdentityModel.JsonWebTokens.6.29.0.nupkg"
-        #           && p.name != "Microsoft.IdentityModel.Tokens.6.29.0.nupkg"
-        #           && p.name != "Microsoft.IdentityModel.Logging.6.29.0.nupkg"
-        #           && p.name != "Microsoft.IdentityModel.Abstractions.6.29.0.nupkg"
-        #         ) (import old.nugetDeps args))
-        #       ++ [
-        #           (args.fetchNuGet { pname = "Microsoft.IdentityModel.JsonWebTokens"; version = "6.30.1"; sha256 = "sha256-m0q6wyQX2erKahaq3NtLAdrZ2Mk+AHlz2zfTny3QMLA="; })
-        #           (args.fetchNuGet { pname = "Microsoft.IdentityModel.Tokens"; version = "6.30.1"; sha256 = "sha256-war/sY+itGgV1cLryaA/ct5BUbNCcu0pLZcfan3YA4k="; })
-        #           (args.fetchNuGet { pname = "Microsoft.IdentityModel.Logging"; version = "6.30.1"; sha256 = "sha256-+jtOwuYMKiy3jGp08pH1BC1U7H4O3Q+3V04LhgGsswk="; })
-        #           (args.fetchNuGet { pname = "Microsoft.IdentityModel.Abstractions"; version = "6.30.1"; sha256 = "sha256-4UZ4RDhTC+LMS+taMtYBZOG/BZG+Xqc26T8QNo/6Z8k="; })
-        #           (args.fetchNuGet { pname = "System.IdentityModel.Tokens.Jwt"; version = "6.30.1"; sha256 = "sha256-gt222dwY9IPCOyyFsJIeyLP527eAQkYLInNenrgunbg="; })
-        #           (args.fetchNuGet { pname = "DynamicData"; version = "7.13.8"; sha256 = "sha256-pBh8mIeCUNs3Dm7LQrQKYYea1F0+p7b0m4YAVOZf3IM="; })
-        #         ]
-        #       );
-        #     };
-        #     dotnet-sdk = prev.dotnetCorePackages.sdk_7_0;
-        #     sdkDeps = prev.lib.lists.flatten [ dotnet-sdk.packages ];
-        #     sdkSource = prev.mkNugetSource {
-        #       name = "dotnet-sdk-${dotnet-sdk.version}-source";
-        #       deps = sdkDeps;
-        #     };
-        #     dependenciesSource = prev.mkNugetSource {
-        #       name = "${pname}-${version}-dependencies-source";
-        #       description = "A Nuget source with the dependencies for ${pname}-${version}";
-        #       deps = [ nugetDeps ];
-        #     };
-        #     nuget-source = prev.symlinkJoin {
-        #       name = "${pname}-${version}-nuget-source";
-        #       paths = [ dependenciesSource sdkSource ];
-        #     };
-        #     nativeBuildInputs = (builtins.filter (p: p.name != "dotnet-configure-hook") old.nativeBuildInputs) ++ [
-        #       (oldConfigureHook.overrideAttrs (old: {
-        #         nugetSource = nuget-source;
-        #       }))
-        #     ];
-        #   });
-        # })
-        # (final: prev: { prusa-slicer = prev.prusa-slicer.overrideAttrs (old: rec {
-        #   version = "2.6.0-alpha5";
-        #   patches = [];
-        #   buildInputs = old.buildInputs ++ [ prev.pkgs.qhull ];
-        #   src = prev.fetchFromGitHub {
-        #     owner = "prusa3d";
-        #     repo = "PrusaSlicer";
-        #     sha256 = "sha256-sIbwuB1Ai2HrzN7tYm6gDL4aCppRcgjsdkuqQTTD3d0=";
-        #     rev = "version_${version}";
-        #   };
-        # });})
       ];
 
       systemPackages =

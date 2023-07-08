@@ -54,40 +54,47 @@
     #    overlays, and mixins shared by different configurations
     # 3) Setup nixpkgs to enable unfree modules
     let
-      inherit (flib) findModules configurePackagesFor mapModules mkHomeConfig;
+      inherit (flib) findModules configurePackagesForSystem mapModules mapModules' mkHomeConfig systemForConfig;
 
-      flib = import ./lib { inherit inputs; lib = nixpkgs.lib; };
+      lib = nixpkgs.lib;
 
+      flib = import ./lib { inherit inputs lib; };
+
+      # This creates an x86_64-linux based package tree for the packages in this flake :-(
       injectPackages = mapModules ./packages (p: systemPackages.x86_64-linux.callPackage p {});
 
-      pkgsFor = configurePackagesFor inputs.nixpkgs {
+      # Global nixpkgs config used in this flake
+      pkgConfig = {
         android_sdk.accept_license = true;
         allowUnfree = true;
-      } [
+      };
+
+      # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
+      pkgOverlays = [
         nixgl.overlay
-        (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer-alpha yuzu-ea; }) #yuzu-ea;})
+        (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer-alpha yuzu-ea; })
       ];
 
-      systemPackages =
-        let
-          system_types =
-            let
-              fn = path: nixpkgs.lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
-            in
-              nixpkgs.lib.unique (builtins.attrValues (mapModules ./home-configs fn) ++ builtins.attrValues (mapModules ./nixos-configs fn));
-        in nixpkgs.lib.genAttrs system_types (system: pkgsFor system);
+      # Curry new config and overlays into nixpkgs as per-system function
+      pkgsForSystem = configurePackagesForSystem nixpkgs pkgConfig pkgOverlays;
+
+      # Generate a list systems supported by the nixos and home-manager configs
+      supportedSystems = lib.unique (mapModules' ./home-configs systemForConfig ++ mapModules' ./nixos-configs systemForConfig);
+
+      # Create an attrset of systems to nixpkgs for that system
+      systemPackages = lib.genAttrs supportedSystems pkgsForSystem;
     in
 
     {
       #devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
       # flakeSystems is a function that takes a list of shells and makes them available for each supported system
       # devShells = flakeSystems (findModules ./dev-shells);
-      devShells.x86_64-linux = with nixpkgs.lib;
+      devShells.x86_64-linux = with lib;
         let
           shells = builtins.attrNames (builtins.readDir ./dev-shells);
           myFunc = name:
             import (./dev-shells + "/${name}") { pkgs = systemPackages.x86_64-linux; };
-        in nixpkgs.lib.genAttrs shells myFunc;
+        in lib.genAttrs shells myFunc;
 
       homeManagerModules = builtins.listToAttrs (findModules ./home-modules);
 
@@ -101,15 +108,15 @@
 
       nixosRoles = import ./nixos-roles;
 
-      nixosConfigurations = with nixpkgs.lib;
+      nixosConfigurations = with lib;
         let
           configs = builtins.attrNames (builtins.readDir ./nixos-configs);
 
           mkNixosConfig = name:
             let
-              system = nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./nixos-configs + "/${name}/system"));
+              system = lib.removeSuffix "\n" (builtins.readFile (./nixos-configs + "/${name}/system"));
               pkgs = systemPackages.${system};
-            in nixpkgs.lib.nixosSystem {
+            in lib.nixosSystem {
               inherit system;
               modules = [
                 (import (./nixos-configs + "/${name}"))
@@ -119,7 +126,7 @@
               # Only used for importable arguments
               specialArgs = { inherit inputs; };
             };
-        in nixpkgs.lib.genAttrs configs mkNixosConfig;
+        in lib.genAttrs configs mkNixosConfig;
 
       homeConfigurations = with home-manager.lib;
         let

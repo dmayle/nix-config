@@ -23,11 +23,17 @@ rec {
         }] else
           findModules (dir + "/${name}")) (builtins.readDir dir)));
 
-    configurePackagesFor = pkgs: config: overlays: system:
-      import pkgs {
-        localSystem = { inherit system; };
-        inherit config overlays;
-      };
+  configurePackagesForSystem = pkgs: config: overlays: system:
+    import pkgs {
+      localSystem = { inherit system; };
+      inherit config overlays;
+    };
+
+  mapSystems = systems: fn:
+    lib.genAttrs systems (system: fn);
+
+  # Read out a system file from the given path and return the contents
+  systemForConfig = path: lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
 
   # For a given directory, return a set of key, value pairs where each key is
   # either the name of a nix file in that directory, or a sub-directory with

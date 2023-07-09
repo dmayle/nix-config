@@ -27,6 +27,9 @@
           <family>Fira Code</family>
         </prefer>
       </alias>
+      <match target="font">
+        <edit names="rbga" modes="assign"><const>bgr</const></edit>
+      </match>
       <match target="pattern">
         <test name="family"><string>monospace</string></test>
         <edit name="family" mode="assign" binding="same"><string>JetBrains Mono NL</string></edit>

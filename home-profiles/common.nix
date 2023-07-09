@@ -152,9 +152,9 @@
       color7                #eee8d5
       color15               #fdf6e3
 
-      # Setup font size controls
-      font_size 10.0
-      map kitty_mod+0 set_font_size 10.0
+      # Setup font size controls, For 8k 65", 14.0 is good, for 4k 65", 10.0 is good
+      font_size 14.0
+      map kitty_mod+0 set_font_size 14.0
       map kitty_mod+equal change_font_size all +2.0
       map kitty_mod+minus change_font_size all -2.0
     '';

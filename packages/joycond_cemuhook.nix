@@ -17,6 +17,7 @@ pkgs.python39Packages.buildPythonPackage rec {
     evdev
     termcolor
     dbus-python
+    setuptools-git-versioning
   ];
 
   postPatch = ''

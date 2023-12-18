@@ -15,8 +15,8 @@
   };
 
   services.gnome-keyring = {
-    enable = true;
-    components = [ "pkcs11" "secrets" "ssh" ];
+    #enable = true;
+    #components = [ "gpg" "pkcs11" "secrets" "ssh" ];
   };
 
   home.sessionVariables = {
@@ -96,22 +96,22 @@
 
   #
   # Add a systemd service for ssh-agent
-  systemd.user.services.ssh-agent = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      Description = "SSH key agent";
-    };
-    Install = {
-      WantedBy = [ "sway-session.target" ];
-    };
-    Service = {
-      type = "Simple";
-      Environment = [ "SSH_AUTH_SOCK=%t/ssh-agent.socket" ];
-      ExecStart = "${pkgs.openssh}/bin/ssh-agent -D -a $SSH_AUTH_SOCK";
-      Restart = "always";
-      RestartSec = 3;
-    };
-  };
+  # systemd.user.services.ssh-agent = {
+  #   Unit = {
+  #     PartOf = [ "graphical-session.target" ];
+  #     Description = "SSH key agent";
+  #   };
+  #   Install = {
+  #     WantedBy = [ "sway-session.target" ];
+  #   };
+  #   Service = {
+  #     type = "Simple";
+  #     Environment = [ "SSH_AUTH_SOCK=%t/ssh-agent.socket" ];
+  #     ExecStart = "${pkgs.openssh}/bin/ssh-agent -D -a $SSH_AUTH_SOCK";
+  #     Restart = "always";
+  #     RestartSec = 3;
+  #   };
+  # };
 
   # Speed up the mouse movement on my laptop
   xsession.initExtra = ''

@@ -67,6 +67,7 @@
       pkgConfig = {
         android_sdk.accept_license = true;
         allowUnfree = true;
+        cudaSupport = true;
       };
 
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
@@ -89,12 +90,13 @@
       #devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
       # flakeSystems is a function that takes a list of shells and makes them available for each supported system
       # devShells = flakeSystems (findModules ./dev-shells);
-      devShells.x86_64-linux = with lib;
+      devShells = lib.genAttrs supportedSystems (system:
         let
           shells = builtins.attrNames (builtins.readDir ./dev-shells);
           myFunc = name:
-            import (./dev-shells + "/${name}") { pkgs = systemPackages.x86_64-linux; };
-        in lib.genAttrs shells myFunc;
+            import (./dev-shells + "/${name}") { pkgs = systemPackages.${system}; };
+        in lib.genAttrs shells myFunc
+      );
 
       homeManagerModules = builtins.listToAttrs (findModules ./home-modules);
 

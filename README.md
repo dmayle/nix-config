@@ -99,3 +99,17 @@ home-manager.lib.homeManagerConfiguration function.
   <dt>Lib</dt>
   <dd>This directory contains helper functions used by the rest of this repository.</dd>
 </dl>
+
+# V2 Notes
+## Outputs
+This top-level flake has four significant outputs:
+1. Packages: any custom packages I've written, either for packages that will never be in nixpkgs, or a staging area before that's ready
+2. NixOS configurations: just enough to get a machine working, and anything hardware-linked (e.g. some games stuff)
+3. Home Manager configurations: the majority of my config, tailoring things so they're just right no matter the host
+4. Dev Shells: Configs for custom environments used just for software development / tinkering
+
+## Structure
+ * Library code: custom code used by this flake to make it easier to read and write
+ * Package configuration: nixpkgs needs global configuration for licensing and hardware support, this happens here
+ * Overlays: nixpkgs as it's made available to my configs needs to contain my custom packages
+ * Roles, Profiles, Configs: explained above, Home Manager and NixOS Configs have this breakdown to make them composable across hosts

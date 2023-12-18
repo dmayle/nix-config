@@ -839,8 +839,8 @@ in
     wob
     xorg.xhost
     qownnotes
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-wlr
+    #xdg-desktop-portal-gtk
+    #xdg-desktop-portal-wlr
     nixgl.nixGLIntel
   ];
 }

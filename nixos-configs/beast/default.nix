@@ -33,6 +33,7 @@
     driSupport = true;
     driSupport32Bit = true;
   };
+  hardware.pulseaudio.support32Bit = true;
   # Configure keymap in X11
   services.xserver.layout = "gb";
   services.xserver.xkbOptions = "caps:swapescape";

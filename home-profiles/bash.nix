@@ -10,6 +10,7 @@
       set8k = "xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1";
       # Effectively 5760x3240
       set5k = "xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75";
+      gnome-logout = "dbus-send --session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1";
     };
     # Still need to setup prompt.rc
     initExtra = ''
@@ -183,7 +184,7 @@
 
         _start_ssh_agent
       }
-      ssh-reagent
+      #ssh-reagent
 
       [[ -f ~/src/dotfiles/bash/prompt.rc ]] && source ~/src/dotfiles/bash/prompt.rc
     '';

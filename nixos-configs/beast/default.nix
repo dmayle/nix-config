@@ -60,7 +60,6 @@
     autoSuspend = false;
   };
   programs.xwayland.enable = true;
-  services.xserver.displayManager.sessionPackages = with pkgs; [ sway ];
   #services.xserver.extraConfig = "";
   #services.xserver.extraDisplaySettings = "";
   #services.xserver.extraLayouts.foo = {};
@@ -108,37 +107,11 @@
 
   environment.variables.EDITOR = "nvim";
 
+  # This adds a sway session to gdm, but the session just selects sway from the
+  # current environment. My home manager config will override that version, so
+  # all config should be done there.
   programs.sway = {
     enable = true;
-    wrapperFeatures.gtk = true;
-    extraOptions = [ "--unsupported-gpu" ];
-    # extraSessionCommands = ''
-    #   # Test fix for external monitor being black
-    #   #export WLR_DRM_NO_MODIFIERS=1
-    #   # Use native wayland renderer for Firefox
-    #   #export MOZ_ENABLE_WAYLAND=1
-    #   # Use native wayland renderer for QT applications
-    #   #export QT_QPA_PLATFORM=wayland
-    #   # Allow sway to manage window decorations
-    #   #export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-    #   # Use native wayland renderer for SDL applications
-    #   #export SDL_VIDEODRIVER=wayland
-    #   # Let XDG-compliant apps know they're working on wayland
-    #   #export XDG_SESSION_TYPE=wayland
-    #   # Fix JAVA drawing issues in sway
-    #   #export _JAVA_AWT_WM_NONREPARENTING=1
-    #   # Fix Nvidia/Sway flickering
-    #   export XWAYLAND_NO_GLAMOR=1
-
-    #   # Misc.
-    #   #export LIBVA_DRIVER_NAME=nvidia
-    #   #export GBM_BACKEND=nvidia-drm
-    #   #export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    #   export WLR_NO_HARDWARE_CURSORS=1
-    #   #export GDK_BACKEND=wayland
-    #   # Let sway have access to your nix profile
-    #   source "${pkgs.nix}/etc/profile.d/nix.sh"
-    # '';
   };
 
   services.openssh = {

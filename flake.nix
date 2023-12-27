@@ -13,10 +13,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # nixpkgs-wayland = {
-    #   url = "github:nix-community/nixpkgs-wayland";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    nixpkgs-wayland = {
+      url = "github:nix-community/nixpkgs-wayland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-colors.url = "github:misterio77/nix-colors";
     vim-maximizer = {
       url = "github:szw/vim-maximizer";
@@ -49,7 +49,7 @@
   };
 
   # The output of this is my nixos configurations and home manager configurations
-  outputs = inputs @ { self, nixpkgs, home-manager, nixgl, ... }:
+  outputs = inputs @ { self, nixpkgs, home-manager, nixgl, nixpkgs-wayland, ... }:
     # I need to setup three things in order for the code contained in this
     # flake to work properly:
     # 1) Import and setup library code which is used by my modules, but also by
@@ -76,7 +76,7 @@
 
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
       pkgOverlays = [
-        #nixpkgs-wayland.overlay
+        nixpkgs-wayland.overlay
         (final: prev: {inherit (injectPackages) joycond_cemuhook; })
       ];
 

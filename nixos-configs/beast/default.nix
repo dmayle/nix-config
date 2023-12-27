@@ -9,6 +9,7 @@
     inputs.self.nixosProfiles.sound
     inputs.self.nixosProfiles.games
     inputs.self.nixosProfiles.cachix-cuda
+    inputs.self.nixosProfiles.cachix-nixpkgs-wayland
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -27,7 +28,13 @@
     useXkbConfig = true; # use xkbOptions in tty.
   };
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
+  hardware.nvidia = {
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    modesetting.enable = true;
+    nvidiaSettings = true;
+  };
   hardware.opengl = {
     enable = true;
     driSupport = true;
@@ -42,14 +49,18 @@
   services.xserver.libinput.enable = true;
   services.xserver.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.xterm.enable = true;
   # Temporarily remove 8k because of issue booting with 530.41.03
   #services.xserver.resolutions = [{ x = 7680; y = 4320; }{ x = 3840; y = 2160; }];
   #services.xserver.resolutions = [{ x = 3840; y = 2160; }];
   services.xserver.resolutions = [{ x = 7680; y = 4320; }];
   services.xserver.displayManager.gdm = {
     enable = true;
+    wayland = true;
     autoSuspend = false;
   };
+  programs.xwayland.enable = true;
+  services.xserver.displayManager.sessionPackages = with pkgs; [ sway ];
   #services.xserver.extraConfig = "";
   #services.xserver.extraDisplaySettings = "";
   #services.xserver.extraLayouts.foo = {};
@@ -83,16 +94,53 @@
     vimAlias = true;
     defaultEditor = true;
   };
+
   # Ensure that nix-* (e.g. nix-shell) use the same nixpkgs as this flake
   environment.etc."nixpath/nixpkgs".source = inputs.nixpkgs;
   nix.nixPath = [
     "nixpkgs=/etc/nixpath/nixpkgs"
   ];
+
   environment.etc.inputrc.text = lib.mkAfter ''
     set editing-mode vi
     set keymap vi
   '';
+
   environment.variables.EDITOR = "nvim";
+
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+    extraOptions = [ "--unsupported-gpu" ];
+    # extraSessionCommands = ''
+    #   # Test fix for external monitor being black
+    #   #export WLR_DRM_NO_MODIFIERS=1
+    #   # Use native wayland renderer for Firefox
+    #   #export MOZ_ENABLE_WAYLAND=1
+    #   # Use native wayland renderer for QT applications
+    #   #export QT_QPA_PLATFORM=wayland
+    #   # Allow sway to manage window decorations
+    #   #export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+    #   # Use native wayland renderer for SDL applications
+    #   #export SDL_VIDEODRIVER=wayland
+    #   # Let XDG-compliant apps know they're working on wayland
+    #   #export XDG_SESSION_TYPE=wayland
+    #   # Fix JAVA drawing issues in sway
+    #   #export _JAVA_AWT_WM_NONREPARENTING=1
+    #   # Fix Nvidia/Sway flickering
+    #   export XWAYLAND_NO_GLAMOR=1
+
+    #   # Misc.
+    #   #export LIBVA_DRIVER_NAME=nvidia
+    #   #export GBM_BACKEND=nvidia-drm
+    #   #export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    #   export WLR_NO_HARDWARE_CURSORS=1
+    #   #export GDK_BACKEND=wayland
+    #   # Let sway have access to your nix profile
+    #   source "${pkgs.nix}/etc/profile.d/nix.sh"
+    # '';
+  };
+
   services.openssh = {
     enable = true;
     settings.X11Forwarding = true;

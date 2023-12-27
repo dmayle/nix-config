@@ -7,6 +7,9 @@
 
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.canon-cups-ufr2 ];
-  services.avahi.enable = true;
-  services.avahi.nssmdns = true;
+  #services.avahi.enable = true;
+  #services.avahi.nssmdns4 = true;
+
+  # Required to support sway configuration in home manager
+  security.polkit.enable = true;
 }

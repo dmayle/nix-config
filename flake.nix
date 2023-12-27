@@ -13,6 +13,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # nixpkgs-wayland = {
+    #   url = "github:nix-community/nixpkgs-wayland";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     nix-colors.url = "github:misterio77/nix-colors";
     vim-maximizer = {
       url = "github:szw/vim-maximizer";
@@ -72,8 +76,8 @@
 
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
       pkgOverlays = [
-        nixgl.overlay
-        (final: prev: {inherit (injectPackages) joycond_cemuhook prusa-slicer-alpha yuzu-ea; })
+        #nixpkgs-wayland.overlay
+        (final: prev: {inherit (injectPackages) joycond_cemuhook; })
       ];
 
       # Curry new config and overlays into nixpkgs as per-system function

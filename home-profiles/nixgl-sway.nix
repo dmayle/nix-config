@@ -1,5 +1,10 @@
 { config, pkgs, lib, inputs, ... }:
 let
+  # NixGL is a tool that enables graphics hardware accelerated Nix programs to
+  # run on non-NixOS systems like debian.  This config wraps sway (which is
+  # itself hardware accelerated) and allows all programs launched from sway to
+  # also support hardware acceleration without further configuration
+  nixgl = import inputs.nixgl { inherit pkgs; };
   # This is just a default background image for the lock screen
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
@@ -12,12 +17,12 @@ let
     ${pkgs.swayidle}/bin/swayidle -w \
       timeout 300 '${brightness_cmd} 20' \
         resume '${brightness_cmd} 100' \
-      timeout 600 '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
-      timeout 900 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-        resume '${pkgs.sway}/bin/swaymsg "output * dpms on" && ${brightness_cmd} 100 && /usr/bin/systemctl --user restart kanshi' \
-        after-resume '${pkgs.sway}/bin/swaymsg "output * enable" && ${brightness_cmd} 100 && /usr/bin/systemctl --user restart kanshi' \
-      before-sleep '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
-      lock '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
+      timeout 600 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
+      timeout 900 '${nixgl-sway}/bin/swaymsg "output * dpms off"' \
+        resume '${nixgl-sway}/bin/swaymsg "output * dpms on" && ${brightness_cmd} 100 && /usr/bin/systemctl --user restart kanshi' \
+        after-resume '${nixgl-sway}/bin/swaymsg "output * enable" && ${brightness_cmd} 100 && /usr/bin/systemctl --user restart kanshi' \
+      before-sleep 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
+      lock 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
       idlehint 300
   '';
   # Helper command that uses brightnessctl to update the brightness of all
@@ -75,38 +80,72 @@ let
         "$@"
   '';
   # This applies configuration to the builtin sway package
-  # overridden-sway = pkgs.sway.override {
-  #   # extraOptions = [ "--unsupported-gpu" ];
-  #   # extraSessionCommands = ''
-  #   #   # Test fix for external monitor being black
-  #   #   #export WLR_DRM_NO_MODIFIERS=1
-  #   #   # Use native wayland renderer for Firefox
-  #   #   #export MOZ_ENABLE_WAYLAND=1
-  #   #   # Use native wayland renderer for QT applications
-  #   #   #export QT_QPA_PLATFORM=wayland
-  #   #   # Allow sway to manage window decorations
-  #   #   #export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-  #   #   # Use native wayland renderer for SDL applications
-  #   #   #export SDL_VIDEODRIVER=wayland
-  #   #   # Let XDG-compliant apps know they're working on wayland
-  #   #   #export XDG_SESSION_TYPE=wayland
-  #   #   # Fix JAVA drawing issues in sway
-  #   #   #export _JAVA_AWT_WM_NONREPARENTING=1
-  #   #   # Fix Nvidia/Sway flickering
-  #   #   export XWAYLAND_NO_GLAMOR=1
+  nonixgl-sway = pkgs.sway.override {
+    extraSessionCommands = ''
+      # Test fix for external monitor being black
+      export WLR_DRM_NO_MODIFIERS=1
+      # Use native wayland renderer for Firefox
+      export MOZ_ENABLE_WAYLAND=1
+      # Use native wayland renderer for QT applications
+      export QT_QPA_PLATFORM=wayland
+      # Allow sway to manage window decorations
+      export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+      # Use native wayland renderer for SDL applications
+      export SDL_VIDEODRIVER=wayland
+      # Let XDG-compliant apps know they're working on wayland
+      export XDG_SESSION_TYPE=wayland
+      # Fix JAVA drawing issues in sway
+      export _JAVA_AWT_WM_NONREPARENTING=1
+      # Let sway have access to your nix profile
+      source "${pkgs.nix}/etc/profile.d/nix.sh"
+    '';
+    withBaseWrapper = true;
+    withGtkWrapper = true;
+  };
+  # This is a custom sway-wrapping package that runs sway using NixGL and
+  # creates a .desktop entry usable by native GDM for launching sway.
+  nixgl-sway = pkgs.runCommand "sway" {} ''
 
-  #   #   # Misc.
-  #   #   #export LIBVA_DRIVER_NAME=nvidia
-  #   #   #export GBM_BACKEND=nvidia-drm
-  #   #   #export __GLX_VENDOR_LIBRARY_NAME=nvidia
-  #   #   export WLR_NO_HARDWARE_CURSORS=1
-  #   #   #export GDK_BACKEND=wayland
-  #   #   # Let sway have access to your nix profile
-  #   #   source "${pkgs.nix}/etc/profile.d/nix.sh"
-  #   # '';
-  #   withBaseWrapper = true;
-  #   withGtkWrapper = true;
-  # };
+    mkdir $out
+
+    # By default, link all top-level directories
+    ln -s ${nonixgl-sway}/* $out
+
+    # We make changes to /bin and /share, so remove those links and create dirs
+    rm $out/bin
+    rm $out/share
+    mkdir $out/bin
+    mkdir $out/share
+
+    # Link the contents of the directory we masked
+    ln -s ${nonixgl-sway}/bin/* $out/bin
+    ln -s ${nonixgl-sway}/share/* $out/share
+
+    # We have a custom sway binary, so remove that link to place a wrapper
+    rm $out/bin/sway
+
+    # Create NixGL wrapper
+    echo "#!${pkgs.runtimeShell} -e" > $out/bin/sway
+    echo "exec ${nixgl.nixGLIntel}/bin/nixGL" ${nonixgl-sway}/bin/sway \"\$@\" >> $out/bin/sway
+    chmod +x $out/bin/sway
+
+    # We make changes to the sessions, so remove that link and create a dir
+    rm $out/share/wayland-sessions
+    mkdir $out/share/wayland-sessions
+
+    # Link all sessions
+    ln -s ${nonixgl-sway}/share/wayland-sessions/* $out/share/wayland-sessions
+
+    # We will mask just this one session file
+    rm $out/share/wayland-sessions/sway.desktop
+
+    # Create Desktop Entry for display manager
+    echo [Desktop Entry] > $out/share/wayland-sessions/sway.desktop
+    echo Name=Sway \(Home-Manager\) >> $out/share/wayland-sessions/sway.desktop
+    echo Comment=An i3-compatible Wayland compositor >> $out/share/wayland-sessions/sway.desktop
+    echo Exec=/nix/var/nix/profiles/per-user/${config.home.username}/profile/bin/sway >> $out/share/wayland-sessions/sway.desktop
+    echo Type=Application >> $out/share/wayland-sessions/sway.desktop
+  '';
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -122,35 +161,7 @@ in
 
   wayland.windowManager.sway = {
     enable = true;
-    #package = overridden-sway;
-    # extraOptions = [ "--unsupported-gpu" ];
-    # extraSessionCommands = ''
-    #   # Test fix for external monitor being black
-    #   #export WLR_DRM_NO_MODIFIERS=1
-    #   # Use native wayland renderer for Firefox
-    #   #export MOZ_ENABLE_WAYLAND=1
-    #   # Use native wayland renderer for QT applications
-    #   #export QT_QPA_PLATFORM=wayland
-    #   # Allow sway to manage window decorations
-    #   #export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-    #   # Use native wayland renderer for SDL applications
-    #   #export SDL_VIDEODRIVER=wayland
-    #   # Let XDG-compliant apps know they're working on wayland
-    #   #export XDG_SESSION_TYPE=wayland
-    #   # Fix JAVA drawing issues in sway
-    #   #export _JAVA_AWT_WM_NONREPARENTING=1
-    #   # Fix Nvidia/Sway flickering
-    #   export XWAYLAND_NO_GLAMOR=1
-
-    #   # Misc.
-    #   #export LIBVA_DRIVER_NAME=nvidia
-    #   #export GBM_BACKEND=nvidia-drm
-    #   #export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    #   export WLR_NO_HARDWARE_CURSORS=1
-    #   #export GDK_BACKEND=wayland
-    #   # Let sway have access to your nix profile
-    #   source "${pkgs.nix}/etc/profile.d/nix.sh"
-    # '';
+    package = nixgl-sway;
     config = {
       gaps = {
         smartGaps = true;
@@ -225,7 +236,7 @@ in
       keybindings = let
         modifier = config.wayland.windowManager.sway.config.modifier;
       in lib.mkOptionDefault {
-        "${modifier}+Shift+e" = "exec ${pkgs.sway}/bin/swaynag -t warning -m 'Exit Sway?' -b 'Exit Sway' '${pkgs.sway}/bin/swaymsg exit'";
+        "${modifier}+Shift+e" = "exec ${nixgl-sway}/bin/swaynag -t warning -m 'Exit Sway?' -b 'Exit Sway' '${nixgl-sway}/bin/swaymsg exit'";
         "${modifier}+Shift+p" = "exec loginctl lock-session";
         "${modifier}+c" = "focus child";
         "${modifier}+Shift+r" =  "exec /usr/bin/systemctl list-units --type=service --user --plain -q | /usr/bin/cut -d' ' -f1 | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs /usr/bin/systemctl --user restart --";
@@ -239,19 +250,19 @@ in
       startup = [
         # Send GUI DISPLAY VARIABLES into dbus to enable things like gnome-keyring-daemon to use user prompts
         {
-          command = "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway";
+          command = "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK";
         }
       ];
 
       # DMenu is a HUD (heads-up display) program launcher, but not wayland native.  This uses the waylang-native HUD launcher (wofi) with dmenu command selection
-      menu = "${pkgs.dmenu}/bin/dmenu_path | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
+      menu = "${pkgs.dmenu}/bin/dmenu_path | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${nixgl-sway}/bin/swaymsg exec --";
     };
     extraConfig = ''
       bindswitch lid:on output eDP-1 disable
       bindswitch lid:off output eDP-1 enable
-      bindsym --locked Mod4+Shift+s exec ${pkgs.sway}/bin/swaymsg output eDP-1 enable
-      bindsym --locked Mod4+Shift+y exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') enable
-      bindsym --locked Mod4+Shift+n exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') disable
+      bindsym --locked Mod4+Shift+s exec ${nixgl-sway}/bin/swaymsg output eDP-1 enable
+      bindsym --locked Mod4+Shift+y exec ${nixgl-sway}/bin/swaymsg output $(${nixgl-sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') enable
+      bindsym --locked Mod4+Shift+n exec ${nixgl-sway}/bin/swaymsg output $(${nixgl-sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') disable
     '';
   };
   services.kanshi = {
@@ -808,7 +819,6 @@ in
     longitude = "-122.5";
     systemdTarget = "sway-session.target";
   };
-
   home.packages = with pkgs; [
     kitty
     google-chrome
@@ -829,10 +839,8 @@ in
     wob
     xorg.xhost
     qownnotes
-    xdg-utils
-    glib
-    #gnome3.adwaita-icon-theme
     #xdg-desktop-portal-gtk
     #xdg-desktop-portal-wlr
+    nixgl.nixGLIntel
   ];
 }

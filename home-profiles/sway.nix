@@ -260,80 +260,10 @@ in
       home_office = {
         outputs = [
           {
-            criteria = "Unknown 0x4141 0x00000000";
-            transform = "normal";
-            status = "disable";
-          }
-          {
-            criteria = "Technical Concepts Ltd 65R648 0x00000000";
-            mode = "3840x2160";
+            criteria = "Technical Concepts Ltd 65R648 Unknown";
+            mode = "7680x4320";
             position = "0,0";
             transform = "normal";
-            status = "enable";
-          }
-        ];
-      };
-      undocked = {
-        outputs = [
-          {
-            criteria = "eDP-1";
-            status = "enable";
-            transform = "normal";
-            position = "0,0";
-          }
-        ];
-      };
-      anza = {
-        outputs = [
-          {
-            criteria = "Unknown 0x4141 0x00000000";
-            transform = "normal";
-            status = "disable";
-          }
-          {
-            criteria = "Lenovo Group Limited LEN P32p-20 VNA65XZA";
-            mode = "3840x2160";
-            transform = "270";
-            position = "2160,0";
-            status = "enable";
-          }
-          {
-            criteria = "Lenovo Group Limited LEN P32p-20 VNA4Y6P6";
-            mode = "3840x2160";
-            transform = "90";
-            position = "0,0";
-            status = "enable";
-          }
-        ];
-      };
-      anza_left_only = {
-        outputs = [
-          {
-            criteria = "Unknown 0x4141 0x00000000";
-            transform = "normal";
-            status = "disable";
-          }
-          {
-            criteria = "Lenovo Group Limited LEN P32p-20 VNA4Y6P6";
-            mode = "3840x2160";
-            transform = "90";
-            position = "0,0";
-            status = "enable";
-          }
-        ];
-      };
-      anza_right_only = {
-        outputs = [
-          {
-            criteria = "Unknown 0x4141 0x00000000";
-            transform = "normal";
-            status = "disable";
-          }
-          {
-            criteria = "Lenovo Group Limited LEN P32p-20 VNA65XZA";
-            mode = "3840x2160";
-            transform = "270";
-            position = "0,0";
             status = "enable";
           }
         ];

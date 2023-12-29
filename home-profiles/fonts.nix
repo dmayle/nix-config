@@ -28,7 +28,7 @@
         </prefer>
       </alias>
       <match target="font">
-        <edit names="rbga" modes="assign"><const>bgr</const></edit>
+        <edit name="rbga" mode="assign"><const>bgr</const></edit>
       </match>
       <match target="pattern">
         <test name="family"><string>monospace</string></test>
@@ -79,6 +79,7 @@
     gyre-fonts
     helvetica-neue-lt-std
     iosevka
+    noto-fonts
     jetbrains-mono
     (nerdfonts.override { fonts = [ "DroidSansMono" ]; })
   ];

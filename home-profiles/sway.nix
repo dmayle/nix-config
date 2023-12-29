@@ -10,54 +10,13 @@ let
   # the monitor after 15.
   idlecmd = pkgs.writeShellScript "swayidle.sh" ''
     ${pkgs.swayidle}/bin/swayidle -w \
-      timeout 300 '${brightness_cmd} 20' \
-        resume '${brightness_cmd} 100' \
       timeout 600 '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
       timeout 900 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-        resume '${pkgs.sway}/bin/swaymsg "output * dpms on" && ${brightness_cmd} 100 && /usr/bin/systemctl --user restart kanshi' \
-        after-resume '${pkgs.sway}/bin/swaymsg "output * enable" && ${brightness_cmd} 100 && /usr/bin/systemctl --user restart kanshi' \
+        resume '${pkgs.sway}/bin/swaymsg "output * dpms on" && /usr/bin/systemctl --user restart kanshi' \
+        after-resume '${pkgs.sway}/bin/swaymsg "output * enable" && /usr/bin/systemctl --user restart kanshi' \
       before-sleep '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
       lock '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
       idlehint 300
-  '';
-  # Helper command that uses brightnessctl to update the brightness of all
-  # displays at once, and display the change to the user using WOB.  It
-  # supports up, down, and integer brightness levels
-  brightness_cmd = pkgs.writeShellScript "brightness_change.sh" ''
-    # Our variables
-    BRIGHTNESS_MAX=0
-
-    # Read list of eligible screens into bash array
-    < <(${pkgs.brightnessctl}/bin/brightnessctl -l -m | grep '^[^,]*,backlight,') readarray -t SCREENS
-
-    # Get the current maximum brightness
-    for SCREEN in "''${SCREENS[@]}"; do
-      PERCENT="$(echo $SCREEN | cut -d, -f4 | tr -d '%')"
-      BRIGHTNESS_MAX=$((PERCENT > BRIGHTNESS_MAX ? PERCENT : BRIGHTNESS_MAX))
-    done
-
-    # Change the value as requested, rounding down to multiple of 10, and capping
-    case "''${1:-up}" in
-      down)
-        NEW_BRIGHTNESS=$((BRIGHTNESS_MAX<10?0:BRIGHTNESS_MAX-10-BRIGHTNESS_MAX%10))
-      ;;
-      *[!0-9]*)
-        NEW_BRIGHTNESS=$((BRIGHTNESS_MAX>90?100:BRIGHTNESS_MAX+10-BRIGHTNESS_MAX%10))
-      ;;
-      *)
-        NEW_BRIGHTNESS=$((''${1}-''${1}%10))
-      ;;
-    esac
-
-
-    # Set the value
-    for SCREEN in "''${SCREENS[@]}"; do
-      DEVICE="$(echo $SCREEN | cut -d, -f1)"
-      ${pkgs.brightnessctl}/bin/brightnessctl -q -d $DEVICE set ''${NEW_BRIGHTNESS}%
-    done
-
-    # Display the value with WOB
-    echo $NEW_BRIGHTNESS > $XDG_RUNTIME_DIR/wob.sock
   '';
   # Wrap native google-chrome and add the flags to run using the native wayland
   # renderer, and gnome keyring for password storage
@@ -233,8 +192,6 @@ in
         "XF86AudioLowerVolume" = "exec '${pkgs.pamixer}/bin/pamixer -ud 2 && ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
         "XF86AudioMute" = "exec '${pkgs.pamixer}/bin/pamixer --toggle-mute && (${pkgs.pamixer}/bin/pamixer --get-mute && echo 0 > $XDG_RUNTIME_DIR/wob.sock) || ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
         "Print" = "exec 'flameshot gui'";
-        "F5" = "exec '${brightness_cmd} down'";
-        "F6" = "exec '${brightness_cmd} up'";
       };
       startup = [
         # Send GUI DISPLAY VARIABLES into dbus to enable things like gnome-keyring-daemon to use user prompts
@@ -247,9 +204,6 @@ in
       menu = "${pkgs.dmenu}/bin/dmenu_path | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
     };
     extraConfig = ''
-      bindswitch lid:on output eDP-1 disable
-      bindswitch lid:off output eDP-1 enable
-      bindsym --locked Mod4+Shift+s exec ${pkgs.sway}/bin/swaymsg output eDP-1 enable
       bindsym --locked Mod4+Shift+y exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') enable
       bindsym --locked Mod4+Shift+n exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') disable
     '';

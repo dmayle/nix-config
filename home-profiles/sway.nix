@@ -114,6 +114,10 @@ in
         outer = 0;
         inner = 1;
       };
+      fonts = {
+        names = [ "JetBrains Mono NL" ];
+        size = 24.0;
+      };
       window = {
         titlebar = true;
         commands = [

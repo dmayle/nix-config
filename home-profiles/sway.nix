@@ -694,7 +694,7 @@ in
     xdg-utils
     glib
     #gnome3.adwaita-icon-theme
-    #xdg-desktop-portal-gtk
-    #xdg-desktop-portal-wlr
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-wlr
   ];
 }

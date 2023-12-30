@@ -33,39 +33,6 @@ let
         "--password-store=gnome" \
         "$@"
   '';
-  # This applies configuration to the builtin sway package
-  # overridden-sway = pkgs.sway.override {
-  #   # extraOptions = [ "--unsupported-gpu" ];
-  #   # extraSessionCommands = ''
-  #   #   # Test fix for external monitor being black
-  #   #   #export WLR_DRM_NO_MODIFIERS=1
-  #   #   # Use native wayland renderer for Firefox
-  #   #   #export MOZ_ENABLE_WAYLAND=1
-  #   #   # Use native wayland renderer for QT applications
-  #   #   #export QT_QPA_PLATFORM=wayland
-  #   #   # Allow sway to manage window decorations
-  #   #   #export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-  #   #   # Use native wayland renderer for SDL applications
-  #   #   #export SDL_VIDEODRIVER=wayland
-  #   #   # Let XDG-compliant apps know they're working on wayland
-  #   #   #export XDG_SESSION_TYPE=wayland
-  #   #   # Fix JAVA drawing issues in sway
-  #   #   #export _JAVA_AWT_WM_NONREPARENTING=1
-  #   #   # Fix Nvidia/Sway flickering
-  #   #   export XWAYLAND_NO_GLAMOR=1
-
-  #   #   # Misc.
-  #   #   #export LIBVA_DRIVER_NAME=nvidia
-  #   #   #export GBM_BACKEND=nvidia-drm
-  #   #   #export __GLX_VENDOR_LIBRARY_NAME=nvidia
-  #   #   export WLR_NO_HARDWARE_CURSORS=1
-  #   #   #export GDK_BACKEND=wayland
-  #   #   # Let sway have access to your nix profile
-  #   #   source "${pkgs.nix}/etc/profile.d/nix.sh"
-  #   # '';
-  #   withBaseWrapper = true;
-  #   withGtkWrapper = true;
-  # };
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -81,7 +48,6 @@ in
 
   wayland.windowManager.sway = {
     enable = true;
-    #package = overridden-sway;
     extraOptions = [ "--unsupported-gpu" ];
     extraSessionCommands = ''
       # Test fix for external monitor being black

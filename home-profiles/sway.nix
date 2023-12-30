@@ -98,8 +98,6 @@ in
       #export XDG_SESSION_TYPE=wayland
       # Fix JAVA drawing issues in sway
       #export _JAVA_AWT_WM_NONREPARENTING=1
-      # Fix Nvidia/Sway flickering
-      export XWAYLAND_NO_GLAMOR=1
 
       # Misc.
       #export LIBVA_DRIVER_NAME=nvidia

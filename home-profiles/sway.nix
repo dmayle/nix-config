@@ -164,7 +164,17 @@ in
       startup = [
         # Send GUI DISPLAY VARIABLES into dbus to enable things like gnome-keyring-daemon to use user prompts
         {
-          command = "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway";
+          command = "systemctl --user restart waybar";
+          always = true;
+        }
+        {
+          command = "systemctl --user stop pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr";
+        }
+        {
+          command = "systemctl --user start pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr";
+        }
+        {
+          command = "XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:$XDG_DATA_DIRS gsettings set org.gnome.desktop.interface gtk-theme 'Dracula'";
         }
       ];
 

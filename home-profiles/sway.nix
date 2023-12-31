@@ -89,6 +89,12 @@ in
         commands = [
           {
             criteria = {
+              class = "^steam$";
+            };
+            command = "floating enable, no_focus, move to scratchpad";
+          }
+          {
+            criteria = {
               class = "^Firefox$";
             };
             command = "inhibit_idle fullscreen";
@@ -162,7 +168,6 @@ in
         "Print" = "exec 'flameshot gui'";
       };
       startup = [
-        # Send GUI DISPLAY VARIABLES into dbus to enable things like gnome-keyring-daemon to use user prompts
         {
           command = "systemctl --user restart waybar";
           always = true;

@@ -90,7 +90,7 @@
       systemPackages = lib.genAttrs supportedSystems pkgsForSystem;
     in
 
-    {
+    rec {
       #devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
       # flakeSystems is a function that takes a list of shells and makes them available for each supported system
       # devShells = flakeSystems (findModules ./dev-shells);
@@ -141,8 +141,11 @@
             stateVersion = "22.05";
             homeDirectory = "/home/${username}";
           };
+          extraArgs = {
+            devShells = devShells;
+          };
 
-        in mapModules ./home-configs (mkHomeConfig defaultHomeConfig systemPackages);
+        in mapModules ./home-configs (mkHomeConfig defaultHomeConfig systemPackages extraArgs);
 
       # packages = mergePackages (fundModules ./packages)
       # mergePackages takes a list of attributes sets, where each set is a mapping of supported systems to a single package

@@ -31,7 +31,7 @@ in
       };
     };
 
-  mkHomeConfig = defaults: systemPackages: path:
+  mkHomeConfig = defaults: systemPackages: extraArgs: path:
     let
       system = lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
     in inputs.home-manager.lib.homeManagerConfiguration {
@@ -42,7 +42,7 @@ in
         defaults
       ];
       # Only used for importable arguments
-      extraSpecialArgs = { inherit inputs; };
+      extraSpecialArgs = { inherit inputs; } // extraArgs;
     };
 
   mapHomes = dir: attrs @ { system ? system, ... }:

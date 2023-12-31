@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, devShells, ... }:
 
 let
   myJupyter = pkgs.jupyter.override {

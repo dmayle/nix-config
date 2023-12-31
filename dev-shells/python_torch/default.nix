@@ -3,7 +3,6 @@ let
   my-packages = p: with p; [
     torchWithCuda
     matplotlib
-    jupyter
     graphviz
     scikit-learn
     sqlalchemy

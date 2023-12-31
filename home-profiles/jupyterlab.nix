@@ -3,15 +3,26 @@
 let
   myJupyter = pkgs.jupyter.override {
     definitions = {
-      clojure = pkgs.clojupyter.definition;
-      custom = {
+      python_msdoc = let python_msdoc = (builtins.head devShells.x86_64-linux.python_msdoc.nativeBuildInputs); in {
         displayName = "Python MSDoc";
         language = "python";
         logo32 = "${pkgs.jupyter.sitePackages}/ipykernel/resources/logo-32x32.png";
         logo64 = "${pkgs.jupyter.sitePackages}/ipykernel/resources/logo-64x64.png";
         argv = [
-          # Actualized in devShell, need to figure out how to link this to that actual devShell
-          "/nix/store/2864ar7vhhw1fn04jwl5cdj9c39ffswi-python3-3.11.6-env/bin/python"
+          "${python_msdoc}/bin/python"
+          "-m"
+          "ipykernel_launcher"
+          "-f"
+          "{connection_file}"
+        ];
+      };
+      python_torch = let python_torch = (builtins.head devShells.x86_64-linux.python_msdoc.nativeBuildInputs); in {
+        displayName = "PyTorch";
+        language = "python";
+        logo32 = "${pkgs.jupyter.sitePackages}/ipykernel/resources/logo-32x32.png";
+        logo64 = "${pkgs.jupyter.sitePackages}/ipykernel/resources/logo-64x64.png";
+        argv = [
+          "${python_torch}/bin/python"
           "-m"
           "ipykernel_launcher"
           "-f"

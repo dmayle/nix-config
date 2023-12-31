@@ -16,7 +16,7 @@ let
           "{connection_file}"
         ];
       };
-      python_torch = let python_torch = (builtins.head devShells.x86_64-linux.python_msdoc.nativeBuildInputs); in {
+      python_torch = let python_torch = (builtins.head devShells.x86_64-linux.python_torch.nativeBuildInputs); in {
         displayName = "PyTorch";
         language = "python";
         logo32 = "${pkgs.jupyter.sitePackages}/ipykernel/resources/logo-32x32.png";

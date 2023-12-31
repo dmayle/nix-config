@@ -5,6 +5,7 @@
     homeManagerProfiles.three_d_printing
     homeManagerProfiles.fonts
     homeManagerProfiles.games
+    homeManagerProfiles.jupyterlab
     homeManagerProfiles.neovim
     homeManagerProfiles.sway
     #homeManagerProfiles.syncthing

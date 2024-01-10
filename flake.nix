@@ -8,6 +8,23 @@
     nixgl = {
       url = "github:guibou/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+    # Transient dependency, but I want it to use my nixpkgs
+    nix-eval-jobs = {
+      url = "github:nix-community/nix-eval-jobs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    lib-aggregate = {
+      url = "github:nix-community/lib-aggregate";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
+    };
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
+    nixpkgs-lib = {
+      url = "github:nix-community/nixpkgs.lib";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -16,8 +33,13 @@
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nix-eval-jobs.follows = "nix-eval-jobs";
+      inputs.lib-aggregate.follows = "lib-aggregate";
     };
-    nix-colors.url = "github:misterio77/nix-colors";
+    nix-colors = {
+      url = "github:misterio77/nix-colors";
+      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
+    };
     vim-maximizer = {
       url = "github:szw/vim-maximizer";
       flake = false;

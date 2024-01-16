@@ -12,8 +12,8 @@ let
     ${pkgs.swayidle}/bin/swayidle -w \
       timeout 600 '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
       timeout 900 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-        resume '${pkgs.sway}/bin/swaymsg "output * dpms on" && /usr/bin/systemctl --user restart kanshi' \
-        after-resume '${pkgs.sway}/bin/swaymsg "output * enable" && /usr/bin/systemctl --user restart kanshi' \
+        resume '${pkgs.sway}/bin/swaymsg "output * dpms on" && ${pkgs.systemd}/bin/systemctl --user restart kanshi' \
+        after-resume '${pkgs.sway}/bin/swaymsg "output * enable" && ${pkgs.systemd}/bin/systemctl --user restart kanshi' \
       before-sleep '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
       lock '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
       idlehint 300
@@ -161,22 +161,24 @@ in
         "${modifier}+Shift+e" = "exec ${pkgs.sway}/bin/swaynag -t warning -m 'Exit Sway?' -b 'Exit Sway' '${pkgs.sway}/bin/swaymsg exit'";
         "${modifier}+Shift+p" = "exec loginctl lock-session";
         "${modifier}+c" = "focus child";
-        "${modifier}+Shift+r" =  "exec /usr/bin/systemctl list-units --type=service --user --plain -q | /usr/bin/cut -d' ' -f1 | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs /usr/bin/systemctl --user restart --";
+        "${modifier}+Shift+r" =  "exec ${pkgs.systemd}/bin/systemctl list-units --type=service --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --";
         "XF86AudioRaiseVolume" = "exec '${pkgs.pamixer}/bin/pamixer -ui 2 && ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
         "XF86AudioLowerVolume" = "exec '${pkgs.pamixer}/bin/pamixer -ud 2 && ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
         "XF86AudioMute" = "exec '${pkgs.pamixer}/bin/pamixer --toggle-mute && (${pkgs.pamixer}/bin/pamixer --get-mute && echo 0 > $XDG_RUNTIME_DIR/wob.sock) || ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
         "Print" = "exec 'flameshot gui'";
+        "${modifier}+Shift+y" =  "exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs | ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') enable";
+        "${modifier}+Shift+n" =  "exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs | ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') disable";
       };
       startup = [
         {
-          command = "systemctl --user restart waybar";
+          command = "${pkgs.systemd}/bin/systemctl --user restart waybar";
           always = true;
         }
         {
-          command = "systemctl --user stop pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr";
+          command = "${pkgs.systemd}/bin/systemctl --user stop pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr";
         }
         {
-          command = "systemctl --user start pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr";
+          command = "${pkgs.systemd}/bin/systemctl --user start pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr";
         }
         {
           command = "XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:$XDG_DATA_DIRS gsettings set org.gnome.desktop.interface gtk-theme 'Dracula'";

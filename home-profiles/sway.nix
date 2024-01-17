@@ -188,10 +188,6 @@ in
       # DMenu is a HUD (heads-up display) program launcher, but not wayland native.  This uses the waylang-native HUD launcher (wofi) with dmenu command selection
       menu = "${pkgs.dmenu}/bin/dmenu_path | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
     };
-    extraConfig = ''
-      bindsym --locked Mod4+Shift+y exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') enable
-      bindsym --locked Mod4+Shift+n exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs |  ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') disable
-    '';
   };
   services.kanshi = {
     enable = true;

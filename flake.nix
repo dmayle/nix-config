@@ -100,6 +100,15 @@
       pkgOverlays = [
         inputs.nixpkgs-wayland.overlay
         (final: prev: {inherit (injectPackages) joycond_cemuhook; })
+        (final: prev: {
+          magma = prev.magma.overrideAttrs (oldAttrs: {
+            cmakeFlags = oldAttrs.cmakeFlags ++ [
+              "-DCMAKE_C_FLAGS=-DADD_"
+              "-DCMAKE_CXX_FLAGS=-DADD_"
+              "-DFORTRAN_CONVENTION:STRING=-DADD_"
+            ];
+          });
+        })
       ];
 
       # Curry new config and overlays into nixpkgs as per-system function

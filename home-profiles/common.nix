@@ -31,6 +31,12 @@
     };
   };
 
+  nixpkgs.config = {
+    android_sdk.accept_license = true;
+    allowUnfree = true;
+    cudaSupport = true;
+  };
+
   home.packages = with pkgs; [
     # Basic utilities
     file

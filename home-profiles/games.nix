@@ -2,7 +2,7 @@
 
 {
   home.packages = with pkgs; [
-    joycond_cemuhook
+    joycond-cemuhook
     yuzu-ea
     ryujinx
     (lutris.override {
@@ -22,7 +22,7 @@
     };
     Service = {
       type = "Simple";
-      ExecStart = "${pkgs.joycond_cemuhook}/bin/joycond-cemuhook";
+      ExecStart = "${pkgs.joycond-cemuhook}/bin/joycond-cemuhook";
       Restart = "always";
       RestartSec = 3;
     };

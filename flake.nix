@@ -99,7 +99,6 @@
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
       pkgOverlays = [
         inputs.nixpkgs-wayland.overlay
-        (final: prev: {inherit (injectPackages) joycond_cemuhook; })
         (final: prev: {
           magma = prev.magma.overrideAttrs (oldAttrs: {
             cmakeFlags = oldAttrs.cmakeFlags ++ [

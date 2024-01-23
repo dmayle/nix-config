@@ -647,22 +647,7 @@ in
       WantedBy = [ "sway-session.target" ];
     };
     Service = {
-      ExecStart = "lxpolkit";
-      Restart = "always";
-      RestartSec = 3;
-    };
-  };
-  # Start and run the goobuntu indicator that shows the status of the environment
-  systemd.user.services.goobuntu_indicator = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      Description = "Goobuntu Indicator";
-    };
-    Install = {
-      WantedBy = [ "sway-session.target" ];
-    };
-    Service = {
-      ExecStart = "env XDG_CURRENT_DESKTOP=gnome /usr/share/goobuntu-indicator/goobuntu_indicator.py";
+      ExecStart = "${pkgs.lxde.lxsession}/bin/lxpolkit";
       Restart = "always";
       RestartSec = 3;
     };
@@ -675,6 +660,7 @@ in
   };
 
   home.packages = with pkgs; [
+    lxde.lxsession
     kitty
     google-chrome
     dmenu

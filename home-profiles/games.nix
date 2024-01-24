@@ -22,6 +22,7 @@
     };
     Service = {
       type = "Simple";
+      Environment = "PATH=${pkgs.kmod}/bin:${pkgs.gnugrep}/bin";
       ExecStart = "${pkgs.joycond-cemuhook}/bin/joycond-cemuhook";
       Restart = "always";
       RestartSec = 3;

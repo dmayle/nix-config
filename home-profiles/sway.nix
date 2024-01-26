@@ -5,19 +5,6 @@ let
     url = "https://i.imgur.com/4Xqpx6R.png";
     sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
   };
-  # A basic lock screen script that will dim the screen after 5 minutes, lock
-  # the screen and replace it with a background after 10 minutes, and turn off
-  # the monitor after 15.
-  idlecmd = pkgs.writeShellScript "swayidle.sh" ''
-    ${pkgs.swayidle}/bin/swayidle -w \
-      timeout 600 '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
-      timeout 900 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-        resume '${pkgs.sway}/bin/swaymsg "output * dpms on" && ${pkgs.systemd}/bin/systemctl --user restart kanshi' \
-        after-resume '${pkgs.sway}/bin/swaymsg "output * enable" && ${pkgs.systemd}/bin/systemctl --user restart kanshi' \
-      before-sleep '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
-      lock '${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}' \
-      idlehint 300
-  '';
   # Wrap native google-chrome and add the flags to run using the native wayland
   # renderer, and gnome keyring for password storage
   google-chrome-wrapper = pkgs.writeShellScriptBin "google-chrome" ''
@@ -631,19 +618,21 @@ in
     };
   };
   # Setup screensaver / lock with swayidle and swaylock
-  systemd.user.services.swayidle = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      Description = "Screenlock with SwayIdle and SwayLock";
-    };
-    Install = {
-      WantedBy = [ "sway-session.target" ];
-    };
-    Service = {
-      ExecStart = "${idlecmd}";
-      Restart = "always";
-      RestartSec = 3;
-    };
+  services.swayidle = {
+    enable = true;
+    events = [
+      { event = "before-sleep"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
+      { event = "after-resume"; command = "${pkgs.sway}/bin/swaymsg 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+      { event = "lock"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
+    ];
+    timeouts = [
+      { timeout = 600; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${pkgs.sway}/bin/swaymsg 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+      { timeout = 900; command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'"; }
+    ];
+    extraArgs = [
+      "idlehint 300"
+    ];
+    systemdTarget = "sway-session.target";
   };
   # LXPolkit is a GUI policy kit client that will prompt the user for their
   # password when attempting to run GUI programs that need privelege

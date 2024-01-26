@@ -75,6 +75,8 @@ in
       # source "${pkgs.nix}/etc/profile.d/nix.sh"
     '';
     config = {
+      # Set the output background to solarized base3
+      output."*".bg = "#fdf6e3 solid_color";
       gaps = {
         smartGaps = true;
         outer = 0;
@@ -401,7 +403,7 @@ in
       }
       /* The whole bar */
       #waybar {
-          background: transparent;
+          background: @base03;
           color: @base2;
           font-family: Terminus, Siji;
           font-size: 30pt;
@@ -517,7 +519,7 @@ in
           color: @base2;
       }
       #tray {
-          background: @date;
+          background: @base03;
       }
       #clock.date {
           background: @base03;
@@ -533,12 +535,12 @@ in
       #custom-right-blue-background {
           font-size: 38px;
           color: @blue;
-          background: transparent;
+          background: @base03;
       }
       #custom-right-cyan-background {
           font-size: 38px;
           color: @cyan;
-          background: transparent;
+          background: @base03;
       }
       #custom-left-base3-base03 {
           font-size: 38px;
@@ -558,7 +560,7 @@ in
       #custom-left-yellow-background {
           font-size: 38px;
           color: @yellow;
-          background: transparent;
+          background: @base03;
       }
     '';
   };
@@ -682,8 +684,8 @@ in
     qownnotes
     xdg-utils
     glib
-    #gnome3.adwaita-icon-theme
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-wlr
+    gnome3.adwaita-icon-theme
+    libadwaita
+    networkmanagerapplet
   ];
 }

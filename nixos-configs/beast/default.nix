@@ -17,6 +17,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Add NTFS support
+  xdg.portal.enable = lib.mkForce false;
   boot.supportedFilesystems = [ "ntfs" ];
 
   # Set your time zone.

@@ -46,6 +46,16 @@ in
     };
   };
 
+  dconf = {
+    enable = true;
+    settings."org/freedesktop/appearance" = {
+      color-scheme = 2;
+    };
+    settings."org/gnome/desktop/interface" = {
+      color-scheme = "prefer-light";
+      gtk-theme = "Adwaita";
+    };
+  };
   wayland.windowManager.sway = {
     enable = true;
     extraOptions = [ "--unsupported-gpu" ];
@@ -181,9 +191,6 @@ in
         }
         {
           command = "${pkgs.systemd}/bin/systemctl --user start pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr";
-        }
-        {
-          command = "XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:$XDG_DATA_DIRS gsettings set org.gnome.desktop.interface gtk-theme 'Dracula'";
         }
       ];
 

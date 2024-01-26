@@ -41,7 +41,7 @@ in
       WantedBy = [ "graphical-session.target" ];
     };
     Service = {
-      Type = "Simple";
+      Type = "simple";
       ExecStart = "${myJupyter}/bin/jupyter-lab";
       Restart = "always";
       RestartSec = 3;

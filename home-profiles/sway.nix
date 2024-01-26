@@ -608,7 +608,7 @@ in
       WantedBy = [ "sway-session.target" ];
     };
     Service = {
-      ExecStart = "${pkgs.wob}/bin/wob -O '*'";
+      ExecStart = "${pkgs.wob}/bin/wob";
       StandardInput = "socket";
     };
   };
@@ -626,6 +626,8 @@ in
     Socket = {
       ListenFIFO = "%t/wob.sock";
       SocketMode = "0600";
+      RemoveOnStop = "on";
+      FlushPending = "yes";
     };
   };
   # Setup screensaver / lock with swayidle and swaylock

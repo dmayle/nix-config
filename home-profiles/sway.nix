@@ -668,6 +668,24 @@ in
     systemdTarget = "sway-session.target";
   };
 
+  xdg.portal = {
+    enable = true;
+    config = {
+      common = {
+        default = [
+          "wlr"
+          "gtk"
+        ];
+      };
+    };
+    xdgOpenUsePortal = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
+    ];
+    configPackages = [ pkgs.sway ];
+  };
+
   home.packages = with pkgs; [
     lxde.lxsession
     kitty

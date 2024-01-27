@@ -99,15 +99,6 @@
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
       pkgOverlays = [
         inputs.nixpkgs-wayland.overlay
-        (final: prev: {
-          magma = prev.magma.overrideAttrs (oldAttrs: {
-            cmakeFlags = oldAttrs.cmakeFlags ++ [
-              "-DCMAKE_C_FLAGS=-DADD_"
-              "-DCMAKE_CXX_FLAGS=-DADD_"
-              "-DFORTRAN_CONVENTION:STRING=-DADD_"
-            ];
-          });
-        })
       ];
 
       # Curry new config and overlays into nixpkgs as per-system function

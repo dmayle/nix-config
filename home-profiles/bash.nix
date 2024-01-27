@@ -8,6 +8,8 @@
     shellAliases = {
       set4k = "xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1";
       set8k = "xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1";
+      # Command to find a swaysock file in use by a current sway process
+      sway_sock = "echo \"SWAYSOCK=$(${pkgs.lsof}/bin/lsof -Fn -p $(${pkgs.procps}/bin/pgrep sway\$) | ${pkgs.gnugrep}/bin/grep -e 'sway[^ ]*\.sock' | ${pkgs.coreutils}/bin/cut -c2- |${pkgs.coreutils}/bin/cut -f1 -d' ' | ${pkgs.coreutils}/bin/sort -u)\"";
       # Effectively 5760x3240
       set5k = "xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75";
       gnome-logout = "dbus-send --session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1";

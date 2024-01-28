@@ -74,6 +74,13 @@ in
     config = {
       # Set the output background to solarized base3
       output."*".bg = "#fdf6e3 solid_color";
+
+      # If we set output resolution here, then the screen goes permanently
+      # blank, so we use kanshi instead
+      # output."HDMI-A-1" = {
+      #   mode = "7680x4320";
+      # };
+
       gaps = {
         smartGaps = true;
         outer = 0;

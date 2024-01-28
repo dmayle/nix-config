@@ -681,6 +681,7 @@ in
     lxde.lxsession
     kitty
     google-chrome
+    firefox
     dmenu
     wofi
     waybar
@@ -700,6 +701,8 @@ in
     qownnotes
     xdg-utils
     glib
+    vulkan-tools
+    glxinfo
     gnome3.adwaita-icon-theme
     libadwaita
     networkmanagerapplet

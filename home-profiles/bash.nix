@@ -6,12 +6,8 @@
     historyControl = [ "ignoredups" "ignorespace" "erasedups" ];
     historyFileSize = 20000;
     shellAliases = {
-      set4k = "xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1";
-      set8k = "xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1";
       # Command to find a swaysock file in use by a current sway process
       sway_sock = "echo \"SWAYSOCK=$(${pkgs.lsof}/bin/lsof -Fn -p $(${pkgs.procps}/bin/pgrep sway\$) | ${pkgs.gnugrep}/bin/grep -e 'sway[^ ]*\.sock' | ${pkgs.coreutils}/bin/cut -c2- |${pkgs.coreutils}/bin/cut -f1 -d' ' | ${pkgs.coreutils}/bin/sort -u)\"";
-      # Effectively 5760x3240
-      set5k = "xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75";
       gnome-logout = "dbus-send --session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1";
     };
     # Still need to setup prompt.rc
@@ -19,6 +15,38 @@
       # Command hashing is used by various shell scripts, so enable it
       set -h
 
+      # Support manual resolution change for convenience
+      function set4k() {
+        case "$XDG_CURRENT_DESKTOP" in
+          sway)
+            swaymsg output HDMI-A-1 res 3840x2160@119.880Hz scale 1
+            ;;
+          gnome)
+            xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1
+            ;;
+        esac
+      }
+      # Effectively 5760x3240
+      function set5k() {
+        case "$XDG_CURRENT_DESKTOP" in
+          sway)
+            swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1.5
+            ;;
+          gnome)
+            xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75
+            ;;
+        esac
+      }
+      function set8k() {
+        case "$XDG_CURRENT_DESKTOP" in
+          sway)
+            swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1
+            ;;
+          gnome)
+            xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1
+            ;;
+        esac
+      }
       # A number of support functions to make tmux work the way I want it to
       function _inside_local_tmux() {
         if [ -n "$TMUX" ]; then

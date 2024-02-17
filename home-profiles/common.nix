@@ -37,6 +37,14 @@
     cudaSupport = true;
   };
 
+  # Better process inspection than top
+  programs.btop = {
+    enable = true;
+    settings = {
+      color_theme = "${pkgs.btop}/share/btop/themes/solarized_light.theme";
+    };
+  };
+
   home.packages = with pkgs; [
     # Basic utilities
     file
@@ -60,9 +68,6 @@
     ripgrep
     mcfly
     fd
-
-    # Better process inspection than top
-    htop
 
     # Terminal session management
     tmux

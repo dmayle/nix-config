@@ -68,6 +68,18 @@
     Option "SidebandSocketPath" "/tmp"
   '';
 
+  # Trying out Prometheus and Grafana for desktop monitoring
+  services.grafana = {
+    enable = true;
+    settings = {
+      server = {
+        http_addr = "127.0.0.1";
+        http_port = 3000;
+        domain = "home.mayle.org";
+      };
+    };
+  };
+
 
   # Configure keymap in X11
   services.xserver.xkb = {

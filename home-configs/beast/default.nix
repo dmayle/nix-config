@@ -5,11 +5,13 @@
     homeManagerProfiles.three_d_printing
     homeManagerProfiles.fonts
     homeManagerProfiles.games
+    homeManagerProfiles.hyprland
     homeManagerProfiles.jupyterlab
     homeManagerProfiles.neovim
     homeManagerProfiles.sway
     #homeManagerProfiles.syncthing
     homeManagerProfiles.tmux
+    homeManagerProfiles.wayland
   ];
 
   dconf.settings = {

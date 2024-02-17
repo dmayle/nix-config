@@ -92,9 +92,8 @@
   # current environment. My home manager config will override that version, so
   # all config should be done there.
   programs.xwayland.enable = true;
-  programs.sway = {
-    enable = true;
-  };
+  programs.sway.enable = true;
+  programs.hyprland.enable = true;
 
   # Enabling desktop managers forces xdg-desktop-portal (services for sandboxed
   # applications) to be configured. We want to configure this at the

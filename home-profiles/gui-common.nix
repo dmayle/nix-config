@@ -10,8 +10,20 @@
 
     # pipe to and from X clipboard
     xsel
+    wl-clipboard
 
     libreoffice
+
+    kitty
+    google-chrome
+    firefox
+    tree-sitter
+    vulkan-tools
+    glxinfo
+    pamixer
+    pulseaudio
+    qownnotes
+    xdg-utils
   ];
 
   # Speed up the mouse movement on my laptop

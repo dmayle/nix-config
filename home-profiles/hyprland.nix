@@ -17,7 +17,8 @@ in
     enable = true;
     theme = {
       package = pkgs.flat-remix-gtk;
-      name = "Flat-Remix-GTK-Grey-Darkest";
+      name = "Adwaita";
+      #name = "Flat-Remix-GTK-Grey-Darkest";
     };
     iconTheme = {
       package = pkgs.gnome.adwaita-icon-theme;
@@ -48,7 +49,7 @@ in
         kb_options = "";
         kb_rules = "";
         touchpad.natural_scroll = false;
-      }
+      };
     };
   };
   systemd.user.services.plugged_in_suspend_inhibitor = {

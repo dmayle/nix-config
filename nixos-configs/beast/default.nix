@@ -70,10 +70,12 @@
 
 
   # Configure keymap in X11
-  services.xserver.layout = "gb";
-  services.xserver.xkbOptions = "caps:swapescape";
-  services.xserver.xkbVariant = "extd";
-  services.xserver.xkbModel = "pc105";
+  services.xserver.xkb = {
+    layout = "gb";
+    options = "caps:swapescape";
+    variant = "extd";
+    model = "pc105";
+  };
   services.xserver.libinput.enable = true;
   services.xserver.enable = true;
 

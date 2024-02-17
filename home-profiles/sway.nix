@@ -44,7 +44,7 @@ in
   };
   wayland.windowManager.sway = {
     enable = true;
-    extraOptions = [ "--unsupported-gpu" ];
+    extraOptions = [ "--unsupported-gpu" "-Dlegacy-wl-drm" ];
     extraSessionCommands = ''
       # Test fix for external monitor being black
       #export WLR_DRM_NO_MODIFIERS=1

@@ -11,10 +11,12 @@
         height = 48;
         modules-left = [
           "sway/mode"
+          "hyprland/submap"
           "sway/workspaces"
+          "hyprland/workspaces"
           "custom/right-blue-background"
         ];
-        modules-center = [ "sway/window" ];
+        modules-center = [ "sway/window" "hyprland/window" ];
         modules-right = [
           "idle_inhibitor"
           "custom/left-yellow-background"
@@ -81,6 +83,22 @@
           all-outputs = false;
           disable-scroll = false;
           format = " {name} ";
+        };
+        "hyprland/submap" = {
+          format = "⚠️ <span style=\"italic\">{}</span>";
+          tooltip = false;
+        };
+        "hyprland/window" = {
+          format = "{}";
+          max-length = 30;
+          tooltip = false;
+        };
+        "hyprland/workspaces" = {
+          all-outputs = false;
+          disable-scroll = false;
+          format = "{icon}";
+          on-scroll-up = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e+1";
+          on-scroll-down = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e-1";
         };
         "pulseaudio" = {
           scroll-step = 2;

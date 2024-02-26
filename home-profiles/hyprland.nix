@@ -29,6 +29,25 @@ in
       size = 11;
     };
   };
+  programs.fuzzel = {
+    enable = true;
+    settings = {
+      main = {
+        terminal = "${pkgs.kitty}/bin/kitty";
+        layer = "overlay";
+        width = 45;
+        line-height = 50;
+        fields = "name,generic,comment,categories,filename,keywords";
+        prompt = "❯   ";
+      };
+      border = {
+        radius = 20;
+      };
+      dmenu = {
+        exit-immediately-if-empty = true;
+      };
+    };
+  };
   wayland.windowManager.hyprland = {
     enable = true;
     plugins = [];
@@ -39,16 +58,32 @@ in
       "$fileManager" = "${pkgs.libsForQt5.dolphin}/bin/dolphin";
       "$menu" = "${pkgs.wofi}/bin/wofi --show drun";
       "$mod" = "SUPER";
+      "$modShift" = "SUPERSHIFT";
+      #monitor = "HDMI-A-1,7680x4320@59.940,0x0,1";
+      env = [
+        "WLR_NO_HARDWARE_CURSORS,1"
+      ];
       bindm = [
         "$mod, mouse:272, movewindow"
       ];
+      bind = [
+        "$mod, Return, exec, $terminal"
+        "$mod, d, exec, ${pkgs.fuzzel}/bin/fuzzel -I"
+        "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"
+        "$modShift, e, exec, ${pkgs.hyprland}/bin/hyprctl dispatch exit"
+      ];
+      "device:matias-ergo-pro-keyboard" = {
+        #name = "matias-ergo-pro-keyboard";
+        kb_layout = "gb";
+        kb_variant = "extd";
+        kb_options = "caps:swapescape";
+        numlock_by_default = true;
+        kb_file = "${config.xdg.configHome}/sway/keymap_backtick.xkb";
+      };
       input = {
         kb_layout = "us";
-        kb_variant = "";
-        kb_model = "";
-        kb_options = "";
-        kb_rules = "";
-        touchpad.natural_scroll = false;
+        kb_options = "caps:swapescape";
+        numlock_by_default = true;
       };
     };
   };

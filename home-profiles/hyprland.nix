@@ -61,6 +61,9 @@ in
       "$modShift" = "SUPERSHIFT";
       #monitor = "HDMI-A-1,7680x4320@59.940,0x0,1";
       env = [
+        "LIBVA_DRIVER_NAME,nvidia"
+        "GBM_BACKEND,nvidia-drm"
+        "__GLX_VENDOR_VENDOR_LIBRARY_NAME,nvidia"
         "WLR_NO_HARDWARE_CURSORS,1"
       ];
       bindm = [

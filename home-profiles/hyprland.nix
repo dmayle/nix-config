@@ -56,7 +56,7 @@ in
     settings = {
       "$terminal" = "${pkgs.kitty}/bin/kitty";
       "$fileManager" = "${pkgs.libsForQt5.dolphin}/bin/dolphin";
-      "$menu" = "${pkgs.wofi}/bin/wofi --show drun";
+      "$menu" = "${pkgs.fuzzel}/bin/fuzzel -I";
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
       #monitor = "HDMI-A-1,7680x4320@59.940,0x0,1";
@@ -71,7 +71,11 @@ in
       ];
       bind = [
         "$mod, Return, exec, $terminal"
-        "$mod, d, exec, ${pkgs.fuzzel}/bin/fuzzel -I"
+        "$mod, d, exec, $menu"
+        "$mod, h, movefocus, l"
+        "$mod, j, movefocus, d"
+        "$mod, k, movefocus, u"
+        "$mod, l, movefocus, r"
         "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"
         "$modShift, e, exec, ${pkgs.hyprland}/bin/hyprctl dispatch exit"
       ];

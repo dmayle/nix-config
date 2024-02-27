@@ -109,6 +109,7 @@ in
         "$mod, k, hy3:movefocus, u"
         "$mod, l, hy3:movefocus, r"
 
+        # Move focus parent (raise), child (lower)
         "$mod, a, hy3:changefocus, raise"
         "$mod, c, hy3:changefocus, lower"
 
@@ -130,6 +131,10 @@ in
         "$modShift, j, hy3:movewindow, d"
         "$modShift, k, hy3:movewindow, u"
         "$modShift, l, hy3:movewindow, r"
+
+        # Maximized (f) and full-screen (shift-f)
+        "$mod, f, fullscreen, 1"
+        "$modShift, f, fullscreen, 0"
 
         # Session helpers
         "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"

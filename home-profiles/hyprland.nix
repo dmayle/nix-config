@@ -50,7 +50,8 @@ in
   };
   wayland.windowManager.hyprland = {
     enable = true;
-    plugins = [];
+    package = inputs.hyprland.packages.x86_64-linux.hyprland;
+    plugins = [ inputs.hy3.packages.x86_64-linux.hy3 ];
     extraConfig = ''
     '';
     settings = {

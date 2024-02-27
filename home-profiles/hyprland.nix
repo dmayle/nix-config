@@ -71,9 +71,35 @@ in
         "$mod, mouse:272, movewindow"
       ];
       bind = [
+        # Terminal, menu
         "$mod, Return, exec, $terminal"
         "$mod, d, exec, $menu"
 
+        # Move to workspace
+        "$mod, 1, workspace, 1"
+        "$mod, 2, workspace, 2"
+        "$mod, 3, workspace, 3"
+        "$mod, 4, workspace, 4"
+        "$mod, 5, workspace, 5"
+        "$mod, 6, workspace, 6"
+        "$mod, 7, workspace, 7"
+        "$mod, 8, workspace, 8"
+        "$mod, 9, workspace, 9"
+        "$mod, 0, workspace, 10"
+
+        # Move window to workspace
+        "$modShift, 1, movetoworkspace, 1"
+        "$modShift, 2, movetoworkspace, 2"
+        "$modShift, 3, movetoworkspace, 3"
+        "$modShift, 4, movetoworkspace, 4"
+        "$modShift, 5, movetoworkspace, 5"
+        "$modShift, 6, movetoworkspace, 6"
+        "$modShift, 7, movetoworkspace, 7"
+        "$modShift, 8, movetoworkspace, 8"
+        "$modShift, 9, movetoworkspace, 9"
+        "$modShift, 0, movetoworkspace, 10"
+
+        # Move focus
         "$mod, left, hy3:movefocus, l"
         "$mod, down, hy3:movefocus, d"
         "$mod, up, hy3:movefocus, u"
@@ -86,9 +112,11 @@ in
         "$mod, a, hy3:changefocus, raise"
         "$mod, c, hy3:changefocus, lower"
 
+        # Splits
         "$mod, b, hy3:makegroup, h"
         "$mod, v, hy3:makegroup, v"
 
+        # Move window
         "$modShift, left, hy3:movewindow, l"
         "$modShift, down, hy3:movewindow, d"
         "$modShift, up, hy3:movewindow, u"
@@ -98,6 +126,7 @@ in
         "$modShift, k, hy3:movewindow, u"
         "$modShift, l, hy3:movewindow, r"
 
+        # Session helpers
         "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"
         "$modShift, e, exec, ${pkgs.hyprland}/bin/hyprctl dispatch exit"
       ];

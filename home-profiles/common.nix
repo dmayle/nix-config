@@ -42,6 +42,7 @@
     enable = true;
     settings = {
       color_theme = "${pkgs.btop}/share/btop/themes/solarized_light.theme";
+      vim_keys = true;
     };
   };
 

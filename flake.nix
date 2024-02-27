@@ -30,6 +30,14 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland = {
+      url = "github:hyprwm/Hyprland?ref=v0.35.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hy3 = {
+      url = "github:outfoxxed/hy3?ref=hl0.35.0";
+      inputs.hyprland.follows = "hyprland";
+    };
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
       inputs.nixpkgs.follows = "nixpkgs";

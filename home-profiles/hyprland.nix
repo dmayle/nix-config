@@ -116,6 +116,11 @@ in
         "$mod, b, hy3:makegroup, h"
         "$mod, v, hy3:makegroup, v"
 
+        # Group controls
+        "$mod, w, hy3:changegroup, tab"
+        "$mod, s, hy3:changegroup, untab"
+        "$mod, e, hy3:changegroup, opposite"
+
         # Move window
         "$modShift, left, hy3:movewindow, l"
         "$modShift, down, hy3:movewindow, d"

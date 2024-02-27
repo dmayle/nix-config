@@ -73,13 +73,37 @@ in
       bind = [
         "$mod, Return, exec, $terminal"
         "$mod, d, exec, $menu"
-        "$mod, h, movefocus, l"
-        "$mod, j, movefocus, d"
-        "$mod, k, movefocus, u"
-        "$mod, l, movefocus, r"
+
+        "$mod, left, hy3:movefocus, l"
+        "$mod, down, hy3:movefocus, d"
+        "$mod, up, hy3:movefocus, u"
+        "$mod, right, hy3:movefocus, r"
+        "$mod, h, hy3:movefocus, l"
+        "$mod, j, hy3:movefocus, d"
+        "$mod, k, hy3:movefocus, u"
+        "$mod, l, hy3:movefocus, r"
+
+        "$mod, a, hy3:changefocus, raise"
+        "$mod, c, hy3:changefocus, lower"
+
+        "$mod, b, hy3:makegroup, h"
+        "$mod, v, hy3:makegroup, v"
+
+        "$modShift, left, hy3:movewindow, l"
+        "$modShift, down, hy3:movewindow, d"
+        "$modShift, up, hy3:movewindow, u"
+        "$modShift, right, hy3:movewindow, r"
+        "$modShift, h, hy3:movewindow, l"
+        "$modShift, j, hy3:movewindow, d"
+        "$modShift, k, hy3:movewindow, u"
+        "$modShift, l, hy3:movewindow, r"
+
         "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"
         "$modShift, e, exec, ${pkgs.hyprland}/bin/hyprctl dispatch exit"
       ];
+      general = {
+        layout = "hy3";
+      };
       "device:matias-ergo-pro-keyboard" = {
         #name = "matias-ergo-pro-keyboard";
         kb_layout = "gb";

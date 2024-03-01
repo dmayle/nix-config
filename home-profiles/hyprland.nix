@@ -61,11 +61,15 @@ in
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
       #monitor = "HDMI-A-1,7680x4320@59.940,0x0,1";
+      debug = {
+        disable_logs = false;
+      };
       env = [
         "LIBVA_DRIVER_NAME,nvidia"
         "GBM_BACKEND,nvidia-drm"
         "__GLX_VENDOR_VENDOR_LIBRARY_NAME,nvidia"
         "WLR_NO_HARDWARE_CURSORS,1"
+        "HYPRLAND_LOG_WLR,1"
       ];
       bindm = [
         "$mod, mouse:272, movewindow"

@@ -136,6 +136,17 @@ in
         "$modShift, k, hy3:movewindow, u"
         "$modShift, l, hy3:movewindow, r"
 
+        # Scratchpad
+        "$mod, minus, togglespecialworkspace, magic"
+
+        "$modShift, minus, movetoworkspace, special:magic"
+        "$modShift, minus, togglefloating"
+
+        "$modShift, space, togglefloating"
+
+        # Close uncloseable window
+        "$modShift, q, killactive"
+
         # Maximized (f) and full-screen (shift-f)
         "$mod, f, fullscreen, 1"
         "$modShift, f, fullscreen, 0"

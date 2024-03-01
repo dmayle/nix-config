@@ -166,6 +166,13 @@ in
         numlock_by_default = true;
         kb_file = "${config.xdg.configHome}/sway/keymap_backtick.xkb";
       };
+      "device:keychron-keychron-q11" = {
+        kb_layout = "gb";
+        kb_variant = "extd";
+        kb_options = "caps:swapescape";
+        numlock_by_default = true;
+        kb_file = "${config.xdg.configHome}/sway/keymap_backtick.xkb";
+      };
       input = {
         kb_layout = "us";
         kb_options = "caps:swapescape";

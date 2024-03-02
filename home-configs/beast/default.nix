@@ -8,7 +8,6 @@
     homeManagerProfiles.hyprland
     homeManagerProfiles.jupyterlab
     homeManagerProfiles.neovim
-    homeManagerProfiles.sway
     #homeManagerProfiles.syncthing
     homeManagerProfiles.tmux
     homeManagerProfiles.wayland

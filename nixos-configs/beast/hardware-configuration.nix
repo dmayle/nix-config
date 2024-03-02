@@ -17,7 +17,6 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.blacklistedKernelModules = [ "cdc_ether" ];
   boot.extraModulePackages = [ ];
-  boot.kernelPackages = pkgs.linuxPackages_6_5;
   boot.kernelParams = [
     "pcie_aspm=off"
     "nvidia.NVreg_PreserveVideoMemoryAllocations=1"

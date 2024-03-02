@@ -1,6 +1,165 @@
 { config, pkgs, lib, ... }:
-
+let
+  # This is just a default background image for the lock screen
+  bgNixSnowflake = builtins.fetchurl {
+    url = "https://i.imgur.com/4Xqpx6R.png";
+    sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
+  };
+in
 {
+  # Setup screensaver / lock with swayidle and swaylock
+  services.swayidle = {
+    enable = true;
+    events = [
+      { event = "before-sleep"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
+      { event = "after-resume"; command = "${pkgs.sway}/bin/swaymsg 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+      { event = "lock"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
+    ];
+    timeouts = [
+      { timeout = 600; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${pkgs.sway}/bin/swaymsg 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+      { timeout = 900; command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'"; }
+    ];
+    extraArgs = [
+      "idlehint 300"
+    ];
+    systemdTarget = "sway-session.target";
+  };
+  # LXPolkit is a GUI policy kit client that will prompt the user for their
+  # password when attempting to run GUI programs that need privelege
+  # escalation. You can test it out with the following shell command:
+  # `pkexec echo Hello from root`
+  systemd.user.services.lxpolkit = {
+    Unit = {
+      PartOf = [ "graphical-session.target" ];
+      Description = "Policykit agent for privilege escalation (ie. gui sudo)";
+    };
+    Install = {
+      WantedBy = [ "sway-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.lxde.lxsession}/bin/lxpolkit";
+      Restart = "always";
+      RestartSec = 3;
+    };
+  };
+  services.wlsunset = {
+    enable = true;
+    latitude = "37.7";
+    longitude = "-122.5";
+    systemdTarget = "sway-session.target";
+  };
+  xdg.configFile."sway/keymap_backtick.xkb".source = ../keymap_backtick.xkb;
+  services.network-manager-applet.enable = true;
+  xsession.preferStatusNotifierItems = true;
+  systemd.user.targets.tray = {
+    Unit = {
+      Description = "Home Manager System Tray";
+      Requires = [ "graphical-session-pre.target" ];
+    };
+  };
+
+  dconf = {
+    enable = true;
+    settings."org/freedesktop/appearance" = {
+      color-scheme = 2;
+    };
+    settings."org/gnome/desktop/interface" = {
+      color-scheme = "prefer-light";
+      gtk-theme = "Adwaita";
+    };
+  };
+  services.kanshi = {
+    enable = true;
+    profiles = {
+      home_office = {
+        outputs = [
+          {
+            criteria = "Technical Concepts Ltd 65R648 Unknown";
+            mode = "7680x4320";
+            position = "0,0";
+            transform = "normal";
+            status = "enable";
+          }
+        ];
+      };
+    };
+  };
+  xdg.portal = {
+    enable = true;
+    config = {
+      common = {
+        default = [
+          "wlr"
+          "gtk"
+        ];
+      };
+    };
+    xdgOpenUsePortal = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
+    ];
+    configPackages = [ pkgs.sway ];
+  };
+  # Mako is a DBUS-activated desktop notifications daemon for wayland
+  services.mako = {
+    enable = true;
+  };
+  systemd.user.services.mako = {
+    Unit = {
+      Description = "Mako notification daemon";
+      PartOf = [ "graphical-session.target" ];
+    };
+    Install = {
+      WantedBy = [ "sway-session.target" ];
+    };
+    Service = {
+      Type = "dbus";
+      BusName = "org.freedesktop.Notifications";
+      ExecStart = "${pkgs.mako}/bin/mako";
+      RestartSec = 5;
+      Restart = "always";
+    };
+  };
+  # WOB (Wayland Overlay Bar) is a simple progress bar that displays in the
+  # center of the screen briefly.  It's used to give the user (you) visual
+  # confirmation that the volume key you pressed had the desired effect.  It
+  # can also be used for screen brightness or just about anything else you'd
+  # like to connect to it... (e.g. dd progress)
+  systemd.user.services.wob = {
+    Unit = {
+      Description = "A lightweight overlay volume/backlight/progress/anything bar for Wayland";
+      Documentation = "man:wob(1)";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+      ConditionEnvironment = "WAYLAND_DISPLAY";
+    };
+    Install = {
+      WantedBy = [ "sway-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.wob}/bin/wob";
+      StandardInput = "socket";
+    };
+  };
+  systemd.user.services.plugged_in_suspend_inhibitor = {
+    Service = {
+      ExecStart = "systemd-inhibit sleep infinity";
+      Restart = "always";
+      RestartSec = 3;
+    };
+  };
+  systemd.user.sockets.wob = {
+    Install = {
+      WantedBy = [ "sockets.target" ];
+    };
+    Socket = {
+      ListenFIFO = "%t/wob.sock";
+      SocketMode = "0600";
+      RemoveOnStop = "on";
+      FlushPending = "yes";
+    };
+  };
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -378,5 +537,19 @@
   };
   home.packages = with pkgs; [
     waybar
+    lxde.lxsession
+    flameshot
+    grim
+    slurp
+    i2c-tools
+    kanshi
+    wl-clipboard
+    wob
+    xorg.xhost
+    xdg-utils
+    glib
+    gnome3.adwaita-icon-theme
+    libadwaita
+    networkmanagerapplet
   ];
 }

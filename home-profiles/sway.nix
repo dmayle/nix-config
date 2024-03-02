@@ -1,10 +1,5 @@
 { config, pkgs, lib, inputs, ... }:
 let
-  # This is just a default background image for the lock screen
-  bgNixSnowflake = builtins.fetchurl {
-    url = "https://i.imgur.com/4Xqpx6R.png";
-    sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
-  };
   # Wrap native google-chrome and add the flags to run using the native wayland
   # renderer, and gnome keyring for password storage
   google-chrome-wrapper = pkgs.writeShellScriptBin "google-chrome" ''
@@ -22,26 +17,6 @@ let
   '';
 in
 {
-  xdg.configFile."sway/keymap_backtick.xkb".source = ../keymap_backtick.xkb;
-  services.network-manager-applet.enable = true;
-  xsession.preferStatusNotifierItems = true;
-  systemd.user.targets.tray = {
-    Unit = {
-      Description = "Home Manager System Tray";
-      Requires = [ "graphical-session-pre.target" ];
-    };
-  };
-
-  dconf = {
-    enable = true;
-    settings."org/freedesktop/appearance" = {
-      color-scheme = 2;
-    };
-    settings."org/gnome/desktop/interface" = {
-      color-scheme = "prefer-light";
-      gtk-theme = "Adwaita";
-    };
-  };
   wayland.windowManager.sway = {
     enable = true;
     extraOptions = [ "--unsupported-gpu" "-Dlegacy-wl-drm" ];
@@ -265,47 +240,6 @@ in
       RemoveOnStop = "on";
       FlushPending = "yes";
     };
-  };
-  # Setup screensaver / lock with swayidle and swaylock
-  services.swayidle = {
-    enable = true;
-    events = [
-      { event = "before-sleep"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
-      { event = "after-resume"; command = "${pkgs.sway}/bin/swaymsg 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
-      { event = "lock"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
-    ];
-    timeouts = [
-      { timeout = 600; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${pkgs.sway}/bin/swaymsg 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
-      { timeout = 900; command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'"; }
-    ];
-    extraArgs = [
-      "idlehint 300"
-    ];
-    systemdTarget = "sway-session.target";
-  };
-  # LXPolkit is a GUI policy kit client that will prompt the user for their
-  # password when attempting to run GUI programs that need privelege
-  # escalation. You can test it out with the following shell command:
-  # `pkexec echo Hello from root`
-  systemd.user.services.lxpolkit = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      Description = "Policykit agent for privilege escalation (ie. gui sudo)";
-    };
-    Install = {
-      WantedBy = [ "sway-session.target" ];
-    };
-    Service = {
-      ExecStart = "${pkgs.lxde.lxsession}/bin/lxpolkit";
-      Restart = "always";
-      RestartSec = 3;
-    };
-  };
-  services.wlsunset = {
-    enable = true;
-    latitude = "37.7";
-    longitude = "-122.5";
-    systemdTarget = "sway-session.target";
   };
 
   xdg.portal = {

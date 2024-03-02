@@ -51,6 +51,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.x86_64-linux.hyprland;
+    systemd.enable = true;
     plugins = [ inputs.hy3.packages.x86_64-linux.hy3 ];
     extraConfig = ''
     '';
@@ -164,14 +165,14 @@ in
         kb_variant = "extd";
         kb_options = "caps:swapescape";
         numlock_by_default = true;
-        kb_file = "${config.xdg.configHome}/sway/keymap_backtick.xkb";
+        kb_file = "${config.xdg.configHome}/keymap_backtick.xkb";
       };
       "device:keychron-keychron-q11" = {
         kb_layout = "gb";
         kb_variant = "extd";
         kb_options = "caps:swapescape";
         numlock_by_default = true;
-        kb_file = "${config.xdg.configHome}/sway/keymap_backtick.xkb";
+        kb_file = "${config.xdg.configHome}/keymap_backtick.xkb";
       };
       input = {
         kb_layout = "us";

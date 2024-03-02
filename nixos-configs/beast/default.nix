@@ -100,14 +100,13 @@
   };
 
   # We enable desktop managers in order to setup a graphical login with gnome
-  # and sway. We want those to be configured by home-manager, so we'll have to
-  # fixup this config a bit
+  # and hyprland. We want those to be configured by home-manager, so we'll have
+  # to fixup this config a bit
   services.xserver.desktopManager.gnome.enable = true;
-  # This adds a sway session to gdm, but the session just selects sway from the
-  # current environment. My home manager config will override that version, so
-  # all config should be done there.
+  # This adds a hyprland session to gdm, but the session just selects hyprland
+  # from the current environment. My home manager config will override that
+  # version, so all config should be done there.
   programs.xwayland.enable = true;
-  programs.sway.enable = true;
   programs.hyprland.enable = true;
 
   # Enabling desktop managers forces xdg-desktop-portal (services for sandboxed

@@ -38,12 +38,6 @@
       url = "github:outfoxxed/hy3?ref=hl0.35.0";
       inputs.hyprland.follows = "hyprland";
     };
-    nixpkgs-wayland = {
-      url = "github:nix-community/nixpkgs-wayland";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nix-eval-jobs.follows = "nix-eval-jobs";
-      inputs.lib-aggregate.follows = "lib-aggregate";
-    };
     nix-colors = {
       url = "github:misterio77/nix-colors";
       inputs.nixpkgs-lib.follows = "nixpkgs-lib";
@@ -106,7 +100,6 @@
 
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
       pkgOverlays = [
-        inputs.nixpkgs-wayland.overlay
       ];
 
       # Curry new config and overlays into nixpkgs as per-system function

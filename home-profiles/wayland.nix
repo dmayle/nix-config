@@ -22,7 +22,7 @@ in
     extraArgs = [
       "idlehint 300"
     ];
-    systemdTarget = "sway-session.target";
+    systemdTarget = "hyprland-session.target";
   };
   # LXPolkit is a GUI policy kit client that will prompt the user for their
   # password when attempting to run GUI programs that need privelege
@@ -34,7 +34,7 @@ in
       Description = "Policykit agent for privilege escalation (ie. gui sudo)";
     };
     Install = {
-      WantedBy = [ "sway-session.target" ];
+      WantedBy = [ "hyprland-session.target" ];
     };
     Service = {
       ExecStart = "${pkgs.lxde.lxsession}/bin/lxpolkit";
@@ -46,17 +46,11 @@ in
     enable = true;
     latitude = "37.7";
     longitude = "-122.5";
-    systemdTarget = "sway-session.target";
+    systemdTarget = "hyprland-session.target";
   };
-  xdg.configFile."sway/keymap_backtick.xkb".source = ../keymap_backtick.xkb;
+  xdg.configFile."keymap_backtick.xkb".source = ../keymap_backtick.xkb;
   services.network-manager-applet.enable = true;
   xsession.preferStatusNotifierItems = true;
-  systemd.user.targets.tray = {
-    Unit = {
-      Description = "Home Manager System Tray";
-      Requires = [ "graphical-session-pre.target" ];
-    };
-  };
 
   dconf = {
     enable = true;
@@ -70,6 +64,7 @@ in
   };
   services.kanshi = {
     enable = true;
+    systemdTarget = "hyprland-session.target";
     profiles = {
       home_office = {
         outputs = [
@@ -111,7 +106,7 @@ in
       PartOf = [ "graphical-session.target" ];
     };
     Install = {
-      WantedBy = [ "sway-session.target" ];
+      WantedBy = [ "hyprland-session.target" ];
     };
     Service = {
       Type = "dbus";
@@ -135,7 +130,7 @@ in
       ConditionEnvironment = "WAYLAND_DISPLAY";
     };
     Install = {
-      WantedBy = [ "sway-session.target" ];
+      WantedBy = [ "hyprland-session.target" ];
     };
     Service = {
       ExecStart = "${pkgs.wob}/bin/wob";

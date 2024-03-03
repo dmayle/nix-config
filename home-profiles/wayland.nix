@@ -533,7 +533,6 @@ in
   home.packages = with pkgs; [
     waybar
     lxde.lxsession
-    flameshot
     grim
     slurp
     i2c-tools

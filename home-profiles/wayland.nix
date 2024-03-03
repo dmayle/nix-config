@@ -62,6 +62,10 @@ in
       gtk-theme = "Adwaita";
     };
   };
+  services.swayosd = {
+    enable = true;
+    topMargin = 0.5;
+  };
   services.kanshi = {
     enable = true;
     systemdTarget = "hyprland-session.target";

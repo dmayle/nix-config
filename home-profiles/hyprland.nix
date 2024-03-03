@@ -177,6 +177,14 @@ in
         "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"
         "$modShift, e, exec, ${pkgs.hyprland}/bin/hyprctl dispatch exit"
       ];
+      bindle = [
+        ",XF86AudioRaiseVolume, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume raise"
+        ",XF86AudioLowerVolume, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume lower"
+        ",XF86AudioMute, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume mute-toggle"
+      ];
+      bindr = [
+        ", Caps_Lock, exec, ${pkgs.swayosd}/bin/swayosd-client --caps-lock"
+      ];
       general = {
         layout = "hy3";
       };

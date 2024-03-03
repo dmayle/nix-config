@@ -120,43 +120,11 @@ in
       Restart = "always";
     };
   };
-  # WOB (Wayland Overlay Bar) is a simple progress bar that displays in the
-  # center of the screen briefly.  It's used to give the user (you) visual
-  # confirmation that the volume key you pressed had the desired effect.  It
-  # can also be used for screen brightness or just about anything else you'd
-  # like to connect to it... (e.g. dd progress)
-  systemd.user.services.wob = {
-    Unit = {
-      Description = "A lightweight overlay volume/backlight/progress/anything bar for Wayland";
-      Documentation = "man:wob(1)";
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-      ConditionEnvironment = "WAYLAND_DISPLAY";
-    };
-    Install = {
-      WantedBy = [ "hyprland-session.target" ];
-    };
-    Service = {
-      ExecStart = "${pkgs.wob}/bin/wob";
-      StandardInput = "socket";
-    };
-  };
   systemd.user.services.plugged_in_suspend_inhibitor = {
     Service = {
       ExecStart = "systemd-inhibit sleep infinity";
       Restart = "always";
       RestartSec = 3;
-    };
-  };
-  systemd.user.sockets.wob = {
-    Install = {
-      WantedBy = [ "sockets.target" ];
-    };
-    Socket = {
-      ListenFIFO = "%t/wob.sock";
-      SocketMode = "0600";
-      RemoveOnStop = "on";
-      FlushPending = "yes";
     };
   };
   programs.waybar = {
@@ -542,7 +510,6 @@ in
     i2c-tools
     kanshi
     wl-clipboard
-    wob
     xorg.xhost
     xdg-utils
     glib

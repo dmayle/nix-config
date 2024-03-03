@@ -52,6 +52,8 @@
 
     git
 
+    # Usefull process tool
+    killall
     # Try out obsidian notes
     #obsidian
 

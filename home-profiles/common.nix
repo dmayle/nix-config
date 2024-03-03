@@ -134,7 +134,9 @@
   # Configure solarized light color scheme for kitty
   programs.kitty = {
     enable = true;
+    shellIntegration.mode = "no-cursor";
     extraConfig = ''
+      cursor_shape block
       enable_audio_bell no
       # Solarized Light Colorscheme
 

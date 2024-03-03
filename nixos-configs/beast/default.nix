@@ -136,7 +136,12 @@
     file
     canon-cups-ufr2
     gnomeExtensions.gtile
+    # Adds udev rules for access to QMK keyboards
+    via
   ];
+  services.udev.extraRules = ''
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0666", TAG+="uaccess", TAG+="udev-acl"
+  '';
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 

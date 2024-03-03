@@ -88,7 +88,7 @@ in
     config = {
       common = {
         default = [
-          "wlr"
+          "hyprland"
           "gtk"
         ];
       };
@@ -96,7 +96,7 @@ in
     xdgOpenUsePortal = true;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      xdg-desktop-portal-wlr
+      xdg-desktop-portal-hyprland
     ];
     configPackages = [ pkgs.sway ];
   };

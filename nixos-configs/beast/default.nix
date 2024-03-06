@@ -38,7 +38,7 @@
   hardware.nvidia = {
     # Production version is newer than beta as of 03/01/2024
     package = config.boot.kernelPackages.nvidiaPackages.production;
-    powerManagement.enable = false;
+    powerManagement.enable = true;
     powerManagement.finegrained = false;
     modesetting.enable = true;
     nvidiaSettings = true;

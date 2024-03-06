@@ -23,6 +23,7 @@
   boot.kernelParams = [
     "nvme_core.default_ps_max_latency_us=0"
     "pci_aspm=performance"
+    "NVreg_PreserveVideoMemoryAllocations=1"
   ];
 
   fileSystems."/" =

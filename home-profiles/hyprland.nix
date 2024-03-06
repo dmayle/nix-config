@@ -74,6 +74,9 @@ in
     extraConfig = ''
     '';
     settings = {
+      exec-once = [
+        "${pkgs.systemd}/bin/systemctl --user import-environment"
+      ];
       "$terminal" = "${pkgs.kitty}/bin/kitty";
       "$fileManager" = "${pkgs.libsForQt5.dolphin}/bin/dolphin";
       "$menu" = "${pkgs.fuzzel}/bin/fuzzel -I";

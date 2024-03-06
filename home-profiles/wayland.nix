@@ -33,23 +33,26 @@ in
     text = ''
     '';
   };
+
   # Setup screensaver / lock with swayidle and swaylock
-  services.swayidle = {
-    enable = true;
-    events = [
-      { event = "before-sleep"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
-      { event = "after-resume"; command = "${pkgs.sway}/bin/swaymsg 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
-      { event = "lock"; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
-    ];
-    timeouts = [
-      { timeout = 600; command = "${pkgs.swaylock}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${pkgs.sway}/bin/swaymsg 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
-      { timeout = 900; command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'"; }
-    ];
-    extraArgs = [
-      "idlehint 300"
-    ];
-    systemdTarget = "hyprland-session.target";
-  };
+  # services.swayidle = {
+  #   package = pkgs.hypridle
+  #   enable = true;
+  #   # events = [
+  #   #   { event = "before-sleep"; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
+  #   #   { event = "after-resume"; command = "${pkgs.hyprland}/bin/hyprctl 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+  #   #   { event = "lock"; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
+  #   # ];
+  #   # timeouts = [
+  #   #   { timeout = 600; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${pkgs.hyprland}/bin/hyprctl 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+  #   #   { timeout = 900; command = "${pkgs.hyprland}/bin/hyprctl 'output * dpms off'"; }
+  #   # ];
+  #   # extraArgs = [
+  #   #   "idlehint 300"
+  #   # ];
+  #   systemdTarget = "hyprland-session.target";
+  # };
+
   # LXPolkit is a GUI policy kit client that will prompt the user for their
   # password when attempting to run GUI programs that need privelege
   # escalation. You can test it out with the following shell command:

@@ -98,7 +98,7 @@ in
       xdg-desktop-portal-gtk
       xdg-desktop-portal-hyprland
     ];
-    configPackages = [ pkgs.sway ];
+    configPackages = [ pkgs.hyprland ];
   };
   # Mako is a DBUS-activated desktop notifications daemon for wayland
   services.mako = {

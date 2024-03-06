@@ -81,6 +81,9 @@
     iosevka
     noto-fonts
     jetbrains-mono
+    material-design-icons
+    material-icons
+    material-symbols
     (nerdfonts.override { fonts = [ "DroidSansMono" ]; })
   ];
 }

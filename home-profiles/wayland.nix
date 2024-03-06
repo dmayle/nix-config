@@ -53,6 +53,25 @@ in
   #   systemdTarget = "hyprland-session.target";
   # };
 
+  # programs.swaylock = {
+  #   enable = true;
+  #   package = pkgs.swaylock-effects;
+  #   settings = {
+  #     daemonize = true;
+  #     font-size = 24;
+  #     indicator = true;
+  #     indicator-radius = 200;
+  #     indicator-thickness = 20;
+  #     indicator-caps-lock = true;
+  #     indicator-idle-visible = false;
+  #     ignore-empty-password = true;
+  #     clock = true;
+  #     screenshots = true;
+  #     fade-in = 1;
+  #     effect-blur = "5x2";
+  #   };
+  # };
+
   programs.wlogout = {
     enable = true;
     layout = [

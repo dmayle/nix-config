@@ -53,6 +53,64 @@ in
   #   systemdTarget = "hyprland-session.target";
   # };
 
+  programs.wlogout = {
+    enable = true;
+    layout = [
+      {
+        label = "lock";
+        action = "${pkgs.systemd}/bin/loginctl lock-session";
+        text = "lock";
+        keybind = "l";
+      }
+      {
+        label = "logout";
+        action = "${pkgs.hyprland}/bin/hyprctl dispatch exit";
+        text = "logout";
+        keybind = "l";
+      }
+      {
+        label = "shutdown";
+        action = "${pkgs.systemd}/bin/systemctl poweroff";
+        text = "power_settings_new";
+        keybind = "l";
+      }
+      {
+        label = "reboot";
+        action = "${pkgs.systemd}/bin/systemctl reboot";
+        text = "restart_alt";
+        keybind = "l";
+      }
+    ];
+    style = ''
+      * {
+        all: unset;
+        background-image: none;
+        transition: 400ms cubic-bezier(0.05, 0.7, 0.1, 1);
+      }
+
+      window {
+        background: rgba(0, 0, 0, 0.5);
+      }
+
+      button {
+        font-family: 'Material Symbols Outlined';
+        font-size: 10rem;
+        background-color: rgba(11, 11, 11, 0.4);
+        color: #FFFFFF;
+        margin: 2rem;
+        border-radius: 2rem;
+        padding: 3rem;
+      }
+
+      button:focus,
+      button:active,
+      button:hover {
+        background-color: rgba(51, 51, 51, 0.5);
+        border-radius: 4rem;
+      }
+    '';
+  };
+
   # LXPolkit is a GUI policy kit client that will prompt the user for their
   # password when attempting to run GUI programs that need privelege
   # escalation. You can test it out with the following shell command:

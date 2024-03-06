@@ -139,9 +139,14 @@
     # Adds udev rules for access to QMK keyboards
     via
   ];
+
+  # Allow via (and http://usevia.app) to access hidraw devices for updating/flashing
   services.udev.extraRules = ''
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0666", TAG+="uaccess", TAG+="udev-acl"
   '';
+
+  # Allow swaylock configured in home-manager to work.
+  security.pam.services.swaylock = {};
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 

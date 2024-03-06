@@ -7,6 +7,32 @@ let
   };
 in
 {
+  # Test hypridle / hyprlock config
+  xdg.configFile."hypr/hypridle.conf" = {
+    text = ''
+      $lock_cmd = ${pkgs.procps}/bin/pidof hyprlock || ${pkgs.hyprlock}/bin/hyprlock
+
+      general {
+        lock_cmd = $lock_cmd
+        before_sleep_cmd = $lock_cmd
+      }
+
+      listener {
+        timeout = 180 # seconds (3 minutes)
+        on-timeout = $lock_cmd
+      }
+
+      listener {
+        timeout = 240 # seconds (4 minutes)
+        on-timeout # ${pkgs.hyprland}/bin/hyprctl dispatch dpms off
+        on-resume # ${pkgs.hyprland}/bin/hyprctl dispatch dpms on
+      }
+    '';
+  };
+  xdg.configFile."hypr/hyprlock.conf" = {
+    text = ''
+    '';
+  };
   # Setup screensaver / lock with swayidle and swaylock
   services.swayidle = {
     enable = true;

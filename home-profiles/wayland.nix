@@ -5,6 +5,37 @@ let
     url = "https://i.imgur.com/4Xqpx6R.png";
     sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
   };
+  wlogout-command = "wlogout-wrapped";
+  wlogoutWrapped = pkgs.writeShellScriptBin wlogout-command ''
+    ${pkgs.procps}/bin/pgrep -x "wlogout" > /dev/null && ${pkgs.procps}/bin/pkill -x "wlogout" && exit 0
+    export LAYOUT="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/layout"
+    export STYLE="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/style.css"
+
+    export SCREEN_HEIGHT=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .height')
+    export SCREEN_WIDTH=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .width')
+    export SCREEN_SCALE=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .scale' | ${pkgs.gnused}/bin/sed 's/\.//')
+
+    # Magic ratios pulled from hyprdots
+    export MARGIN=$((SCREEN_HEIGHT * 28 / SCREEN_SCALE))
+    export HOVER=$((SCREEN_HEIGHT * 23 / SCREEN_SCALE))
+
+    export FONT_SIZE=$((SCREEN_HEIGHT * 2 / 100))
+
+    export BORDER=12 # or 10, arbitrary preference
+    export ACTIVE_RADIUS=$((BORDER * 5))
+    export BUTTON_RADIUS=$((BORDER * 8))
+
+    cat <(${pkgs.envsubst}/bin/envsubst < $STYLE)
+    #echo \
+    ${pkgs.wlogout}/bin/wlogout \
+      --buttons-per-row 4 \
+      --column-spacing 0 \
+      --row-spacing 0 \
+      --margin 0 \
+      --layout $LAYOUT \
+      --css <(${pkgs.envsubst}/bin/envsubst < $STYLE) \
+      --protocol layer-shell
+  '';
 in
 {
   # Test hypridle / hyprlock config
@@ -106,35 +137,81 @@ in
     ];
     style = ''
       * {
-        all: unset;
         background-image: none;
-        transition: 400ms cubic-bezier(0.05, 0.7, 0.1, 1);
+        font-size: ''${FONT_SIZE}px;
       }
 
+      /* Solarized */
+      @define-color base03 #002b36;
+      @define-color base02 #073642;
+      @define-color base01 #586e75;
+      @define-color base00 #657b83;
+      @define-color base0 #839496;
+      @define-color base1 #93a1a1;
+      @define-color base2 #eee8d5;
+      @define-color base3 #fdf6e3;
+      @define-color yellow #b58900;
+      @define-color orange #cb4b16;
+      @define-color red #dc322f;
+      @define-color magenta #d33682;
+      @define-color violet #6c71c4;
+      @define-color blue #268bd2;
+      @define-color cyan #2aa198;
+      @define-color green #859900;
+
       window {
-        padding: 25%;
-        background: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0);
       }
 
       button {
         font-family: 'Material Symbols Outlined';
-        font-size: 5rem;
-        background-color: rgba(11, 11, 11, 0.4);
-        color: #FFFFFF;
-        margin: 2rem;
-        border-radius: 2rem;
-        padding: 3rem;
+        color: @base3;
+        background-color: @base1;
+        outline-style: none;
+        border: none;
+        border-width: 0;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 20%;
+        border-radius: 0;
+        box-shadow: none;
+        text-shadow: none;
+        animation: gradient_f 20s ease-in infinite;
+        /* default margin rule (excluding ends) */
+        margin: ''${MARGIN}px 0 ''${MARGIN}px 0;
       }
 
       button:focus {
-        background-color: rgba(51, 51, 51, 0.25);
-        border-radius: 4rem;
+        background-color: @base01;
+        background-size: 30%;
       }
 
-      button:active,
       button:hover {
-        background-color: rgba(51, 51, 51, 0.5);
-        border-radius: 4rem;
+        background-color: @magenta;
+        background-size: 40%;
+        border-radius: ''${ACTIVE_RADIUS}px;
+        animation: gradient_f 20s ease-in infinite;
+        transition: all 0.3s cubic-bezier(.55,0.0,.28,1.682);
+        /* default margin rule (excluding ends) */
+        margin: ''${HOVER}px 0 ''${HOVER}px 0;
+      }
+
+      /* left end */
+      button:hover#lock {
+        margin: ''${HOVER}px 0 ''${HOVER}px ''${MARGIN}px;
+      }
+
+      #lock {
+        margin: ''${MARGIN}px 0 ''${MARGIN}px ''${MARGIN}px;
+      }
+
+      /* right end */
+      button:hover#reboot {
+        margin: ''${HOVER}px ''${MARGIN}px ''${HOVER}px 0;
+      }
+
+      #reboot {
+        margin: ''${MARGIN}px ''${MARGIN}px ''${MARGIN}px 0;
       }
     '';
   };

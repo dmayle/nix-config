@@ -78,24 +78,28 @@ in
       {
         label = "lock";
         action = "${pkgs.systemd}/bin/loginctl lock-session";
+        # Material design icon text name
         text = "lock";
         keybind = "l";
       }
       {
         label = "logout";
         action = "${pkgs.hyprland}/bin/hyprctl dispatch exit";
+        # Material design icon text name
         text = "logout";
         keybind = "l";
       }
       {
         label = "shutdown";
         action = "${pkgs.systemd}/bin/systemctl poweroff";
+        # Material design icon text name
         text = "power_settings_new";
         keybind = "l";
       }
       {
         label = "reboot";
         action = "${pkgs.systemd}/bin/systemctl reboot";
+        # Material design icon text name
         text = "restart_alt";
         keybind = "l";
       }
@@ -108,12 +112,13 @@ in
       }
 
       window {
+        padding: 25%;
         background: rgba(0, 0, 0, 0.5);
       }
 
       button {
         font-family: 'Material Symbols Outlined';
-        font-size: 10rem;
+        font-size: 5rem;
         background-color: rgba(11, 11, 11, 0.4);
         color: #FFFFFF;
         margin: 2rem;
@@ -121,7 +126,11 @@ in
         padding: 3rem;
       }
 
-      button:focus,
+      button:focus {
+        background-color: rgba(51, 51, 51, 0.25);
+        border-radius: 4rem;
+      }
+
       button:active,
       button:hover {
         background-color: rgba(51, 51, 51, 0.5);

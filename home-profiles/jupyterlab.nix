@@ -42,7 +42,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStart = "${myJupyter}/bin/jupyter-lab --ip=0.0.0.0";
+      ExecStart = "${myJupyter}/bin/jupyter-lab --ip=0.0.0.0 --no-browser";
       Restart = "always";
       RestartSec = 3;
     };

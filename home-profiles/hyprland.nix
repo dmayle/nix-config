@@ -18,6 +18,10 @@ let
     ];
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.libsForQt5.kguiaddons ];
   });
+  service-restart-command = "service-restart";
+  serviceRestart = pkgs.writeShellScriptBin service-restart-command ''
+        ${pkgs.systemd}/bin/systemctl list-units --type=service --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
+  '';
 in
 {
   # This is only here because I want to share the package override with a keybinding
@@ -25,12 +29,14 @@ in
     enable = true;
     package = flameshotGrim;
   };
+
   home.pointerCursor = {
     gtk.enable = true;
     package = pkgs.bibata-cursors;
     name = "Bibata-Modern-Classic";
     size = 16;
   };
+
   gtk = {
     enable = true;
     theme = {
@@ -47,6 +53,7 @@ in
       size = 11;
     };
   };
+
   programs.fuzzel = {
     enable = true;
     settings = {
@@ -66,6 +73,7 @@ in
       };
     };
   };
+
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.x86_64-linux.hyprland;
@@ -79,7 +87,7 @@ in
       ];
       "$terminal" = "${pkgs.kitty}/bin/kitty";
       "$fileManager" = "${pkgs.libsForQt5.dolphin}/bin/dolphin";
-      "$menu" = "${pkgs.fuzzel}/bin/fuzzel -I";
+      "$menu" = "${pkgs.fuzzel}/bin/fuzzel";
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
       #monitor = "HDMI-A-1,7680x4320@59.940,0x0,1";
@@ -179,6 +187,7 @@ in
         # Session helpers
         "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"
         "$modShift, e, exec, ${pkgs.hyprland}/bin/hyprctl dispatch exit"
+        "$modShift, r, exec, ${serviceRestart}/bin/${service-restart-command}"
       ];
       bindle = [
         ",XF86AudioRaiseVolume, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume raise"
@@ -213,6 +222,7 @@ in
       };
     };
   };
+
   systemd.user.services.plugged_in_suspend_inhibitor = {
     Service = {
       ExecStart = "systemd-inhibit sleep infinity";

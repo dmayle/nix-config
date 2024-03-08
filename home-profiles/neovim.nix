@@ -1,14 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 let
   # Custom neovim plugins
   vim-maximizer = pkgs.vimUtils.buildVimPlugin rec {
     name = "vim-maximizer";
-    src = pkgs.fetchFromGitHub {
-      owner = "szw";
-      repo = "vim-maximizer";
-      rev = "2e54952fe91e140a2e69f35f22131219fcd9c5f1";
-      sha256 = "031brldzxhcs98xpc3sr0m2yb99xq0z5yrwdlp8i5fqdgqrdqlzr";
-    };
+    src = inputs.vim-maximizer;
     meta = {
       homepage = https://github.com/szw/vim-maximizer;
       maintainers = [ "szw" ];
@@ -17,12 +12,7 @@ let
 
   nvim-colorizer = pkgs.vimUtils.buildVimPlugin rec {
     name = "nvim-colorizer";
-    src = pkgs.fetchFromGitHub {
-      owner = "norcalli";
-      repo = "nvim-colorizer.lua";
-      rev = "36c610a9717cc9ec426a07c8e6bf3b3abcb139d6";
-      sha256 = "0gvqdfkqf6k9q46r0vcc3nqa6w45gsvp8j4kya1bvi24vhifg2p9";
-    };
+    src = inputs.nvim-colorizer;
     meta = {
       homepage = https://github.com/norcalli/nvim-colorizer.lua;
       maintainers = [ "norcalli" ];
@@ -31,12 +21,7 @@ let
 
   indent-blankline = pkgs.vimUtils.buildVimPlugin rec {
     name = "indent-blankline";
-    src = pkgs.fetchFromGitHub {
-      owner = "lukas-reineke";
-      repo = "indent-blankline.nvim";
-      rev = "d925b80b3f57c8e2bf913a36b37aa63b6ed75205";
-      sha256 = "1h1jsjn6ldpx0qv7vk3isqs7hrfz1srv5q6vrf44lv2r5di1gr65";
-    };
+    src = inputs.indent-blankline;
     meta = {
       homepage = https://github.com/lukas-reineke/indent-blankline.nvim;
       maintainers = [ "lukas-reineke" ];
@@ -45,12 +30,7 @@ let
 
   vim-glaive = pkgs.vimUtils.buildVimPlugin rec {
     name = "vim-glaive";
-    src = pkgs.fetchFromGitHub {
-      owner = "google";
-      repo = "vim-glaive";
-      rev = "c17bd478c1bc358dddf271a13a4a025efb30514d";
-      sha256 = "0py6wqqnblr4n1xz1nwlxp0l65qmd76448gz0bf5q9a1sf0mkh5g";
-    };
+    src = inputs.vim-glaive;
     meta = {
       homepage = https://github.com/google/vim-glaive;
       maintainers = [ "google" ];
@@ -59,12 +39,7 @@ let
 
   vim-syncopate = pkgs.vimUtils.buildVimPlugin rec {
     name = "vim-syncopate";
-    src = pkgs.fetchFromGitHub {
-      owner = "google";
-      repo = "vim-syncopate";
-      rev = "cc68632a72c269e8d75f1f22a6fa588fd5b46e02";
-      sha256 = "0vb68h07wkqlwfr24s4nsxyclla60sii7lbg6wlgwhdn837hiqyx";
-    };
+    src = inputs.vim-syncopate;
     meta = {
       homepage = https://github.com/google/vim-syncopate;
       maintainers = [ "google" ];
@@ -73,12 +48,7 @@ let
 
   vim-fakeclip = pkgs.vimUtils.buildVimPlugin rec {
     name = "vim-fakeclip";
-    src = pkgs.fetchFromGitHub {
-      owner = "kana";
-      repo = "vim-fakeclip";
-      rev = "59858dabdb55787d7f047c4ab26b45f11ebb533b";
-      sha256 = "1jrfi1vc7svhypvg2gizx40vracr91m9d912b61j0c7z8swix908";
-    };
+    src = inputs.vim-fakeclip;
     meta = {
       homepage = https://github.com/kana/vim-fakeclip;
       maintainers = [ "kana" ];
@@ -87,12 +57,7 @@ let
 
   conflict-marker = pkgs.vimUtils.buildVimPlugin rec {
     name = "conflict-marker";
-    src = pkgs.fetchFromGitHub {
-      owner = "rhysd";
-      repo = "conflict-marker.vim";
-      rev = "6a9b8f92a57ea8a90cbf62c960db9e5894be2d7a";
-      sha256 = "0vw5kvnmwwia65gni97vk42b9s47r3p5bglrhpcxsvs3f4s250vq";
-    };
+    src = inputs.conflict-marker;
     meta = {
       homepage = https://github.com/rhysd/conflict-marker.vim;
       maintainers = [ "rhysd" ];

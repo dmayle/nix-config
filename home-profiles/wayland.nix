@@ -5,37 +5,6 @@ let
     url = "https://i.imgur.com/4Xqpx6R.png";
     sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
   };
-  wlogout-command = "wlogout-wrapped";
-  wlogoutWrapped = pkgs.writeShellScriptBin wlogout-command ''
-    ${pkgs.procps}/bin/pgrep -x "wlogout" > /dev/null && ${pkgs.procps}/bin/pkill -x "wlogout" && exit 0
-    export LAYOUT="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/layout"
-    export STYLE="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/style.css"
-
-    export SCREEN_HEIGHT=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .height')
-    export SCREEN_WIDTH=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .width')
-    export SCREEN_SCALE=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .scale' | ${pkgs.gnused}/bin/sed 's/\.//')
-
-    # Magic ratios pulled from hyprdots
-    export MARGIN=$((SCREEN_HEIGHT * 28 / SCREEN_SCALE))
-    export HOVER=$((SCREEN_HEIGHT * 23 / SCREEN_SCALE))
-
-    export FONT_SIZE=$((SCREEN_HEIGHT * 2 / 100))
-
-    export BORDER=12 # or 10, arbitrary preference
-    export ACTIVE_RADIUS=$((BORDER * 5))
-    export BUTTON_RADIUS=$((BORDER * 8))
-
-    cat <(${pkgs.envsubst}/bin/envsubst < $STYLE)
-    #echo \
-    ${pkgs.wlogout}/bin/wlogout \
-      --buttons-per-row 4 \
-      --column-spacing 0 \
-      --row-spacing 0 \
-      --margin 0 \
-      --layout $LAYOUT \
-      --css <(${pkgs.envsubst}/bin/envsubst < $STYLE) \
-      --protocol layer-shell
-  '';
 in
 {
   # Test hypridle / hyprlock config
@@ -135,6 +104,7 @@ in
         keybind = "l";
       }
     ];
+    # This style uses environment variables passed by the wlogoutWrapped script in hyprland.nix
     style = ''
       * {
         background-image: none;
@@ -172,8 +142,8 @@ in
         border-width: 0;
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 20%;
         border-radius: 0;
+        padding-bottom: ''${TEXT_OFFSET}px;
         box-shadow: none;
         text-shadow: none;
         animation: gradient_f 20s ease-in infinite;
@@ -183,13 +153,12 @@ in
 
       button:focus {
         background-color: @base01;
-        background-size: 30%;
       }
 
       button:hover {
-        background-color: @magenta;
-        background-size: 40%;
+        background-color: @''${BUTTON_COLOR:-magenta};
         border-radius: ''${ACTIVE_RADIUS}px;
+        padding-bottom: ''${HOVER_TEXT_OFFSET}px;
         animation: gradient_f 20s ease-in infinite;
         transition: all 0.3s cubic-bezier(.55,0.0,.28,1.682);
         /* default margin rule (excluding ends) */
@@ -202,6 +171,7 @@ in
       }
 
       #lock {
+        border-radius: ''${BUTTON_RADIUS}px 0 0 ''${BUTTON_RADIUS}px;
         margin: ''${MARGIN}px 0 ''${MARGIN}px ''${MARGIN}px;
       }
 
@@ -211,6 +181,7 @@ in
       }
 
       #reboot {
+        border-radius: 0 ''${BUTTON_RADIUS}px ''${BUTTON_RADIUS}px 0;
         margin: ''${MARGIN}px ''${MARGIN}px ''${MARGIN}px 0;
       }
     '';

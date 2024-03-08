@@ -22,6 +22,39 @@ let
   serviceRestart = pkgs.writeShellScriptBin service-restart-command ''
         ${pkgs.systemd}/bin/systemctl list-units --type=service --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
   '';
+  wlogout-command = "wlogout-wrapped";
+  wlogoutWrapped = pkgs.writeShellScriptBin wlogout-command ''
+    ${pkgs.procps}/bin/pgrep -x "wlogout" > /dev/null && ${pkgs.procps}/bin/pkill -x "wlogout" && exit 0
+    export LAYOUT="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/layout"
+    export STYLE="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/style.css"
+
+    export SCREEN_HEIGHT=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .height')
+    export SCREEN_WIDTH=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .width')
+    export SCREEN_SCALE=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .scale' | ${pkgs.gnused}/bin/sed 's/\.//')
+
+    # Calculate as percentages of screen height
+    export MARGIN=$((SCREEN_HEIGHT * 40 / SCREEN_SCALE))
+    export TEXT_OFFSET=$((SCREEN_HEIGHT * 8 / SCREEN_SCALE))
+    export HOVER=$((SCREEN_HEIGHT * 35 / SCREEN_SCALE))
+    export HOVER_TEXT_OFFSET=$((SCREEN_HEIGHT * 124 / SCREEN_SCALE / 10))
+
+    export FONT_SIZE=$((SCREEN_HEIGHT * 3 / 100))
+
+    export BORDER=12 # or 10, arbitrary preference
+    export ACTIVE_RADIUS=$((BORDER * 5))
+    export BUTTON_RADIUS=$((BORDER * 8))
+
+    export BUTTON_COLOR=''${1:-magenta}
+
+    ${pkgs.wlogout}/bin/wlogout \
+      --buttons-per-row 4 \
+      --column-spacing 0 \
+      --row-spacing 0 \
+      --margin 0 \
+      --layout $LAYOUT \
+      --css <(${pkgs.envsubst}/bin/envsubst < $STYLE) \
+      --protocol layer-shell
+  '';
 in
 {
   # This is only here because I want to share the package override with a keybinding
@@ -185,8 +218,9 @@ in
         ", Print, exec, ${flameshotGrim}/bin/flameshot gui"
 
         # Session helpers
-        "$modShift, p, exec, ${pkgs.swaylock-effects}/bin/swaylock"
-        "$modShift, e, exec, ${pkgs.hyprland}/bin/hyprctl dispatch exit"
+        "$modShift, p, exec, ${pkgs.systemd}/bin/loginctl lock-session"
+        "$modShift, e, exec, ${wlogoutWrapped}/bin/${wlogout-command}"
+
         "$modShift, r, exec, ${serviceRestart}/bin/${service-restart-command}"
       ];
       bindle = [

@@ -263,14 +263,13 @@ in
     ];
     configPackages = [ pkgs.hyprland ];
   };
-  # Mako is a DBUS-activated desktop notifications daemon for wayland
-  services.mako = {
-    enable = true;
-  };
-  systemd.user.services.mako = {
+  systemd.user.services.swaync = {
     Unit = {
-      Description = "Mako notification daemon";
+      Description = "GTK-based wayland notification daemon";
+      Documentation = "man:swaync(1)";
       PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+      ConditionEnvironment = [ "WAYLAND_DISPLAY" ];
     };
     Install = {
       WantedBy = [ "hyprland-session.target" ];
@@ -278,9 +277,9 @@ in
     Service = {
       Type = "dbus";
       BusName = "org.freedesktop.Notifications";
-      ExecStart = "${pkgs.mako}/bin/mako";
-      RestartSec = 5;
-      Restart = "always";
+      ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
+      ExecReload = "${pkgs.swaynotificationcenter}/bin/swaync-client --reload-config ; ${pkgs.swaynotificationcenter}/bin/swaync-client  --reload-css";
+      Restart = "on-failure";
     };
   };
   systemd.user.services.plugged_in_suspend_inhibitor = {
@@ -679,5 +678,6 @@ in
     gnome3.adwaita-icon-theme
     libadwaita
     networkmanagerapplet
+    libnotify
   ];
 }

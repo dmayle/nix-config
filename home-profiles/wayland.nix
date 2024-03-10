@@ -129,14 +129,19 @@ in
       @define-color cyan #2aa198;
       @define-color green #859900;
 
+      @define-color button-text @base3;
+      @define-color button-background @base1;
+      @define-color button-background-focused @base01;
+      @define-color button-background-hover @''${BUTTON_COLOR:-magenta};
+
       window {
         background-color: rgba(0, 0, 0, 0);
       }
 
       button {
         font-family: 'Material Symbols Outlined';
-        color: @base3;
-        background-color: @base1;
+        color: @button-text;
+        background-color: @button-background;
         outline-style: none;
         border: none;
         border-width: 0;
@@ -152,11 +157,11 @@ in
       }
 
       button:focus {
-        background-color: @base01;
+        background-color: @button-background-focused;
       }
 
       button:hover {
-        background-color: @''${BUTTON_COLOR:-magenta};
+        background-color: @button-background-hover;
         border-radius: ''${ACTIVE_RADIUS}px;
         padding-bottom: ''${HOVER_TEXT_OFFSET}px;
         animation: gradient_f 20s ease-in infinite;

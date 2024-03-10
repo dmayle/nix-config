@@ -199,6 +199,9 @@ in
         "$modShift, k, hy3:movewindow, u"
         "$modShift, l, hy3:movewindow, r"
 
+        # Show notifications
+        "$modShift, n, exec, ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw"
+
         # Scratchpad
         "$mod, minus, togglespecialworkspace, magic"
 

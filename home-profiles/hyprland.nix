@@ -73,13 +73,12 @@ in
   gtk = {
     enable = true;
     theme = {
-      package = pkgs.flat-remix-gtk;
-      name = "Adwaita";
-      #name = "Flat-Remix-GTK-Grey-Darkest";
+      package = pkgs.numix-solarized-gtk-theme;
+      name = "NumixSolarizedLightMagenta";
     };
     iconTheme = {
-      package = pkgs.gnome.adwaita-icon-theme;
-      name = "Adwaita";
+      package = pkgs.numix-icon-theme;
+      name = "Numix";
     };
     font = {
       name = "Sans";

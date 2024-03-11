@@ -130,7 +130,7 @@ in
       @define-color green #859900;
 
       @define-color button-text @base3;
-      @define-color button-background @base1;
+      @define-color button-background @base03;
       @define-color button-background-focused @base01;
       @define-color button-background-hover @''${BUTTON_COLOR:-magenta};
 
@@ -227,7 +227,6 @@ in
     };
     settings."org/gnome/desktop/interface" = {
       color-scheme = "prefer-light";
-      gtk-theme = "Adwaita";
     };
   };
   services.swayosd = {
@@ -680,8 +679,7 @@ in
     xorg.xhost
     xdg-utils
     glib
-    gnome3.adwaita-icon-theme
-    libadwaita
+    numix-solarized-gtk-theme
     networkmanagerapplet
     libnotify
   ];

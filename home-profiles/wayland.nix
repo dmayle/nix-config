@@ -440,44 +440,6 @@ in
       }
     ];
     style = ''
-      @keyframes blink-warning {
-          70% {
-              color: @base2;
-          }
-          to {
-              color: @base2;
-              background-color: @magenta;
-          }
-      }
-      @keyframes blink-critical {
-          70% {
-              color: @base2;
-          }
-          to {
-              color: @base2;
-              background-color: @red;
-          }
-      }
-      @keyframes battery-blink-warning {
-          70% {
-              color: @magenta;
-              background-color: @magenta;
-          }
-          to {
-              color: @base3;
-              background-color: @magenta;
-          }
-      }
-      @keyframes battery-blink-critical {
-          70% {
-              color: @base3;
-              background-color: @magenta;
-          }
-          to {
-              color: @base3;
-              background-color: @red;
-          }
-      }
       /* Solarized */
       @define-color base03 #002b36;
       @define-color base02 #073642;
@@ -665,6 +627,44 @@ in
           font-size: 38px;
           color: @yellow;
           background: @base03;
+      }
+      @keyframes blink-warning {
+          70% {
+              color: @base2;
+          }
+          to {
+              color: @base2;
+              background-color: @magenta;
+          }
+      }
+      @keyframes blink-critical {
+          70% {
+              color: @base2;
+          }
+          to {
+              color: @base2;
+              background-color: @red;
+          }
+      }
+      @keyframes battery-blink-warning {
+          70% {
+              color: @magenta;
+              background-color: @magenta;
+          }
+          to {
+              color: @base3;
+              background-color: @magenta;
+          }
+      }
+      @keyframes battery-blink-critical {
+          70% {
+              color: @base3;
+              background-color: @magenta;
+          }
+          to {
+              color: @base3;
+              background-color: @red;
+          }
       }
     '';
   };

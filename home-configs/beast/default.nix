@@ -9,6 +9,7 @@
     homeManagerProfiles.jupyterlab
     homeManagerProfiles.neovim
     #homeManagerProfiles.syncthing
+    homeManagerProfiles.swaync
     homeManagerProfiles.tmux
     homeManagerProfiles.wayland
   ];

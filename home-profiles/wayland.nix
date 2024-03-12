@@ -284,25 +284,6 @@ in
     ];
     configPackages = [ pkgs.hyprland ];
   };
-  systemd.user.services.swaync = {
-    Unit = {
-      Description = "GTK-based wayland notification daemon";
-      Documentation = "man:swaync(1)";
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-      ConditionEnvironment = [ "WAYLAND_DISPLAY" ];
-    };
-    Install = {
-      WantedBy = [ "hyprland-session.target" ];
-    };
-    Service = {
-      Type = "dbus";
-      BusName = "org.freedesktop.Notifications";
-      ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
-      ExecReload = "${pkgs.swaynotificationcenter}/bin/swaync-client --reload-config ; ${pkgs.swaynotificationcenter}/bin/swaync-client  --reload-css";
-      Restart = "on-failure";
-    };
-  };
   systemd.user.services.plugged_in_suspend_inhibitor = {
     Service = {
       ExecStart = "systemd-inhibit sleep infinity";

@@ -245,11 +245,17 @@ in
       color-scheme = "prefer-light";
     };
   };
+
+  # SwayOSD shows volume notifications and caps lock changes
   services.swayosd = {
     package = swayosdUpdated;
     enable = true;
     topMargin = 0.5;
   };
+
+  # Since the rest of the display is Solarized Light, I want SwayOSD Dark for contrast
+  systemd.user.services.swayosd.Unit.Environment = [ "GTK_THEME=NumixSolarizedDarkMagenta" ];
+
   services.kanshi = {
     enable = true;
     systemdTarget = "hyprland-session.target";

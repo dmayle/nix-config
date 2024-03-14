@@ -5,9 +5,8 @@
     # 3D Modeling software
     openscad
 
-    # 3D slizing software
+    # 3D slicing software
     cura
-    super-slicer-latest
     prusa-slicer
   ];
 }

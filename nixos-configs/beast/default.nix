@@ -36,8 +36,7 @@
   # support for wayland
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
-    # Production version is newer than beta as of 03/01/2024
-    package = config.boot.kernelPackages.nvidiaPackages.production;
+    package = config.boot.kernelPackages.nvidiaPackages.latest;
     powerManagement.enable = true;
     powerManagement.finegrained = false;
     modesetting.enable = true;

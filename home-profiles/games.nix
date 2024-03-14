@@ -3,7 +3,6 @@
 {
   home.packages = with pkgs; [
     joycond-cemuhook
-    yuzu-ea
     ryujinx
     (lutris.override {
       extraLibraries = pkgs: [

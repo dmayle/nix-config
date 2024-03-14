@@ -5,6 +5,7 @@
   # by this flake
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    systems.url = "github:nix-systems/default";
     nixgl = {
       url = "github:guibou/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,6 +23,7 @@
     };
     flake-utils = {
       url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
     };
     nixpkgs-lib = {
       url = "github:nix-community/nixpkgs.lib";
@@ -31,11 +33,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland = {
-      url = "github:hyprwm/Hyprland?ref=v0.35.0";
+      url = "github:hyprwm/Hyprland?ref=v0.36.0";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems";
     };
     hy3 = {
-      url = "github:outfoxxed/hy3?ref=hl0.35.0";
+      url = "github:outfoxxed/hy3?ref=hl0.36.0";
       inputs.hyprland.follows = "hyprland";
     };
     nix-colors = {

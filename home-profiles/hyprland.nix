@@ -1,5 +1,6 @@
 { config, pkgs, lib, inputs, ... }:
 let
+  hyprlandPackage = inputs.hyprland.packages.x86_64-linux.hyprland;
   # This is just a default background image for the lock screen
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
@@ -28,9 +29,9 @@ let
     export LAYOUT="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/layout"
     export STYLE="''${XDG_CONFIG_HOME:-$HOME/.config}/wlogout/style.css"
 
-    export SCREEN_HEIGHT=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .height')
-    export SCREEN_WIDTH=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .width')
-    export SCREEN_SCALE=$(${pkgs.hyprland}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .scale' | ${pkgs.gnused}/bin/sed 's/\.//')
+    export SCREEN_HEIGHT=$(${hyprlandPackage}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .height')
+    export SCREEN_WIDTH=$(${hyprlandPackage}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .width')
+    export SCREEN_SCALE=$(${hyprlandPackage}/bin/hyprctl -j monitors | ${pkgs.jq}/bin/jq '.[] | select(.focused==true) | .scale' | ${pkgs.gnused}/bin/sed 's/\.//')
 
     # Calculate as percentages of screen height
     export MARGIN=$((SCREEN_HEIGHT * 40 / SCREEN_SCALE))
@@ -108,7 +109,7 @@ in
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.x86_64-linux.hyprland;
+    package = hyprlandPackage;
     systemd.enable = true;
     plugins = [ inputs.hy3.packages.x86_64-linux.hy3 ];
     extraConfig = ''

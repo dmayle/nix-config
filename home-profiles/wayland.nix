@@ -1,5 +1,7 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 let
+  hyprlandPackage = inputs.hyprland.packages.x86_64-linux.hyprland;
+  hyprlandPortal = inputs.hyprland.packages.x86_64-linux.xdg-desktop-portal-hyprland;
   # This is just a default background image for the lock screen
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
@@ -40,8 +42,8 @@ in
 
       listener {
         timeout = 240 # seconds (4 minutes)
-        on-timeout # ${pkgs.hyprland}/bin/hyprctl dispatch dpms off
-        on-resume # ${pkgs.hyprland}/bin/hyprctl dispatch dpms on
+        on-timeout # ${hyprlandPackage}/bin/hyprctl dispatch dpms off
+        on-resume # ${hyprlandPackage}/bin/hyprctl dispatch dpms on
       }
     '';
   };
@@ -56,12 +58,12 @@ in
   #   enable = true;
   #   # events = [
   #   #   { event = "before-sleep"; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
-  #   #   { event = "after-resume"; command = "${pkgs.hyprland}/bin/hyprctl 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+  #   #   { event = "after-resume"; command = "${hyprlandPackage}/bin/hyprctl 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
   #   #   { event = "lock"; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
   #   # ];
   #   # timeouts = [
-  #   #   { timeout = 600; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${pkgs.hyprland}/bin/hyprctl 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
-  #   #   { timeout = 900; command = "${pkgs.hyprland}/bin/hyprctl 'output * dpms off'"; }
+  #   #   { timeout = 600; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${hyprlandPackage}/bin/hyprctl 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+  #   #   { timeout = 900; command = "${hyprlandPackage}/bin/hyprctl 'output * dpms off'"; }
   #   # ];
   #   # extraArgs = [
   #   #   "idlehint 300"
@@ -100,7 +102,7 @@ in
       }
       {
         label = "logout";
-        action = "${pkgs.hyprland}/bin/hyprctl dispatch exit";
+        action = "${hyprlandPackage}/bin/hyprctl dispatch exit";
         # Material design icon text name
         text = "logout";
         keybind = "l";
@@ -286,9 +288,9 @@ in
     xdgOpenUsePortal = true;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      xdg-desktop-portal-hyprland
+      hyprlandPortal
     ];
-    configPackages = [ pkgs.hyprland ];
+    configPackages = [ hyprlandPackage ];
   };
   systemd.user.services.plugged_in_suspend_inhibitor = {
     Service = {
@@ -393,8 +395,8 @@ in
           all-outputs = false;
           disable-scroll = false;
           format = "{icon}";
-          on-scroll-up = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e+1";
-          on-scroll-down = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e-1";
+          on-scroll-up = "${hyprlandPackage}/bin/hyprctl dispatch workspace e+1";
+          on-scroll-down = "${hyprlandPackage}/bin/hyprctl dispatch workspace e-1";
         };
         "pulseaudio" = {
           scroll-step = 2;

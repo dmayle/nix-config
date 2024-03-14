@@ -83,7 +83,7 @@ in
     };
     font = {
       name = "Sans";
-      size = 11;
+      size = 24;
     };
   };
 
@@ -119,7 +119,7 @@ in
         "${pkgs.systemd}/bin/systemctl --user import-environment"
       ];
       "$terminal" = "${pkgs.kitty}/bin/kitty";
-      "$fileManager" = "${pkgs.libsForQt5.dolphin}/bin/dolphin";
+      "$fileManager" = "${pkgs.rox-filer}/bin/rox";
       "$menu" = "${pkgs.fuzzel}/bin/fuzzel";
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
@@ -198,6 +198,9 @@ in
         "$modShift, j, hy3:movewindow, d"
         "$modShift, k, hy3:movewindow, u"
         "$modShift, l, hy3:movewindow, r"
+
+        # Open file manager
+        "$mod, t, exec, $fileManager"
 
         # Show notifications
         "$modShift, n, exec, ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw"

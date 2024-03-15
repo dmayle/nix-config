@@ -83,8 +83,11 @@ in
     };
     font = {
       name = "Sans";
-      size = 24;
+      size = 13;
     };
+    gtk3.extraCss = ''
+      .thunar { font-size: 18pt; }
+    '';
   };
 
   programs.fuzzel = {
@@ -119,7 +122,7 @@ in
         "${pkgs.systemd}/bin/systemctl --user import-environment"
       ];
       "$terminal" = "${pkgs.kitty}/bin/kitty";
-      "$fileManager" = "${pkgs.rox-filer}/bin/rox";
+      "$fileManager" = "${pkgs.xfce.thunar}/bin/thunar";
       "$menu" = "${pkgs.fuzzel}/bin/fuzzel";
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
@@ -276,5 +279,6 @@ in
 
   home.packages = with pkgs; [
     dolphin
+    xfce.thunar
   ];
 }

@@ -7,22 +7,6 @@ let
     url = "https://i.imgur.com/4Xqpx6R.png";
     sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
   };
-  swayosdUpdated = pkgs.swayosd.overrideAttrs (oldAttrs: rec {
-    pname = "swayosd";
-    version = "unstable-2024-03-10";
-    src = pkgs.fetchFromGitHub {
-      owner = "ErikReider";
-      repo = "SwayOSD";
-      rev = "a0709bcd89d6ca19889486972bac35e69f1fa8e4";
-      sha256 = "sha256-3NJHZv4Ed7haUUmE9JV9Yl4rRnJlPqQFv53Xuw0q+IY=";
-    };
-    cargoDeps = pkgs.rustPlatform.fetchCargoTarball {
-      inherit src;
-      name = "${pname}-${version}";
-      sha256 = "sha256-2/ssRBk4vpk9kRhPRsQKHCRC3VHOCKQe3HGj06XfUvQ=";
-    };
-    buildInputs = oldAttrs.buildInputs ++ [ pkgs.sassc ];
-  });
 in
 {
   # Test hypridle / hyprlock config
@@ -247,16 +231,6 @@ in
       color-scheme = "prefer-light";
     };
   };
-
-  # SwayOSD shows volume notifications and caps lock changes
-  services.swayosd = {
-    package = swayosdUpdated;
-    enable = true;
-    topMargin = 0.5;
-  };
-
-  # Since the rest of the display is Solarized Light, I want SwayOSD Dark for contrast
-  systemd.user.services.swayosd.Unit.Environment = [ "GTK_THEME=NumixSolarizedDarkMagenta" ];
 
   services.kanshi = {
     enable = true;

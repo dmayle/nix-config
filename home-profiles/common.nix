@@ -46,6 +46,15 @@
     };
   };
 
+  # I want less to use case-insensitive search by default
+  programs.less = {
+    enable = true;
+    keys = ''
+      #env
+      LESS = -i -R
+    '';
+  };
+
   home.packages = with pkgs; [
     # Basic utilities
     file
@@ -54,6 +63,7 @@
 
     # Usefull process tool
     killall
+
     # Try out obsidian notes
     #obsidian
 

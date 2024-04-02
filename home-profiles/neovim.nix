@@ -509,11 +509,89 @@ in
       })
 
       autocmd({ 'FileType' }, {
+        desc = "Use 80-column lines for some file types",
         group = filesettings,
         pattern = { "mail", "text", "vim", "c", "cpp", "nix" },
-        desc = "Use 80-column lines for some file types",
         callback = function()
           vim.opt_local.textwidth = 80
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Fix the comment handling, which is set to c-style by default",
+        group = filesettings,
+        pattern = "puppet",
+        callback = function()
+          vim.opt_local.commentstring = "# %s"
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Standard GO tab settings (tabs, not spaces)",
+        group = filesettings,
+        pattern = "go",
+        callback = function()
+          vim.opt_local.tabstop = 4
+          vim.opt_local.tabstop = 4
+          vim.opt_local.expandtab = false
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Help files are both text and help, triggering spellchecking, \z
+                so we manually disable it for them",
+        group = filesettings,
+        pattern = "help",
+        callback = function()
+          vim.opt_local.spell = false
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Don't hide markdown punctuation",
+        group = filesettings,
+        pattern = "markdown",
+        callback = function()
+          vim.opt_local.conceallevel = 0
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Teach vim-commentary about nasm comments",
+        group = filesettings,
+        pattern = "asm",
+        callback = function()
+          vim.opt_local.commentstring = "; %s"
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Ensure that we autowrap git commits to 72 characters, per \z
+                tpope's guidelines for good git comments.",
+        group = filesettings,
+        pattern = "gitcommit",
+        callback = function()
+          vim.opt_local.textwidth = 72
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "I use 100-column lines in Java files",
+        group = filesettings,
+        pattern = "java",
+        callback = function()
+          vim.opt_local.textwidth = 100
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Change line continuation rules for Java. j1 is for Java \z
+                anonymous classes, +2s says indent 2xshiftwidth on line \z
+                continuations.",
+        group = filesettings,
+        pattern = "java",
+        callback = function()
+          vim.opt_local.cinoptions = "j1,+2s"
         end,
       })
     '';

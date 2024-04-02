@@ -304,6 +304,13 @@ in
     ];
 
     extraLuaConfig = ''
+      -- -----------------------------------------------------------------------
+      -- LOCAL NAMESPACE VARIABLES
+      -- -----------------------------------------------------------------------
+      local augroup = vim.api.nvim_create_augroup
+      local autocmd = vim.api.nvim_create_autocmd
+      local keymap = vim.keymap.set
+
       -- Lua table of options which will be set directly into vim options
       local options = {
         -- ---------------------------------------------------------------------
@@ -438,19 +445,83 @@ in
       -- made into vim. Normally I should check the return value here, but
       -- I don't know what I would do if it fails...
       pcall(vim.cmd, "colorscheme NeoSolarized")
+
+      -- -----------------------------------------------------------------------
+      -- AUTOCOMMAND GROUPS
+      -- -----------------------------------------------------------------------
+      local clear = { clear = true }
+      local visualchars = augroup('VisualChars', clear)
+      local filesettings = augroup('FileSettings', clear)
+      local codfmtsettings = augroup('codfmtsettings', clear)
+      local nvimtree = augroup('NvimTree', clear)
+      local coloring = augroup('Coloring', clear)
+      local linenumbers = augroup('LineNumbers', clear)
+      local lspconfig = augroup('LSPConfig', clear)
+
+      -- -----------------------------------------------------------------------
+      -- AUTOCOMMANDS
+      -- -----------------------------------------------------------------------
+      -- VISUAL CHARACTERS
+      -- -----------------------------------------------------------------------
+
+      autocmd({ 'FileType' }, {
+        desc = "Use visual characters to show tab and trailing whitespace",
+        group = visualchars,
+        callback = function()
+          vim.opt.listchars = { tab = "▸ ", trail = "☐" }
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Use visual characters specific to go language",
+        group = visualchars,
+        pattern = "go",
+        callback = function()
+          vim.opt.listchars = { tab = "| ", trail = "☐" }
+        end,
+      })
+
+      -- -----------------------------------------------------------------------
+      -- FILETYPE SETTINGS
+      -- -----------------------------------------------------------------------
+
+      autocmd({ 'FileType' }, {
+        desc = "Set up default spacing and tabs for a few filetypes.  I've \z
+                left off Go, since the filetype plugin handles it for me.",
+        group = filesettings,
+        pattern = { "mail", "text", "python", "gitcommit", "c", "cpp", "java",
+                    "sh", "vim", "puppet", "xml", "json", "javascript", "html",
+                    "yaml", "dart" },
+        callback = function()
+          vim.opt_local.tabstop = 8
+          vim.opt_local.shiftwidth = 2
+          vim.opt_local.expandtab = true
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Turn on spellchecking for some filetypes",
+        group = filesettings,
+        pattern = { "mail", "text", "python", "gitcommit", "c", "cpp" },
+        callback = function()
+          vim.opt_local.spell = true
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        group = filesettings,
+        pattern = { "mail", "text", "vim", "c", "cpp", "nix" },
+        desc = "Use 80-column lines for some file types",
+        callback = function()
+          vim.opt_local.textwidth = 80
+        end,
+      })
     '';
     extraConfig = ''
       " VimScript Reminders:
       " 1) All autocommands should be in autogroups
       " 2) All functions should be prefixed with 's:' but use '<SID>' when
       "    calling from mappings or commands
-
-      " Set visual characters for tabs and trailing whitespace.
-      augroup VisualChars
-        au!
-        autocmd FileType * set listchars=tab:▸\ ,trail:☐
-        autocmd FileType go set listchars=tab:\|\ ,trail:☐
-      augroup END
 
       " Make sure that trailing whitespace is Red
       match errorMsg /\s\+$/
@@ -614,46 +685,6 @@ in
 
       " Default to bash support in shell scripts
       let g:is_bash = 1
-
-      augroup PersonalFileTypeSettings
-        au!
-        " Set up default spacing and tabs for a few filetypes.  I've left off Go,
-        " since the filetype plugin handles it for me.
-        autocmd FileType mail,text,python,gitcommit,c,cpp,java,sh,vim,puppet,xml,json,javascript,html,yaml,dart setlocal tabstop=8 shiftwidth=2 expandtab
-
-        " Fix the comment handling, which is set to c-style by default
-        autocmd FileType puppet setlocal commentstring=#\ %s
-
-        " Standard GO tab settings (tabs, not spaces)
-        autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
-
-        " Turn on spellchecking in these file types.
-        autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
-
-        " Help files trigger the 'text' filetype autocommand, but we don't want
-        " spellchecking in the help buffer, so we manually disable it.
-        autocmd FileType help setlocal nospell
-
-        " Don't hide markdown punctuation
-        autocmd FileType markdown set conceallevel=0
-
-        " Teach vim-commentary about nasm comments
-        autocmd FileType asm set commentstring=;\ %s
-
-        " Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
-        " for good git comments.
-        autocmd FileType gitcommit setlocal textwidth=72
-
-        " I use 80-column lines in mail, plain text, C++ files, and my vimrc.
-        autocmd FileType mail,text,vim,cpp,c setlocal textwidth=80
-
-        " I use 100-column lines in Java files
-        autocmd FileType java setlocal textwidth=100
-
-        " Change line continuation rules for Java. j1 is for Java anonymous classes,
-        " +2s says indent 2xshiftwidth on line continuations.
-        autocmd FileType java setlocal cinoptions=j1,+2s
-      augroup END
 
       augroup codefmt_autoformat_settings
         au!

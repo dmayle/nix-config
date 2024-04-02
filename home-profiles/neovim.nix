@@ -311,6 +311,13 @@ in
       local autocmd = vim.api.nvim_create_autocmd
       local keymap = vim.keymap.set
 
+      -- -----------------------------------------------------------------------
+      -- DISABLE BUILTIN NETRW
+      -- -----------------------------------------------------------------------
+
+      vim.g.loaded_netrw = 1
+      vim.g.loaded_netrwPlugin = 1
+
       -- Lua table of options which will be set directly into vim options
       local options = {
         -- ---------------------------------------------------------------------
@@ -447,14 +454,25 @@ in
       pcall(vim.cmd, "colorscheme NeoSolarized")
 
       -- -----------------------------------------------------------------------
+      -- LOAD PLUGINS
+      -- -----------------------------------------------------------------------
+
+      require('nvim-tree').setup({
+        filters = {
+          custom = { '.git', '^bazel-.*$' }
+        }
+      })
+
+      require('colorizer').setup()
+      require('colorizer').attach_to_buffer(0)
+
+      -- -----------------------------------------------------------------------
       -- AUTOCOMMAND GROUPS
       -- -----------------------------------------------------------------------
       local clear = { clear = true }
       local visualchars = augroup('VisualChars', clear)
       local filesettings = augroup('FileSettings', clear)
-      local codfmtsettings = augroup('codfmtsettings', clear)
-      local nvimtree = augroup('NvimTree', clear)
-      local coloring = augroup('Coloring', clear)
+      local codefmtsettings = augroup('codefmtsettings', clear)
       local linenumbers = augroup('LineNumbers', clear)
       local lspconfig = augroup('LSPConfig', clear)
 
@@ -593,6 +611,83 @@ in
         callback = function()
           vim.opt_local.cinoptions = "j1,+2s"
         end,
+      })
+
+      -- -----------------------------------------------------------------------
+      -- CODEFORMAT SETTINGS (CURRENTLY UNUSED)
+      -- -----------------------------------------------------------------------
+
+      autocmd({ 'VimEnter' }, {
+        desc = "Activate Glaive",
+        group = codefmtsettings,
+        callback = function()
+          vim.cmd('Glaive codefmt plugin[mappings]')
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = "bzl",
+        callback = function() vim.cmd('AutoFormatBuffer buildifier') end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = { "c", "cpp", "proto", "javascript", "arduino" },
+        callback = function() vim.cmd('AutoFormatBuffer clang-format') end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = "dart",
+        callback = function() vim.cmd('AutoFormatBuffer dartfmt') end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = "go",
+        callback = function() vim.cmd('AutoFormatBuffer gofmt') end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = { "html", "css", "sass", "scss", "less", "json" },
+        callback = function() vim.cmd('AutoFormatBuffer js-beautify') end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = "java",
+        callback = function()
+          vim.cmd('AutoFormatBuffer google-java-format')
+        end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = "python",
+        callback = function() vim.cmd('AutoFormatBuffer yapf') end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = "rust",
+        callback = function() vim.cmd('AutoFormatBuffer rustfmt') end,
+      })
+
+      autocmd({ 'FileType' }, {
+        desc = "Configure codeformat for bazel build files",
+        group = codefmtsettings,
+        pattern = "vue",
+        callback = function() vim.cmd('AutoFormatBuffer prettier') end,
       })
     '';
     extraConfig = ''
@@ -764,22 +859,6 @@ in
       " Default to bash support in shell scripts
       let g:is_bash = 1
 
-      augroup codefmt_autoformat_settings
-        au!
-        autocmd VimEnter * Glaive codefmt plugin[mappings]
-        autocmd FileType bzl AutoFormatBuffer buildifier
-        autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-        autocmd FileType dart AutoFormatBuffer dartfmt
-        autocmd FileType go AutoFormatBuffer gofmt
-        autocmd FileType gn AutoFormatBuffer gn
-        autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-        autocmd FileType java AutoFormatBuffer google-java-format
-        autocmd FileType python AutoFormatBuffer yapf
-        " Alternative: autocmd FileType python AutoFormatBuffer autopep8
-        autocmd FileType rust AutoFormatBuffer rustfmt
-        autocmd FileType vue AutoFormatBuffer prettier
-      augroup END
-
       " #######################################################################
       " ****** PERSONAL SHORTCUTS (LEADER) ******
       " #######################################################################
@@ -883,28 +962,9 @@ in
         endif
       endfunction
 
-      function! s:InitNvimTree()
-        lua require'nvim-tree'.setup{ filters = { custom = { '.git', '^bazel-.*$' } } }
-      endfunction
-
-      augroup MyNvimTree
-        au!
-        autocmd VimEnter * call <SID>InitNvimTree()
-      augroup END
-
       " #######################################################################
       " ****** COLORING CONTENT ******
       " #######################################################################
-
-      function! s:InitColoring()
-        lua require'colorizer'.setup()
-        lua require'colorizer'.attach_to_buffer(0)
-      endfunction
-
-      augroup MyColoring
-        au!
-        autocmd VimEnter * call <SID>InitColoring()
-      augroup END
 
       " #######################################################################
       " ****** LINE NUMBERING ******

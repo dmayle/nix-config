@@ -310,6 +310,15 @@ in
       local augroup = vim.api.nvim_create_augroup
       local autocmd = vim.api.nvim_create_autocmd
       local keymap = vim.keymap.set
+      -- Accessor for libuv
+      local uv = vim.loop
+
+      -- We put hostname into these paths so that a home directory which is on
+      -- top of NFS and shared across hosts will not have conflicts
+      local host = uv.os_gethostname()
+      local homedir = os.getenv("HOME")
+      local backupdir = string.format("%s/.vimbak-$s", homedir, host)
+      local undodir = string.format("%s/.vimundo-$s", homedir, host)
 
       -- -----------------------------------------------------------------------
       -- DISABLE BUILTIN NETRW
@@ -419,6 +428,15 @@ in
         undolevels = 1000,
         undoreload = 10000,
 
+        -- Set directory for swap files
+        directory = backupdir,
+
+        -- Set directory for undo files
+        undodir = undodir,
+
+        -- Set directory for backup files
+        backupdir = backupdir,
+
         -- Set to only keep one (current) backup
         backup = true,
         writebackup = true,
@@ -452,6 +470,92 @@ in
       -- made into vim. Normally I should check the return value here, but
       -- I don't know what I would do if it fails...
       pcall(vim.cmd, "colorscheme NeoSolarized")
+
+      -- -----------------------------------------------------------------------
+      -- MKDIRP: UTILITY FOR RECURSIVE DIRECTORY CREATION
+      -- -----------------------------------------------------------------------
+
+      local isWindows
+      if _G.jit then
+        isWindows = _G.jit.os == "Windows"
+      else
+        isWindows = not not package.path:match("\\")
+      end
+
+      function dirparent(dir)
+        local sep
+        if isWindows then
+          sep = "\\"
+        else
+          sep = "/"
+        end
+        if not dir then
+          return sep
+        end
+        result, _ = string.gsub(dir, string.format("%s[^%s]*$", sep, sep), "")
+        return result
+      end
+
+      function mkdirp(path, mode, callback)
+        uv.fs_stat(backupdir, function(err, stat)
+          if not err then
+            if stat.type ~= "directory" then
+              err = string.format("Cannot create %s: File exists")
+              callback(err, nil)
+              return
+            end
+            -- Success!
+            callback(nil, true)
+            return
+          end
+          uv.fs_mkdir(path, mode, function(err, success)
+            if success or string.match(err, "^EEXIST:") then
+              -- Worked, or created during race, success!
+              callback(nil, true)
+              return
+            end
+            if string.match(err, "^ENOENT:") then
+              -- The containing directory (which mkdir uses) does not exist
+              mkdirp(dirparent(path), mode, function(err, success)
+                if success then
+                  -- Replay original dir creation once only
+                  uv.fs_mkdir(path, mode, function(err, success)
+                    if success or string.match(err, "^EEXIST:") then
+                      -- Worked, or created during race, success!
+                      callback(nil, true)
+                      return
+                    end
+                    -- Propagate any mkdir error
+                    callback(err, nil)
+                  end)
+                  return
+                end
+                -- Propagate error from creating parent directory
+                callback(err, nil)
+              end)
+              return
+            end
+            -- Propagate unknown mkdir error
+            callback(err, nil)
+          end)
+        end)
+      end
+
+      -- -----------------------------------------------------------------------
+      -- CREATE NECESSARY BACKUP/UNDO DIRECTORIES
+      -- -----------------------------------------------------------------------
+
+      mkdirp(backupdir, 448, function(err, success)
+        if not success then
+          print(string.format("Error creating backup directory: %s", err))
+        end
+      end)
+
+      mkdirp(undodir, 448, function(err, success)
+        if not success then
+          print(string.format("Error creating undo directory: %s", err))
+        end
+      end)
 
       -- -----------------------------------------------------------------------
       -- LOAD PLUGINS
@@ -711,30 +815,6 @@ in
       " #######################################################################
       " ****** BACKUP SETTINGS ******
       " #######################################################################
-
-      " Use backup settings safe for NFS userdir mounts
-      let $HOST=hostname()
-      let $MYBACKUPDIR=$HOME . '/.vimbak-' . $HOST
-      let $MYUNDODIR=$HOME . '/.vimundo-' . $HOST
-
-      if !isdirectory(fnameescape($MYBACKUPDIR))
-        silent! execute '!mkdir -p ' . shellescape($MYBACKUPDIR)
-        silent! execute '!chmod 700 ' . shellescape($MYBACKUPDIR)
-      endif
-
-      if !isdirectory(fnameescape($MYUNDODIR))
-        silent! execute '!mkdir -p ' . shellescape($MYUNDODIR)
-        silent! execute '!chmod 700 ' . shellescape($MYUNDODIR)
-      endif
-
-      " Set directory for swap files
-      set directory=$MYBACKUPDIR
-
-      " Set directory for undo files
-      set undodir=$MYUNDODIR
-
-      " Set directory for backup files
-      set backupdir=$MYBACKUPDIR
 
       " Sensible list of files we don't want backed up
       set backupskip=/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*

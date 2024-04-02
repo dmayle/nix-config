@@ -303,43 +303,147 @@ in
       completion-nvim
     ];
 
+    extraLuaConfig = ''
+      -- Lua table of options which will be set directly into vim options
+      local options = {
+        -- ---------------------------------------------------------------------
+        -- OVERALL SETTINGS
+        -- ---------------------------------------------------------------------
+
+        -- I don't want files overriding my settings
+        modelines = 0,
+
+        -- I don't like beeping
+        visualbell = true,
+
+        -- Enable 24-bit color support
+        termguicolors = true,
+
+        -- We want to use Solarized light, but setting colorscheme is not an
+        -- option, so that comes later
+        background = "light",
+
+        -- Always show available completion options, but selection must be
+        -- manual
+        completeopt = { "menuone", "noinsert", "noselect", "longest" },
+
+        -- Default to case insensitive searching
+        ignorecase = true,
+
+        -- Unless I use case in my search string, then case matters
+        smartcase = true,
+
+        -- I like to be able to occasionally use the mouse
+        mouse = "a",
+
+        -- My status bar shows vim modes
+        showmode = false,
+
+        -- Trying out an always on tabline
+        showtabline = 2,
+
+        -- Have splits appear "after" current buffer
+        splitright = true,
+        splitbelow = true,
+
+        -- Allow more-responsive async code (fire event 0.1s after typing stops)
+        updatetime = 100,
+
+        -- Trigger multi-key sequence 0.3s after typing stops
+        -- (instead of waiting for additional keys, defaults to 1s)
+        timeoutlen = 300,
+
+        -- Default to showing the current line (useful for long terminals)
+        cursorline = true,
+
+        -- Make sure there is always at least 3 lines of context on either side
+        -- of the cursor (above and below).
+        scrolloff = 3,
+
+        -- ---------------------------------------------------------------------
+        -- Filetype setting defaults below, overridden per-language
+        -- ---------------------------------------------------------------------
+
+        -- Indentation defaults, overridden per-language
+        autoindent = true,
+        cindent = false,
+        smartindent = false,
+
+        -- Unless I'm in go or a makefile, I never want tabs
+        expandtab = true,
+
+        -- Two spaces is reasonable for indent levels by default
+        tabstop = 2, -- treat tab characters as 2 spaces (rare, expandtab above)
+        shiftwidth  = 2, -- increase and decrease 2 spaces with tab key
+
+        -- Visual reminders of file width
+        colorcolumn = { "+1", "+21", "+41" },
+
+        -- Make tabs insert 'indents' when used at the beginning of the line
+        smarttab = true,
+
+        -- Keep unsaved files open with ther changes, even when switching buffers
+        hidden = true,
+
+        -- Show the length of the visual selection while making it
+        showcmd = true,
+
+        -- I speak english and french, but only turn on for certain filetypes
+        spelllang = { "en_us", "fr" },
+
+        -- Make backspace more powerful
+        backspace = { "indent", "eol", "start" },
+
+        -- I find it useful to have lots of command history
+        history = 1000,
+
+        -- When joining lines, don't insert unnecessary whitespace
+        joinspaces = false,
+
+        -- Save the current undo state between launches
+        undofile = true,
+        undolevels = 1000,
+        undoreload = 10000,
+
+        -- Set to only keep one (current) backup
+        backup = true,
+        writebackup = true,
+      }
+
+      for k, v in pairs(options) do
+        vim.opt[k] = v
+      end
+
+      -- -----------------------------------------------------------------------
+      -- MODIFY DEFAULT SETTINGS
+      -- -----------------------------------------------------------------------
+
+      -- Don't show useless match messages while matching
+      vim.opt.shortmess:append "c"
+
+      -- Have vim treat hyphen as part of character for word commands like "*"
+      vim.opt.iskeyword:append "-"
+
+      -- These are my format options, use :help fo-table to understand
+      vim.opt.formatoptions:append 'rcoqnl1j'
+
+      -- I prefer my diffs vertical for side-by-side comparison
+      vim.opt.diffopt:append "vertical"
+
+      -- -----------------------------------------------------------------------
+      -- ALL BETS ARE OFF
+      -- -----------------------------------------------------------------------
+
+      -- Setting colorscheme is not an option, it's a call that needs to be
+      -- made into vim. Normally I should check the return value here, but
+      -- I don't know what I would do if it fails...
+      pcall(vim.cmd, "colorscheme NeoSolarized")
+    '';
     extraConfig = ''
       " VimScript Reminders:
       " 1) All autocommands should be in autogroups
       " 2) All functions should be prefixed with 's:' but use '<SID>' when
       "    calling from mappings or commands
-
-      " #######################################################################
-      " ****** OVERALL SETTINGS ******
-      " #######################################################################
-
-      " I don't want files overriding my settings
-      set modelines=0
-
-      " I don't like beeping
-      set visualbell
-
-      " Enable 24-bit color support
-      set termguicolors
-
-      " I like to be able to occasionally use the mouse
-      set mouse=a
-
-      " Make sure we use Solarized light
-      set background=light
-      colorscheme NeoSolarized
-
-      " Allow more-responsive async code
-      set updatetime=100
-
-      " Always show available completion options, but selection must be manual
-      set completeopt=menuone,noinsert,noselect,longest
-
-      " Don't show useless match messages while matching
-      set shortmess+=c
-
-      " Visual reminders of file width
-      set colorcolumn=+1,+21,+41
 
       " Set visual characters for tabs and trailing whitespace.
       augroup VisualChars
@@ -351,13 +455,6 @@ in
       " Make sure that trailing whitespace is Red
       match errorMsg /\s\+$/
 
-      " Make sure there is always at least 3 lines of context on either side of
-      " the cursor (above and below).
-      set scrolloff=3
-
-      " These are my format options, use :help fo-table to understand
-      set formatoptions+=rcoqnl1j
-
       " Make Y yank to the end of line, similar to D and C
       nnoremap Y y$
 
@@ -366,46 +463,6 @@ in
 
       " Add an insert mode mapping to reflow the current line.
       inoremap <C-G>q <C-O>gqq<C-O>A
-
-      " I prefer my diffs vertical for side-by-side comparison
-      set diffopt+=vertical
-
-      " Default to case insensitive searching
-      set ignorecase
-
-      " Unless I use case in my search string, then case matters
-      set smartcase
-
-      " Keep unsaved files open with ther changes, even when switching buffers
-      set hidden
-
-      " Show the length of the visual selection while making it
-      set showcmd
-
-      " I speak english and french
-      " set spell
-      set spelllang=en_us,fr
-
-      " Make backspace more powerful
-      set backspace=indent,eol,start
-
-      " Make tabs insert 'indents' when used at the beginning of the line
-      set smarttab
-
-      " Reasonable defaults for indentation
-      set autoindent nocindent nosmartindent
-
-      " Default to showing the current line (useful for long terminals)
-      set cursorline
-
-      " I find it useful to have lots of command history
-      set history=1000
-
-      " When joining lines, don't insert unnecessary whitespace
-      set nojoinspaces
-
-      " Have splits appear "after" current buffer
-      set splitright splitbelow
 
       " #######################################################################
       " ****** BACKUP SETTINGS ******
@@ -431,14 +488,6 @@ in
 
       " Set directory for undo files
       set undodir=$MYUNDODIR
-
-      " Save the current undo state between launches
-      set undofile
-      set undolevels=1000
-      set undoreload=10000
-
-      " Set to only keep one (current) backup
-      set backup writebackup
 
       " Set directory for backup files
       set backupdir=$MYBACKUPDIR
@@ -757,7 +806,7 @@ in
       " focused in another buffer, we use standard numbering.
 
       function! s:InitLineNumbering()
-        " Keep track of current window, since 'windo' chances current window
+        " Keep track of current window, since 'windo' changes current window
         let l:my_window = winnr()
 
         " Global line number settings

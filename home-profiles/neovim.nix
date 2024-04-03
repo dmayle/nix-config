@@ -801,6 +801,78 @@ in
 
       -- Add an insert mode mapping to reflow the current line.
       keymap("i", "<C-G>q", "<C-O>gqq<C-O>A", opts)
+
+      -- -----------------------------------------------------------------------
+      -- PERSONAL SHORTCUTS (LEADER)
+      -- -----------------------------------------------------------------------
+
+      keymap("", "<Space>", "<Nop>", opts)
+      vim.g.mapleader = ' '
+      vim.g.maplocalleader = ' '
+
+      -- Searches
+      keymap("n", "<leader><space>", ":GFiles<CR>", opts)
+      keymap("n", "<leader>ff", ":Rg<CR>", opts)
+      -- inoremap <expr> <c-x><c-f> fzf#vim#complete#path(
+      --   \ "find . -path '*/\.*' -prune -o print \| sed '1d;s:%..::'",
+      --   \ fzf#wrap({'dir': expand('%:p:h')}))
+
+      -- Load Git UI
+      keymap("n", "<leader>gg", ":G<CR>", opts)
+
+      -- When copying from the buffer in tmux, we wan't to get rid of visual
+      -- aids like indent lines, line numbering, gutter
+      function ToggleScreenMess()
+        if string.lower(vim.o.signcolumn) == "auto" then
+          vim.opt.number = false
+          vim.opt.list = false
+          vim.opt.relativenumber = false
+          vim.o.signcolumn = "no"
+          require('ibl').update { enabled = false }
+        else
+          vim.opt.number = true
+          vim.opt.list = true
+          vim.opt_local.relativenumber = false
+          vim.o.signcolumn = "auto"
+          require('ibl').update { enabled = true }
+        end
+      end
+      keymap("n", "<leader>sc", "", {
+        noremap = true,
+        silent = true,
+        callback = function(map) ToggleScreenMess() end,
+      })
+
+      -- replace the current buffer (delete) with bufexplorer
+      --nnoremap <silent> <leader>bd :call <SID>BufDelete()<cr>
+
+      -- Jump in and out of nvim tree
+      keymap("n", "<leader>nt", "", {
+        noremap = true,
+        silent = true,
+        callback = function(map)
+          require('nvim-tree.api').tree.toggle()
+        end,
+      })
+      keymap("n", "<leader>nf", "", {
+        noremap = true,
+        silent = true,
+        callback = function(map)
+          require('nvim-tree.api').tree.find_file {
+            open = true,
+            focus = true,
+            update_root = true,
+          }
+        end,
+      })
+      keymap("n", "<leader>nn", "", {
+        noremap = true,
+        silent = true,
+        callback = function(map)
+          require('nvim-tree.api').tree.focus()
+        end,
+      })
+
     '';
     extraConfig = ''
       " VimScript Reminders:
@@ -811,10 +883,6 @@ in
       " #######################################################################
       " ****** PLUGIN SETTINGS ******
       " #######################################################################
-
-      " %%%%%%%%%% Indent Blankline %%%%%%%%%%
-      " Enable treesitter support
-      let g:indent_blankline_use_treesitter = v:true
 
       " %%%%% GutenTags %%%%%
       " Explanaiton of all this at https://www.reddit.com/r/vim/comments/d77t6j
@@ -938,29 +1006,6 @@ in
       " #######################################################################
       " ****** PERSONAL FUNCTIONS ******
       " #######################################################################
-
-      function! s:TogglePaste()
-        if &paste
-          set nopaste
-        else
-          set paste
-        endif
-      endfunction
-
-      " When copying from the buffer in tmux, we wan't to get rid of visual
-      " aids like indent lines, line numbering, gutter
-      function! s:ToggleScreenMess()
-        if &signcolumn ==? "auto"
-          " Turn off
-          set nonumber nolist norelativenumber signcolumn=no
-          exe 'IndentBlanklineDisable'
-        else
-          " Turn on
-          set number list signcolumn=auto
-          setlocal relativenumber
-          exe 'IndentBlanklineEnable'
-        endif
-      endfunction
 
       " Function so that we can push directly from Fugitive git index
       function! s:GitPushAndClose()

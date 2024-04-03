@@ -100,6 +100,17 @@ in
   xdg.configFile."nvim/spell/fr.latin1.spl".source = nvim-spell-fr-latin1-dictionary;
   xdg.configFile."nvim/spell/fr.latin1.sug".source = nvim-spell-fr-latin1-suggestions;
 
+  # LSP language servers I use
+  home.packages = with pkgs; [
+    lua-language-server
+    nil
+    nodePackages.yaml-language-server
+    nodePackages.vim-language-server
+    nodePackages.bash-language-server
+    nodePackages.pyright
+    gopls
+  ];
+
   programs.neovim = {
     enable = true;
     # withPython = false;
@@ -136,9 +147,6 @@ in
 
       # Start using treesitter
       nvim-treesitter
-
-      # Automate the update and connection of tags files
-      vim-gutentags
 
       # Ensure increment operator (Ctrl-A, Ctrl-X) works in visual/block mode
       vim-visual-increment
@@ -254,7 +262,17 @@ in
       nvim-lspconfig
 
       # Lightweight autocompletion
-      completion-nvim
+      luasnip
+      nvim-cmp
+      cmp_luasnip
+      cmp-vim-lsp
+      cmp-buffer
+      cmp-path
+      cmp-cmdline
+      cmp-treesitter
+      cmp-tmux
+      cmp-spell
+      #completion-nvim
     ];
 
     extraLuaConfig = ''
@@ -539,7 +557,7 @@ in
       local filesettings = augroup('FileSettings', clear)
       local codefmtsettings = augroup('codefmtsettings', clear)
       local linenumbers = augroup('LineNumbers', clear)
-      local lspconfig = augroup('LSPConfig', clear)
+      local lspconfiggroup = augroup('LSPConfig', clear)
 
       -- -----------------------------------------------------------------------
       -- AUTOCOMMANDS
@@ -873,6 +891,110 @@ in
         end,
       })
 
+      -- (C)reate (F)ile under cursor (for when `gf` doesn't work)
+      --nnoremap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
+
+      -- base64 encode encode and decode visual selection
+      --vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
+      --vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
+
+      -- Push and close git interface
+      --nnoremap <silent> <leader>gp :call <SID>GitPushAndClose()<CR>
+
+      keymap("n", "<leader>ut", "", {
+        noremap = true,
+        silent = true,
+        callback = function(map)
+          vim.cmd.UndotreeToggle()
+        end,
+      })
+
+      -- -----------------------------------------------------------------------
+      -- LSP CONFIG
+      -- -----------------------------------------------------------------------
+
+      local cmp = require('cmp')
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+          end,
+        },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        }),
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+        }, {
+          { name = 'buffer' },
+        }),
+      })
+
+      local lspconfig = require('lspconfig')
+      lspconfig.pyright.setup {}
+
+      -- Global mappings.
+      -- See `:help vim.diagnostic.*` for documentation on any of the below functions
+      keymap('n', '<space>e', "", {
+        noremap = true,
+        silent = true,
+        callback = function(map) vim.diagnostic.open_float() end,
+      })
+      keymap('n', '[d', "", {
+        noremap = true,
+        silent = true,
+        callback = function(map) vim.diagnostic.goto_prev() end,
+      })
+      keymap('n', ']d', "", {
+        noremap = true,
+        silent = true,
+        callback = function(map) vim.diagnostic.goto_next() end,
+      })
+      keymap('n', '<spacq>e', "", {
+        noremap = true,
+        silent = true,
+        callback = function(map) vim.diagnostic.setloclist() end,
+      })
+
+      -- Use LspAttach autocommand to only map the following keys
+      -- after the language server attaches to the current buffer
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+        callback = function(ev)
+          -- Enable completion triggered by <c-x><c-o>
+          vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+          -- Buffer local mappings.
+          -- See `:help vim.lsp.*` for documentation on any of the below functions
+          local opts = { buffer = ev.buf }
+          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+          vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+          vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+          vim.keymap.set('n', '<space>wl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+          end, opts)
+          vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
+          vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+          vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+          vim.keymap.set('n', '<space>f', function()
+            vim.lsp.buf.format { async = true }
+          end, opts)
+        end,
+      })
     '';
     extraConfig = ''
       " VimScript Reminders:
@@ -883,125 +1005,6 @@ in
       " #######################################################################
       " ****** PLUGIN SETTINGS ******
       " #######################################################################
-
-      " %%%%% GutenTags %%%%%
-      " Explanaiton of all this at https://www.reddit.com/r/vim/comments/d77t6j
-      let g:gutentags_ctags_tagfile = '.tags'
-
-      let g:gutentags_exclude_filetypes = [
-            \ 'dart',
-            \ ]
-
-      " let g:gutentags_project_info = [
-      "       \ {'type': 'dart', 'file': 'pubspec.yaml'},
-      "       \ ]
-
-      " let g:gutentags_ctags_executable_dart = '/home/douglas/.bin/flutter_ctags'
-
-      let g:gutentags_ctags_extra_args = [
-            \ '--tag-relative=yes',
-            \ '--fields=+ailmnS',
-            \ ]
-
-      let g:gutentags_ctags_exclude = [
-            \ '*.git', '*.svg', '*.hg',
-            \ '*/tests/*',
-            \ 'build',
-            \ 'dist',
-            \ '*sites/*/files/*',
-            \ 'bazel-bin',
-            \ 'bazel-out',
-            \ 'bazel-projects',
-            \ 'bazel-testlogs',
-            \ 'bazel-*',
-            \ 'bin',
-            \ 'node_modules',
-            \ 'bower_components',
-            \ 'cache',
-            \ 'compiled',
-            \ 'docs',
-            \ 'example',
-            \ 'bundle',
-            \ 'vendor',
-            \ '*.md',
-            \ '*-lock.json',
-            \ '*.lock',
-            \ '*bundle*.js',
-            \ '*build*.js',
-            \ '.*rc*',
-            \ '*.json',
-            \ '*.min.*',
-            \ '*.map',
-            \ '*.bak',
-            \ '*.zip',
-            \ '*.pyc',
-            \ '*.class',
-            \ '*.sln',
-            \ '*.Master',
-            \ '*.csproj',
-            \ '*.tmp',
-            \ '*.csproj.user',
-            \ '*.cache',
-            \ '*.pdb',
-            \ 'tags*',
-            \ 'cscope.*',
-            \ '*.css',
-            \ '*.less',
-            \ '*.scss',
-            \ '*.exe', '*.dll',
-            \ '*.mp3', '*.ogg', '*.flac',
-            \ '*.swp', '*.swo',
-            \ '*.bmp', '*.gif', '*.ico', '*.jpg', '*.png',
-            \ '*.rar', '*.zip', '*.tar', '*.tar.gz', '*.tar.xz', '*.tar.bz2',
-            \ '*.pdf', '*.doc', '*.docx', '*.ppt', '*.pptx',
-            \ ]
-
-      " #######################################################################
-      " ****** FILETYPE SETTINGS ******
-      " #######################################################################
-
-
-      " #######################################################################
-      " ****** PERSONAL SHORTCUTS (LEADER) ******
-      " #######################################################################
-
-      nnoremap <Space> <Nop>
-      let mapleader = ' '
-
-      " Searches
-      nnoremap <silent> <leader><space> :GFiles<CR>
-      nnoremap <silent> <leader>ff :Rg<CR>
-      inoremap <expr> <c-x><c-f> fzf#vim#complete#path(
-        \ "find . -path '*/\.*' -prune -o print \| sed '1d;s:%..::'",
-        \ fzf#wrap({'dir': expand('%:p:h')}))
-
-      " Load Git UI
-      nnoremap <silent> <leader>gg :G<cr>
-
-      nnoremap <silent> <leader>pp :call <SID>TogglePaste()<cr>
-      nnoremap <silent> <leader>sc :call <SID>ToggleScreenMess()<cr>
-
-      " replace the current buffer (delete) with bufexplorer
-      nnoremap <silent> <leader>bd :call <SID>BufDelete()<cr>
-
-      " Jump in and out of nvim tree
-      nnoremap <silent> <leader>nt :NvimTreeToggle<CR>
-      nnoremap <silent> <leader>nf :NvimTreeFindFile<CR>
-      nnoremap <silent> <leader>nn :call <SID>NvimTreeFocus()<cr>
-
-      " (C)reate (F)ile under cursor (for when `gf` doesn't work)
-      nnoremap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
-
-      " nnoremap <silent> <leader>tt :TagbarToggle<CR>
-
-      " base64 encode encode and decode visual selection
-      vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
-      vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
-
-      " Push and close git interface
-      nnoremap <silent> <leader>gp :call <SID>GitPushAndClose()<CR>
-
-      nnoremap <silent> <leader>ut :UndotreeToggle<CR>
 
       " #######################################################################
       " ****** PERSONAL FUNCTIONS ******
@@ -1030,20 +1033,6 @@ in
         exe "bdelete ".l:cur_buffer
         exe "BufExplorer"
       endfunction
-
-      function! s:NvimTreeFocus()
-        " This function is meant to be used if NvimTree is already open, but
-        " let's assume I meant to open it when trying to focus it.
-        exe ":NvimTreeOpen"
-        let l:nvim_tree_buffer = bufwinnr("NvimTree")
-        if l:nvim_tree_buffer != -1
-          exe l:nvim_tree_buffer."wincmd w"
-        endif
-      endfunction
-
-      " #######################################################################
-      " ****** COLORING CONTENT ******
-      " #######################################################################
 
       " #######################################################################
       " ****** LINE NUMBERING ******
@@ -1170,8 +1159,8 @@ in
 
       augroup MyLSPConfig
         au!
-        autocmd VimEnter * call <SID>InitLSP()
-        autocmd BufEnter * lua require'completion'.on_attach()
+        " "autocmd VimEnter * call <SID>InitLSP()
+        " "autocmd BufEnter * lua require'completion'.on_attach()
       augroup END
     '';
   };

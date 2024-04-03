@@ -10,24 +10,6 @@ let
     };
   };
 
-  nvim-colorizer = pkgs.vimUtils.buildVimPlugin rec {
-    name = "nvim-colorizer";
-    src = inputs.nvim-colorizer;
-    meta = {
-      homepage = https://github.com/norcalli/nvim-colorizer.lua;
-      maintainers = [ "norcalli" ];
-    };
-  };
-
-  indent-blankline = pkgs.vimUtils.buildVimPlugin rec {
-    name = "indent-blankline";
-    src = inputs.indent-blankline;
-    meta = {
-      homepage = https://github.com/lukas-reineke/indent-blankline.nvim;
-      maintainers = [ "lukas-reineke" ];
-    };
-  };
-
   vim-glaive = pkgs.vimUtils.buildVimPlugin rec {
     name = "vim-glaive";
     src = inputs.vim-glaive;
@@ -52,15 +34,6 @@ let
     meta = {
       homepage = https://github.com/kana/vim-fakeclip;
       maintainers = [ "kana" ];
-    };
-  };
-
-  conflict-marker = pkgs.vimUtils.buildVimPlugin rec {
-    name = "conflict-marker";
-    src = inputs.conflict-marker;
-    meta = {
-      homepage = https://github.com/rhysd/conflict-marker.vim;
-      maintainers = [ "rhysd" ];
     };
   };
 
@@ -116,29 +89,16 @@ let
 in
 {
 
-  # nixpkgs.overlays = [
-  #   (import (builtins.fetchTarball {
-  #     url = https://github.com/nix-community/neovim-nightly-overlay/tarball/0f13d55e4634ca7fcf956df0c76d1c1ffefb62a3;
-  #     #url = https://github.com/nix-community/neovim-nightly-overlay/tarball/5e3737ae3243e2e206360d39131d5eb6f65ecff5;
-  #   }))
-
-  #   # For when I need to straight up override packages
-  #   (self: super: {
-  #     # Use nightly neovim as the basis for my regular neovim package
-  #     neovim-unwrapped = self.neovim-nightly;
-  #   })
-  # ];
-
-  home.file."${config.xdg.configHome}/nvim/spell/en.utf-8.spl".source = nvim-spell-en-utf8-dictionary;
-  home.file."${config.xdg.configHome}/nvim/spell/en.utf-8.sug".source = nvim-spell-en-utf8-suggestions;
-  home.file."${config.xdg.configHome}/nvim/spell/en.ascii.spl".source = nvim-spell-en-ascii-dictionary;
-  home.file."${config.xdg.configHome}/nvim/spell/en.ascii.sug".source = nvim-spell-en-ascii-suggestions;
-  home.file."${config.xdg.configHome}/nvim/spell/en.latin1.spl".source = nvim-spell-en-latin1-dictionary;
-  home.file."${config.xdg.configHome}/nvim/spell/en.latin1.sug".source = nvim-spell-en-latin1-suggestions;
-  home.file."${config.xdg.configHome}/nvim/spell/fr.utf-8.spl".source = nvim-spell-fr-utf8-dictionary;
-  home.file."${config.xdg.configHome}/nvim/spell/fr.utf-8.sug".source = nvim-spell-fr-utf8-suggestions;
-  home.file."${config.xdg.configHome}/nvim/spell/fr.latin1.spl".source = nvim-spell-fr-latin1-dictionary;
-  home.file."${config.xdg.configHome}/nvim/spell/fr.latin1.sug".source = nvim-spell-fr-latin1-suggestions;
+  xdg.configFile."nvim/spell/en.utf-8.spl".source = nvim-spell-en-utf8-dictionary;
+  xdg.configFile."nvim/spell/en.utf-8.sug".source = nvim-spell-en-utf8-suggestions;
+  xdg.configFile."nvim/spell/en.ascii.spl".source = nvim-spell-en-ascii-dictionary;
+  xdg.configFile."nvim/spell/en.ascii.sug".source = nvim-spell-en-ascii-suggestions;
+  xdg.configFile."nvim/spell/en.latin1.spl".source = nvim-spell-en-latin1-dictionary;
+  xdg.configFile."nvim/spell/en.latin1.sug".source = nvim-spell-en-latin1-suggestions;
+  xdg.configFile."nvim/spell/fr.utf-8.spl".source = nvim-spell-fr-utf8-dictionary;
+  xdg.configFile."nvim/spell/fr.utf-8.sug".source = nvim-spell-fr-utf8-suggestions;
+  xdg.configFile."nvim/spell/fr.latin1.spl".source = nvim-spell-fr-latin1-dictionary;
+  xdg.configFile."nvim/spell/fr.latin1.sug".source = nvim-spell-fr-latin1-suggestions;
 
   programs.neovim = {
     enable = true;
@@ -194,10 +154,10 @@ in
       NeoSolarized
 
       # Configurable text colorizing
-      nvim-colorizer
+      nvim-colorizer-lua
 
       # Both Indent guides plugins
-      indent-blankline
+      indent-blankline-nvim
 
       #######################################################################
       # ****** UPDATED TEXT/COMMAND FEATURES ******
@@ -226,7 +186,7 @@ in
       vim-indent-object
 
       # Add bracket mappings for diff conflict markers ]x [x
-      conflict-marker
+      conflict-marker-vim
 
       #######################################################################
       # ****** UPDATED UI FEATURES ******
@@ -303,7 +263,7 @@ in
       -- -----------------------------------------------------------------------
       local augroup = vim.api.nvim_create_augroup
       local autocmd = vim.api.nvim_create_autocmd
-      local keymap = vim.keymap.set
+      local keymap = vim.api.nvim_set_keymap
       -- Accessor for libuv
       local uv = vim.loop
 
@@ -438,6 +398,9 @@ in
         -- Set to only keep one (current) backup
         backup = true,
         writebackup = true,
+
+        -- Sensible list of files we don't want backed up
+        backupskip = '/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*',
       }
 
       for k, v in pairs(options) do
@@ -818,28 +781,32 @@ in
           'fzf', 'fugitive', 'man', 'nvim-tree',
         },
       }
+
+      -- -----------------------------------------------------------------------
+      -- INDENT BLANKLINE CONFIG
+      -- -----------------------------------------------------------------------
+
+      vim.g.indent_blankline_use_treesitter = true
+
+      require('ibl').setup()
+
+      -- -----------------------------------------------------------------------
+      -- KEY MAPPINGS
+      -- -----------------------------------------------------------------------
+
+      local opts = { noremap = true, silent = true }
+
+      -- Make Y mirror y, working like D and C, yank to the end of the line
+      keymap("n", "Y", "y$", opts)
+
+      -- Add an insert mode mapping to reflow the current line.
+      keymap("i", "<C-G>q", "<C-O>gqq<C-O>A", opts)
     '';
     extraConfig = ''
       " VimScript Reminders:
       " 1) All autocommands should be in autogroups
       " 2) All functions should be prefixed with 's:' but use '<SID>' when
       "    calling from mappings or commands
-
-      " Make Y yank to the end of line, similar to D and C
-      nnoremap Y y$
-
-      " If w! doesn't work (because you're editing a root file), use w!! to save
-      cnoremap <silent> w!! :exec ":echo ':w!!'"<CR>:%!sudo tee > /dev/null %
-
-      " Add an insert mode mapping to reflow the current line.
-      inoremap <C-G>q <C-O>gqq<C-O>A
-
-      " #######################################################################
-      " ****** BACKUP SETTINGS ******
-      " #######################################################################
-
-      " Sensible list of files we don't want backed up
-      set backupskip=/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
 
       " #######################################################################
       " ****** PLUGIN SETTINGS ******

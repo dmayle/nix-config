@@ -199,9 +199,6 @@ in
       # Both Indent guides plugins
       indent-blankline
 
-      # Font for airline
-      # powerline-fonts
-
       #######################################################################
       # ****** UPDATED TEXT/COMMAND FEATURES ******
       #######################################################################
@@ -246,17 +243,14 @@ in
       bufexplorer
 
       # Source code class explorer
-      tagbar
+      aerial-nvim
 
       # Status bar with coloring
-      vim-airline
-      vim-airline-themes
+      lualine-nvim
+      lualine-lsp-progress
 
       # Built-in debugger
       vimspector
-
-      # Tag/source code explorer
-      tagbar
 
       # Vim Git UI
       vim-fugitive
@@ -321,11 +315,15 @@ in
       local undodir = string.format("%s/.vimundo-$s", homedir, host)
 
       -- -----------------------------------------------------------------------
-      -- DISABLE BUILTIN NETRW
+      -- GLOBAL SETTINGS
       -- -----------------------------------------------------------------------
 
+      -- Disable builtin netrw
       vim.g.loaded_netrw = 1
       vim.g.loaded_netrwPlugin = 1
+
+      -- Default to bash support in shell scripts
+      vim.g.is_bash = 1
 
       -- Lua table of options which will be set directly into vim options
       local options = {
@@ -463,7 +461,7 @@ in
       vim.opt.diffopt:append "vertical"
 
       -- -----------------------------------------------------------------------
-      -- ALL BETS ARE OFF
+      -- SET COLORSCHEME
       -- -----------------------------------------------------------------------
 
       -- Setting colorscheme is not an option, it's a call that needs to be
@@ -602,6 +600,9 @@ in
           vim.opt.listchars = { tab = "| ", trail = "☐" }
         end,
       })
+
+      -- Make sure that trailing whitespace is Red
+      vim.cmd([[match errorMsg /\s\+$/]])
 
       -- -----------------------------------------------------------------------
       -- FILETYPE SETTINGS
@@ -793,15 +794,36 @@ in
         pattern = "vue",
         callback = function() vim.cmd('AutoFormatBuffer prettier') end,
       })
+
+      -- -----------------------------------------------------------------------
+      -- PLUGIN SETTINGS
+      -- -----------------------------------------------------------------------
+      -- LUALINE CONFIG
+      -- -----------------------------------------------------------------------
+
+      require('lualine').setup {
+        options = {
+          theme = 'solarized_light',
+          --ignore_focus = { 'NvimTree' },
+        },
+        sections = {
+          lualine_a = {'mode'},
+          lualine_b = {'branch', 'diff', 'diagnostics'},
+          lualine_c = {'filename', 'lsp_progress'},
+          lualine_x = {'encoding', 'fileformat', 'filetype'},
+          lualine_y = {'progress'},
+          lualine_z = {'location'},
+        },
+        extensions = {
+          'fzf', 'fugitive', 'man', 'nvim-tree',
+        },
+      }
     '';
     extraConfig = ''
       " VimScript Reminders:
       " 1) All autocommands should be in autogroups
       " 2) All functions should be prefixed with 's:' but use '<SID>' when
       "    calling from mappings or commands
-
-      " Make sure that trailing whitespace is Red
-      match errorMsg /\s\+$/
 
       " Make Y yank to the end of line, similar to D and C
       nnoremap Y y$
@@ -822,39 +844,6 @@ in
       " #######################################################################
       " ****** PLUGIN SETTINGS ******
       " #######################################################################
-
-      " %%%%% Airline Status Line %%%%%
-      " Match to overall vim theme
-      let g:airline_theme='solarized'
-
-      " %%%%% Promptline Bash Prompt Generator %%%%%
-      " I only install Promptline when I update Airline, run this, then uninstall
-      let g:promptline_theme = 'airline'
-      " Solarized Bash Color Table For Theme:
-      " 0 base2 (beige)
-      " 1 red
-      " 2 green
-      " 3 yellow
-      " 4 blue
-      " 5 magenta
-      " 6 cyan
-      " 7 base02 (black)
-      " 8 base3 (bright beige)
-      " 9 orange
-      " 10 base1 (lightest grey)
-      " 11 base0 (light grey)
-      " 12 base00 (dark grey)
-      " 13 violet
-      " 14 base01 (darkest grey)
-      " 15 base03 (darkest black)
-      " Colors I like:
-      " Background: blue(4)  > yellow(3) > magenta(5) > bright beige(8)
-      " Foreground: beige(0) > beige(0)  > beige(0)   > grey(11)
-      " let g:promptline_preset = {
-      "     \'a' : [ '\w' ],
-      "     \'b' : [ '$(echo $(printf \\xE2\\x8E\\x88) $(kubectx -c)$(echo :$(kubens -c) | sed -e s@^:default\$@@))' ],
-      "     \'c' : [ promptline#slices#vcs_branch() ],
-      "     \'warn' : [ promptline#slices#last_exit_code() ]}
 
       " %%%%%%%%%% Indent Blankline %%%%%%%%%%
       " Enable treesitter support
@@ -936,8 +925,6 @@ in
       " ****** FILETYPE SETTINGS ******
       " #######################################################################
 
-      " Default to bash support in shell scripts
-      let g:is_bash = 1
 
       " #######################################################################
       " ****** PERSONAL SHORTCUTS (LEADER) ******
@@ -970,7 +957,7 @@ in
       " (C)reate (F)ile under cursor (for when `gf` doesn't work)
       nnoremap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
 
-      nnoremap <silent> <leader>tt :TagbarToggle<CR>
+      " nnoremap <silent> <leader>tt :TagbarToggle<CR>
 
       " base64 encode encode and decode visual selection
       vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>

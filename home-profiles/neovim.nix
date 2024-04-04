@@ -254,6 +254,7 @@ in
 
       # Lightweight autocompletion
       luasnip
+      friendly-snippets
       nvim-cmp
       cmp_luasnip
       cmp-nvim-lsp
@@ -822,6 +823,34 @@ in
       -- Add an insert mode mapping to reflow the current line.
       keymap("i", "<C-G>q", "<C-O>gqq<C-O>A", opts)
 
+      -- Better window navigation
+      keymap("n", "<C-h>", "<C-w>h", opts)
+      keymap("n", "<C-j>", "<C-w>j", opts)
+      keymap("n", "<C-k>", "<C-w>k", opts)
+      keymap("n", "<C-l>", "<C-w>l", opts)
+
+      -- Allow arrows to resize windows
+      keymap("n", "<C-Up>", ":resize -2<CR>", opts)
+      keymap("n", "<C-Down>", ":resize +2<CR>", opts)
+      keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
+      keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
+
+      -- Move current line up or down
+      keymap("n", "<A-j>", ":m .+1<CR>==", opts)
+      keymap("n", "<A-k>", ":m .-2<CR>==", opts)
+
+      -- Keep visual selection after changing indent
+      keymap("v", "<", "<gv^", opts)
+      keymap("v", ">", ">gv^", opts)
+
+      -- Move visual selection up or down
+      keymap("v", "<A-j>", ":m '>+1<CR>gv=gv", opts)
+      keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", opts)
+
+      -- Move visual block selection up or down
+      keymap("x", "<A-j>", ":m '>+1<CR>gv=gv", opts)
+      keymap("x", "<A-k>", ":m '<-2<CR>gv=gv", opts)
+
       -- -----------------------------------------------------------------------
       -- PERSONAL SHORTCUTS (LEADER)
       -- -----------------------------------------------------------------------
@@ -916,6 +945,38 @@ in
       -- -----------------------------------------------------------------------
 
       local cmp = require('cmp')
+      local luasnip = require('luasnip')
+      local check_backspace = function()
+        return false
+      end
+      local kind_icons = {
+        Text = "󰉿",
+        Method = "󰆧",
+        Function = "󰊕",
+        Constructor = "",
+        Field = " ",
+        Variable = "󰀫",
+        Class = "󰠱",
+        Interface = "",
+        Module = "",
+        Property = "󰜢",
+        Unit = "󰑭",
+        Value = "󰎠",
+        Enum = "",
+        Keyword = "󰌋",
+        Snippet = "",
+        Color = "󰏘",
+        File = "󰈙",
+        Reference = "",
+        Folder = "󰉋",
+        EnumMember = "",
+        Constant = "󰏿",
+        Struct = "",
+        Event = "",
+        Operator = "󰆕",
+        TypeParameter = " ",
+        Misc = " ",
+      }
       cmp.setup({
         snippet = {
           expand = function(args)
@@ -932,7 +993,45 @@ in
           ['<C-Space>'] = cmp.mapping.complete(),
           ['<C-e>'] = cmp.mapping.abort(),
           ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expandable() then
+              luasnip.expand()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            elseif check_backspace() then
+              fallback()
+            else
+              fallback()
+            end
+          end, {
+            "i",
+            "s",
+          }),
+          ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, {
+            "i",
+            "s",
+          }),
         }),
+        formatting = {
+          fields = { "kind", "abbr", "menu" },
+          format = function(entry, vim_item)
+            vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
+            vim_item.menu = ({
+              nvim_lsp= "[LSP]",
+            })[entry.sorce_name]
+            return vim_item
+          end,
+        },
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
           { name = 'path' },

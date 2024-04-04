@@ -986,7 +986,7 @@ in
       cmp.setup({
         snippet = {
           expand = function(args)
-            require('luasnip').lsp_expand(args.body)
+            luasnip.lsp_expand(args.body)
           end,
         },
         window = {
@@ -994,10 +994,16 @@ in
           documentation = cmp.config.window.bordered(),
         },
         mapping = cmp.mapping.preset.insert({
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.abort(),
+          ['<C-j>'] = cmp.mapping.select_next_item(),
+          ['<C-k>'] = cmp.mapping.select_prev_item(),
+          ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
+          ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+          ['<C-y>'] = cmp.mapping.disable, -- Removes default mapping
+          ['<C-e>'] = cmp.mapping {
+            i = cmp.mapping.abort(),
+            c = cmp.mapping.close(),
+          },
           ['<CR>'] = cmp.mapping.confirm({ select = true }),
           ["<Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
@@ -1045,6 +1051,10 @@ in
         }, {
           { name = 'buffer' },
         }),
+        confirm_opts = {
+          behavior = cmp.ConfirmBehavior.Replace,
+          select = false,
+        },
         experimental = {
           native_menu = false,
           ghost_text = true,
@@ -1204,82 +1214,6 @@ in
         autocmd VimEnter * call <SID>InitLineNumbering()
         autocmd BufEnter,WinEnter * call <SID>SetLineNumberingForWindow(1)
         autocmd WinLeave * call <SID>SetLineNumberingForWindow(0)
-      augroup END
-
-      " #######################################################################
-      " ****** LSP Configuration ******
-      " #######################################################################
-
-      " Use <Tab> and <S-Tab> to navigate through popup menu
-      inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-      inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-      function! s:InitLSP()
-      lua << EOLUA
-        local nvim_lsp = require('lspconfig')
-        local on_attach = function(client, bufnr)
-          local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-          local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-          buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-          -- Mappings.
-          local opts = { noremap=true, silent=true }
-          buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-          buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-          buf_set_keymap('n', 'gH', '<Cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-          buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-          buf_set_keymap('n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-          buf_set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-          buf_set_keymap('n', '<space>wa', '<Cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-          buf_set_keymap('n', '<space>wr', '<Cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-          buf_set_keymap('n', '<space>wl', '<Cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-          buf_set_keymap('n', '<space>D', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-          buf_set_keymap('n', '<space>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
-          buf_set_keymap('n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)
-          buf_set_keymap('n', '<space>e', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-          buf_set_keymap('n', '[d', '<Cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-          buf_set_keymap('n', ']d', '<Cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-          buf_set_keymap('n', '<space>q', '<Cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-
-          -- Set some keybinds conditional on server capabilities
-          if client.resolved_capabilities.document_formatting then
-            buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-          elseif client.resolved_capabilities.document_range_formatting then
-            buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.range_formatting()<CR>', opts)
-          end
-
-          -- Set autocommands conditional on server_capabilities
-          if client.resolved_capabilities.document_highlight then
-            vim.api.nvim_exec([[
-              hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-              hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-              hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
-              augroup lsp_document_highlight
-                autocmd! * <buffer>
-                autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-                autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-              augroup END
-            ]], false)
-          end
-        end
-
-        -- Use a loop to simply setup all language servers
-        local servers = { 'bashls', 'vimls' }
-        -- Also: { 'sqls', 'rnix', 'efm', 'dartls' }
-        for _, lsp in ipairs(servers) do
-          nvim_lsp[lsp].setup { on_attach = on_attach }
-        end
-      EOLUA
-
-        " Re-trigger filetype detection so LSP works on first file
-        let &ft=&ft
-      endfunction
-
-      augroup MyLSPConfig
-        au!
-        " "autocmd VimEnter * call <SID>InitLSP()
-        " "autocmd BufEnter * lua require'completion'.on_attach()
       augroup END
     '';
   };

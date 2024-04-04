@@ -318,7 +318,7 @@ in
 
         -- Always show available completion options, but selection must be
         -- manual
-        completeopt = { "menu", "menuone", "noinsert", "noselect" },
+        completeopt = { "menuone", "noselect" },
 
         -- Default to case insensitive searching
         ignorecase = true,
@@ -1046,8 +1046,8 @@ in
         },
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
-          { name = 'path' },
           { name = 'luasnip' },
+          { name = 'path' },
         }, {
           { name = 'buffer' },
         }),

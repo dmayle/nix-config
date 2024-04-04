@@ -1,38 +1,29 @@
-{ config, pkgs, inputs, ... }:
+{ pkgs, inputs, ... }:
 let
   # Custom neovim plugins
-  vim-maximizer = pkgs.vimUtils.buildVimPlugin rec {
+  vim-maximizer = pkgs.vimUtils.buildVimPlugin {
     name = "vim-maximizer";
     src = inputs.vim-maximizer;
     meta = {
-      homepage = https://github.com/szw/vim-maximizer;
+      homepage = "https://github.com/szw/vim-maximizer";
       maintainers = [ "szw" ];
     };
   };
 
-  vim-glaive = pkgs.vimUtils.buildVimPlugin rec {
+  vim-glaive = pkgs.vimUtils.buildVimPlugin {
     name = "vim-glaive";
     src = inputs.vim-glaive;
     meta = {
-      homepage = https://github.com/google/vim-glaive;
+      homepage = "https://github.com/google/vim-glaive";
       maintainers = [ "google" ];
     };
   };
 
-  vim-syncopate = pkgs.vimUtils.buildVimPlugin rec {
-    name = "vim-syncopate";
-    src = inputs.vim-syncopate;
-    meta = {
-      homepage = https://github.com/google/vim-syncopate;
-      maintainers = [ "google" ];
-    };
-  };
-
-  vim-fakeclip = pkgs.vimUtils.buildVimPlugin rec {
+  vim-fakeclip = pkgs.vimUtils.buildVimPlugin {
     name = "vim-fakeclip";
     src = inputs.vim-fakeclip;
     meta = {
-      homepage = https://github.com/kana/vim-fakeclip;
+      homepage = "https://github.com/kana/vim-fakeclip";
       maintainers = [ "kana" ];
     };
   };
@@ -265,6 +256,8 @@ in
       luasnip
       nvim-cmp
       cmp_luasnip
+      cmp-nvim-lsp
+      cmp-nvim-lua
       cmp-vim-lsp
       cmp-buffer
       cmp-path
@@ -272,7 +265,7 @@ in
       cmp-treesitter
       cmp-tmux
       cmp-spell
-      #completion-nvim
+      lsp-format-nvim
     ];
 
     extraLuaConfig = ''
@@ -324,7 +317,7 @@ in
 
         -- Always show available completion options, but selection must be
         -- manual
-        completeopt = { "menuone", "noinsert", "noselect", "longest" },
+        completeopt = { "menu", "menuone", "noinsert", "noselect" },
 
         -- Default to case insensitive searching
         ignorecase = true,
@@ -348,9 +341,9 @@ in
         -- Allow more-responsive async code (fire event 0.1s after typing stops)
         updatetime = 100,
 
-        -- Trigger multi-key sequence 0.3s after typing stops
+        -- Trigger multi-key sequence 0.5s after typing stops
         -- (instead of waiting for additional keys, defaults to 1s)
-        timeoutlen = 300,
+        timeoutlen = 500,
 
         -- Default to showing the current line (useful for long terminals)
         cursorline = true,
@@ -418,7 +411,8 @@ in
         writebackup = true,
 
         -- Sensible list of files we don't want backed up
-        backupskip = '/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*',
+        backupskip =
+          '/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*',
       }
 
       for k, v in pairs(options) do
@@ -548,6 +542,7 @@ in
 
       require('colorizer').setup()
       require('colorizer').attach_to_buffer(0)
+      require('lsp-format').setup()
 
       -- -----------------------------------------------------------------------
       -- AUTOCOMMAND GROUPS
@@ -789,7 +784,14 @@ in
         },
         sections = {
           lualine_a = {'mode'},
-          lualine_b = {'branch', 'diff', 'diagnostics'},
+          lualine_b = {'branch', 'diff', {
+            'diagnostics',
+            sources = { 'nvim_lsp', 'nvim_diagnostic' },
+            sections = { 'error', 'warn', 'info', 'hint' },
+            colored = true,
+            update_in_insert = false,
+            always_visible = false,
+          }},
           lualine_c = {'filename', 'lsp_progress'},
           lualine_x = {'encoding', 'fileformat', 'filetype'},
           lualine_y = {'progress'},
@@ -933,13 +935,19 @@ in
         }),
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
+          { name = 'path' },
           { name = 'luasnip' },
         }, {
           { name = 'buffer' },
         }),
+        experimental = {
+          native_menu = false,
+          ghost_text = true,
+        },
       })
 
       local lspconfig = require('lspconfig')
+      lspconfig.nil_ls.setup {}
       lspconfig.pyright.setup {}
 
       -- Global mappings.
@@ -972,6 +980,12 @@ in
         callback = function(ev)
           -- Enable completion triggered by <c-x><c-o>
           vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+          if vim.lsp.formatexpr then
+            vim.bo[ev.buf].formatexpr = 'v:lua.vim.lsp.formatexpr'
+          end
+          if vim.lsp.tagfunc then
+            vim.bo[ev.buf].tagfunc = 'v:lua.vim.lsp.tagfunc'
+          end
 
           -- Buffer local mappings.
           -- See `:help vim.lsp.*` for documentation on any of the below functions

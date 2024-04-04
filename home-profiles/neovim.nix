@@ -946,6 +946,10 @@ in
 
       local cmp = require('cmp')
       local luasnip = require('luasnip')
+
+      -- load from friendly-snippets
+      require("luasnip/loaders/from_vscode").lazy_load()
+
       local check_backspace = function()
         return false
       end

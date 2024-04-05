@@ -229,14 +229,14 @@ function Mkdirp(path, mode, callback)
         Mkdirp(Dirparent(path), mode, function(mkdirp_err, mkdirp_success)
           if mkdirp_success then
             -- Replay original dir creation once only
-            uv.fs_mkdir(path, mode, function(err, success)
-              if success or string.match(err, "^EEXIST:") then
+            uv.fs_mkdir(path, mode, function(retry_err, success)
+              if success or string.match(retry_err, "^EEXIST:") then
                 -- Worked, or created during race, success!
                 callback(nil, true)
                 return
               end
               -- Propagate any mkdir error
-              callback(err, nil)
+              callback(retry_err, nil)
             end)
             return
           end
@@ -646,6 +646,9 @@ keymap("x", "<A-k>", ":m '<-2<CR>gv=gv", opts)
 keymap("", "<Space>", "<Nop>", opts)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+local bufdelete = require("bufdelete").bufdelete
+keymap("n", "<leader>bd", function() bufdelete(0) end, opts)
 
 -- Searches
 local telescope = require('telescope.builtin')

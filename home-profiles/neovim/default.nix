@@ -243,8 +243,10 @@ in
       dart-vim-plugin
 
       # Working on introducing
-      # vim-pyenv (depends on environments)
-      # Rename (maybe replaced by NvimTree rename)
+      trouble-nvim
+
+      # Stupid, but I want to delete a buffer without losing window state
+      bufdelete-nvim
 
       # bazel build file support
       vim-bazel

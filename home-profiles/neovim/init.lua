@@ -682,12 +682,12 @@ end
 keymap("n", "<leader>sc", ToggleScreenMess, opts)
 
 -- Jump in and out of nvim tree
-local nvim_tree = require('nvim-tree.api')
-keymap("n", "<leader>nt", nvim_tree.tree.toggle, opts)
-keymap("n", "<leader>nn", nvim_tree.tree.focus, opts)
+local nvim_tree = require('nvim-tree.api').tree
+keymap("n", "<leader>nt", nvim_tree.toggle, opts)
+keymap("n", "<leader>nn", nvim_tree.focus, opts)
 
 keymap("n", "<leader>nf", function()
-  nvim_tree.tree.find_file {
+  nvim_tree.find_file {
     open = true,
     focus = true,
     update_root = true,
@@ -887,7 +887,7 @@ lspconfig.lua_ls.setup {
         globals = { "vim" }
       },
     },
-  }
+  },
 }
 lspconfig.nil_ls.setup {}
 lspconfig.pyright.setup {}

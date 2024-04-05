@@ -137,7 +137,7 @@ in
       vim-repeat
 
       # Ensure quotes and brackets are added together
-      auto-pairs
+      nvim-autopairs
 
       # Allow number increment (Ctrl-A, Ctrl-X) to work for dates
       vim-speeddating

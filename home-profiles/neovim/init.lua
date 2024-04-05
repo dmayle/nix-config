@@ -47,7 +47,7 @@ local options = {
   background    = "light",
 
   -- Always show available completion options, but selection must be manual
-  completeopt   = { "menuone", "noselect" },
+  completeopt   = { "menuone", "noinsert" },
 
   -- Default to case insensitive searching
   ignorecase    = true,
@@ -639,6 +639,17 @@ keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", opts)
 keymap("x", "<A-j>", ":m '>+1<CR>gv=gv", opts)
 keymap("x", "<A-k>", ":m '<-2<CR>gv=gv", opts)
 
+-- Add comma or semicolon to end of line without breaking flow
+local function append_to_line(content)
+  local row = vim.api.nvim_win_get_cursor(0)[1]
+  local line = vim.api.nvim_buf_get_lines(0, row-1, row, false)
+  local column = string.len(line[1])
+  vim.api.nvim_buf_set_text(0, row-1, column, row-1, column, {content})
+end
+
+keymap("i", "<C-;>", function() append_to_line(";") end, opts)
+keymap("i", "<C-,>", function() append_to_line(",") end, opts)
+
 -- -----------------------------------------------------------------------------
 -- PERSONAL SHORTCUTS (LEADER)
 -- -----------------------------------------------------------------------------
@@ -812,8 +823,8 @@ cmp.setup({
     documentation = cmp.config.window.bordered(),
   },
   mapping = cmp.mapping.preset.insert({
-    ['<C-j>'] = cmp.mapping.select_next_item(),
-    ['<C-k>'] = cmp.mapping.select_prev_item(),
+    ['<C-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+    ['<C-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
     ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
     ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
@@ -825,7 +836,7 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
     ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
-        cmp.select_next_item()
+        cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
       elseif luasnip.expandable() then
         luasnip.expand()
       elseif luasnip.expand_or_jumpable() then
@@ -841,7 +852,7 @@ cmp.setup({
     }),
     ["<S-Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
-        cmp.select_prev_item()
+        cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
       elseif luasnip.jumpable(-1) then
         luasnip.jump(-1)
       else

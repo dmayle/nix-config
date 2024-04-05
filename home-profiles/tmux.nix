@@ -10,6 +10,10 @@
     extraConfig = ''
       # Use tmux TERM for more features, and 256color for true color
       set -g default-terminal "tmux-256color"
+      set -ag terminal-overrides ",xterm-256color:RGB"
+      set -s extended-keys on
+      set -as terminal-features 'xterm*:extkeys'
+      set -as terminal-features 'tmux*:extkeys'
 
       # Enable italic support
       #set -as terminal-overrides ',*:sitm=\E[3m'
@@ -141,6 +145,7 @@
 
     # I like full color terminals
     set -g default-terminal "tmux-256color"
+    set -ag terminal-overrides ",xterm-256color:RGB"
 
     # I think this is obsolete
     # set -ga terminal-overrides ",*256col*:Tc"
@@ -157,5 +162,10 @@
 
     # Use 24-hour clock
     setw -g clock-mode-style
+
+    # Support extended control characters
+    set -s extended-keys on
+    set -as terminal-features 'xterm*:extkeys'
+    set -as terminal-features 'tmux*:extkeys'
   '';
 }

@@ -192,7 +192,7 @@ else
   isWindows = not not package.path:match("\\")
 end
 
-function dirparent(dir)
+function Dirparent(dir)
   local sep
   if isWindows then
     sep = "\\"
@@ -202,32 +202,32 @@ function dirparent(dir)
   if not dir then
     return sep
   end
-  result, _ = string.gsub(dir, string.format("%s[^%s]*$", sep, sep), "")
+  local result, _ = string.gsub(dir, string.format("%s[^%s]*$", sep, sep), "")
   return result
 end
 
-function mkdirp(path, mode, callback)
-  uv.fs_stat(backupdir, function(err, stat)
-    if not err then
+function Mkdirp(path, mode, callback)
+  uv.fs_stat(backupdir, function(stat_err, stat)
+    if not stat_err then
       if stat.type ~= "directory" then
-        err = string.format("Cannot create %s: File exists")
-        callback(err, nil)
+        stat_err = string.format("Cannot create %s: File exists")
+        callback(stat_err, nil)
         return
       end
       -- Success!
       callback(nil, true)
       return
     end
-    uv.fs_mkdir(path, mode, function(err, success)
-      if success or string.match(err, "^EEXIST:") then
+    uv.fs_mkdir(path, mode, function(mkdir_err, mkdir_success)
+      if mkdir_success or string.match(mkdir_err, "^EEXIST:") then
         -- Worked, or created during race, success!
         callback(nil, true)
         return
       end
-      if string.match(err, "^ENOENT:") then
+      if string.match(mkdir_err, "^ENOENT:") then
         -- The containing directory (which mkdir uses) does not exist
-        mkdirp(dirparent(path), mode, function(err, success)
-          if success then
+        Mkdirp(Dirparent(path), mode, function(mkdirp_err, mkdirp_success)
+          if mkdirp_success then
             -- Replay original dir creation once only
             uv.fs_mkdir(path, mode, function(err, success)
               if success or string.match(err, "^EEXIST:") then
@@ -241,12 +241,12 @@ function mkdirp(path, mode, callback)
             return
           end
           -- Propagate error from creating parent directory
-          callback(err, nil)
+          callback(mkdirp_err, nil)
         end)
         return
       end
       -- Propagate unknown mkdir error
-      callback(err, nil)
+      callback(mkdir_err, nil)
     end)
   end)
 end
@@ -255,13 +255,13 @@ end
 -- CREATE NECESSARY BACKUP/UNDO DIRECTORIES
 -- -----------------------------------------------------------------------------
 
-mkdirp(backupdir, 448, function(err, success)
+Mkdirp(backupdir, 448, function(err, success)
   if not success then
     print(string.format("Error creating backup directory: %s", err))
   end
 end)
 
-mkdirp(undodir, 448, function(err, success)
+Mkdirp(undodir, 448, function(err, success)
   if not success then
     print(string.format("Error creating undo directory: %s", err))
   end
@@ -683,7 +683,7 @@ local nvim_tree = require('nvim-tree.api')
 keymap("n", "<leader>nt", nvim_tree.tree.toggle, opts)
 keymap("n", "<leader>nn", nvim_tree.tree.focus, opts)
 
-keymap("n", "<leader>nf", function(map)
+keymap("n", "<leader>nf", function()
   nvim_tree.tree.find_file {
     open = true,
     focus = true,
@@ -854,7 +854,7 @@ cmp.setup({
       vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
       vim_item.menu = ({
         nvim_lsp= "[LSP]",
-      })[entry.sorce_name]
+      })[entry.source_name]
       return vim_item
     end,
   },
@@ -876,6 +876,15 @@ cmp.setup({
 })
 
 local lspconfig = require('lspconfig')
+lspconfig.lua_ls.setup {
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = { "vim" }
+      },
+    },
+  }
+}
 lspconfig.nil_ls.setup {}
 lspconfig.pyright.setup {}
 
@@ -902,23 +911,23 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     -- Buffer local mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
-    local opts = { buffer = ev.buf }
-    keymap('n', 'gD', vim.lsp.buf.declaration, opts)
-    keymap('n', 'gd', vim.lsp.buf.definition, opts)
-    keymap('n', 'K', vim.lsp.buf.hover, opts)
-    keymap('n', 'gi', vim.lsp.buf.implementation, opts)
-    keymap('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-    keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-    keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+    local lsp_opts = { buffer = ev.buf }
+    keymap('n', 'gD', vim.lsp.buf.declaration, lsp_opts)
+    keymap('n', 'gd', vim.lsp.buf.definition, lsp_opts)
+    keymap('n', 'K', vim.lsp.buf.hover, lsp_opts)
+    keymap('n', 'gi', vim.lsp.buf.implementation, lsp_opts)
+    keymap('n', '<C-k>', vim.lsp.buf.signature_help, lsp_opts)
+    keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, lsp_opts)
+    keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, lsp_opts)
     keymap('n', '<space>wl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, opts)
-    keymap('n', '<space>D', vim.lsp.buf.type_definition, opts)
-    keymap('n', '<space>rn', vim.lsp.buf.rename, opts)
-    keymap({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-    keymap('n', 'gr', vim.lsp.buf.references, opts)
+    end, lsp_opts)
+    keymap('n', '<space>D', vim.lsp.buf.type_definition, lsp_opts)
+    keymap('n', '<space>rn', vim.lsp.buf.rename, lsp_opts)
+    keymap({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, lsp_opts)
+    keymap('n', 'gr', vim.lsp.buf.references, lsp_opts)
     keymap('n', '<space>f', function()
       vim.lsp.buf.format { async = true }
-    end, opts)
+    end, lsp_opts)
   end,
 })

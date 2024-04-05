@@ -29,120 +29,120 @@ vim.g.is_bash = 1
 
 -- Lua table of options which will be set directly into vim options
 local options = {
-  -- ---------------------------------------------------------------------
+  -- ---------------------------------------------------------------------------
   -- OVERALL SETTINGS
-  -- ---------------------------------------------------------------------
+  -- ---------------------------------------------------------------------------
 
   -- I don't want files overriding my settings
-  modelines = 0,
+  modelines     = 0,
 
   -- I don't like beeping
-  visualbell = true,
+  visualbell    = true,
 
   -- Enable 24-bit color support
   termguicolors = true,
 
   -- We want to use Solarized light, but setting colorscheme is not an option,
   -- so that comes later
-  background = "light",
+  background    = "light",
 
   -- Always show available completion options, but selection must be manual
-  completeopt = { "menuone", "noselect" },
+  completeopt   = { "menuone", "noselect" },
 
   -- Default to case insensitive searching
-  ignorecase = true,
+  ignorecase    = true,
 
   -- Unless I use case in my search string, then case matters
-  smartcase = true,
+  smartcase     = true,
 
   -- I like to be able to occasionally use the mouse
-  mouse = "a",
+  mouse         = "a",
 
   -- My status bar shows vim modes
-  showmode = false,
+  showmode      = false,
 
   -- Trying out an always on tabline
-  showtabline = 2,
+  showtabline   = 2,
 
   -- Have splits appear "after" current buffer
-  splitright = true,
-  splitbelow = true,
+  splitright    = true,
+  splitbelow    = true,
 
   -- Allow more-responsive async code (fire event 0.1s after typing stops)
-  updatetime = 100,
+  updatetime    = 100,
 
   -- Trigger multi-key sequence 0.5s after typing stops
   -- (instead of waiting for additional keys, defaults to 1s)
-  timeoutlen = 500,
+  timeoutlen    = 500,
 
   -- Default to showing the current line (useful for long terminals)
-  cursorline = true,
+  cursorline    = true,
 
   -- Make sure there is always at least 3 lines of context on either side of
   -- the cursor (above and below).
-  scrolloff = 3,
+  scrolloff     = 3,
 
-  -- ---------------------------------------------------------------------
+  -- ---------------------------------------------------------------------------
   -- Filetype setting defaults below, overridden per-language
-  -- ---------------------------------------------------------------------
+  -- ---------------------------------------------------------------------------
 
   -- Indentation defaults, overridden per-language
-  autoindent = true,
-  cindent = false,
-  smartindent = false,
+  autoindent    = true,
+  cindent       = false,
+  smartindent   = false,
 
   -- Unless I'm in go or a makefile, I never want tabs
-  expandtab = true,
+  expandtab     = true,
 
   -- Two spaces is reasonable for indent levels by default
-  tabstop = 2, -- treat tab characters as 2 spaces (rare, expandtab above)
-  shiftwidth  = 2, -- increase and decrease 2 spaces with tab key
+  tabstop       = 2, -- treat tab characters as 2 spaces (rare, expandtab above)
+  shiftwidth    = 2, -- increase and decrease 2 spaces with tab key
 
   -- Visual reminders of file width
-  colorcolumn = { "+1", "+21", "+41" },
+  colorcolumn   = { "+1", "+21", "+41" },
 
   -- Make tabs insert 'indents' when used at the beginning of the line
-  smarttab = true,
+  smarttab      = true,
 
   -- Keep unsaved files open with ther changes, even when switching buffers
-  hidden = true,
+  hidden        = true,
 
   -- Show the length of the visual selection while making it
-  showcmd = true,
+  showcmd       = true,
 
   -- I speak english and french, but only turn on for certain filetypes
-  spelllang = { "en_us", "fr" },
+  spelllang     = { "en_us", "fr" },
 
   -- Make backspace more powerful
-  backspace = { "indent", "eol", "start" },
+  backspace     = { "indent", "eol", "start" },
 
   -- I find it useful to have lots of command history
-  history = 1000,
+  history       = 1000,
 
   -- When joining lines, don't insert unnecessary whitespace
-  joinspaces = false,
+  joinspaces    = false,
 
   -- Save the current undo state between launches
-  undofile = true,
-  undolevels = 1000,
-  undoreload = 10000,
+  undofile      = true,
+  undolevels    = 1000,
+  undoreload    = 10000,
 
   -- Set directory for swap files
-  directory = backupdir,
+  directory     = backupdir,
 
   -- Set directory for undo files
-  undodir = undodir,
+  undodir       = undodir,
 
   -- Set directory for backup files
-  backupdir = backupdir,
+  backupdir     = backupdir,
 
   -- Set to only keep one (current) backup
-  backup = true,
-  writebackup = true,
+  backup        = true,
+  writebackup   = true,
 
   -- Sensible list of files we don't want backed up
-  backupskip =
-    '/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*',
+  backupskip    =
+  '/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*',
 }
 
 for k, v in pairs(options) do
@@ -290,8 +290,8 @@ require('gitsigns').setup {
     changedelete = { hl = "GitSignsChange", text = "󰍷 ", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
   },
   signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
-  numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
-  linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
+  numhl = false,     -- Toggle with `:Gitsigns toggle_numhl`
+  linehl = false,    -- Toggle with `:Gitsigns toggle_linehl`
   word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
   watch_gitdir = {
     interval = 1000,
@@ -380,9 +380,8 @@ autocmd({ 'FileType' }, {
   desc = "Set up default spacing and tabs for a few filetypes.  I've left off \z
           Go, since the filetype plugin handles it for me.",
   group = filesettings,
-  pattern = { "mail", "text", "python", "gitcommit", "c", "cpp", "java",
-              "sh", "vim", "puppet", "xml", "json", "javascript", "html",
-              "yaml", "dart" },
+  pattern = { "mail", "text", "python", "gitcommit", "c", "cpp", "java", "sh",
+    "vim", "puppet", "xml", "json", "javascript", "html", "yaml", "dart" },
   callback = function()
     vim.opt_local.tabstop = 8
     vim.opt_local.shiftwidth = 2
@@ -573,19 +572,19 @@ require('lualine').setup {
     theme = 'NeoSolarized',
   },
   sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'branch', 'diff', {
+    lualine_a = { 'mode' },
+    lualine_b = { 'branch', 'diff', {
       'diagnostics',
       sources = { 'nvim_lsp', 'nvim_diagnostic' },
       sections = { 'error', 'warn', 'info', 'hint' },
       colored = true,
       update_in_insert = false,
       always_visible = false,
-    }},
-    lualine_c = {'filename', 'lsp_progress'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'},
+    } },
+    lualine_c = { 'filename', 'lsp_progress' },
+    lualine_x = { 'encoding', 'fileformat', 'filetype' },
+    lualine_y = { 'progress' },
+    lualine_z = { 'location' },
   },
   extensions = {
     'fzf', 'fugitive', 'man', 'nvim-tree',
@@ -676,6 +675,7 @@ function ToggleScreenMess()
     require('ibl').update { enabled = true }
   end
 end
+
 keymap("n", "<leader>sc", ToggleScreenMess, opts)
 
 -- Jump in and out of nvim tree
@@ -707,6 +707,7 @@ function GitPushAndClose()
     vim.api.nvim_win_close(0, false)
   end
 end
+
 keymap("n", "<leader>gp", GitPushAndClose, opts)
 
 keymap("n", "<leader>ut", vim.cmd.UndotreeToggle, opts)
@@ -853,7 +854,7 @@ cmp.setup({
     format = function(entry, vim_item)
       vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
       vim_item.menu = ({
-        nvim_lsp= "[LSP]",
+        nvim_lsp = "[LSP]",
       })[entry.source_name]
       return vim_item
     end,
@@ -926,7 +927,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     keymap('n', '<space>rn', vim.lsp.buf.rename, lsp_opts)
     keymap({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, lsp_opts)
     keymap('n', 'gr', vim.lsp.buf.references, lsp_opts)
-    keymap('n', '<space>f', function()
+    keymap('n', '<leader>lf', function()
       vim.lsp.buf.format { async = true }
     end, lsp_opts)
   end,

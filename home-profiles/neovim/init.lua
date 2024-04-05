@@ -186,13 +186,13 @@ pcall(vim.cmd, "colorscheme NeoSolarized")
 -- -----------------------------------------------------------------------------
 
 local isWindows
-if _G.jit then
-  isWindows = _G.jit.os == "Windows"
+if _G["jit"] then
+  isWindows = _G["jit"].os == "Windows"
 else
   isWindows = not not package.path:match("\\")
 end
 
-function Dirparent(dir)
+local function dirparent(dir)
   local sep
   if isWindows then
     sep = "\\"
@@ -206,7 +206,7 @@ function Dirparent(dir)
   return result
 end
 
-function Mkdirp(path, mode, callback)
+local function mkdirp(path, mode, callback)
   uv.fs_stat(backupdir, function(stat_err, stat)
     if not stat_err then
       if stat.type ~= "directory" then
@@ -226,7 +226,7 @@ function Mkdirp(path, mode, callback)
       end
       if string.match(mkdir_err, "^ENOENT:") then
         -- The containing directory (which mkdir uses) does not exist
-        Mkdirp(Dirparent(path), mode, function(mkdirp_err, mkdirp_success)
+        mkdirp(dirparent(path), mode, function(mkdirp_err, mkdirp_success)
           if mkdirp_success then
             -- Replay original dir creation once only
             uv.fs_mkdir(path, mode, function(retry_err, success)
@@ -255,13 +255,13 @@ end
 -- CREATE NECESSARY BACKUP/UNDO DIRECTORIES
 -- -----------------------------------------------------------------------------
 
-Mkdirp(backupdir, 448, function(err, success)
+mkdirp(backupdir, 448, function(err, success)
   if not success then
     print(string.format("Error creating backup directory: %s", err))
   end
 end)
 
-Mkdirp(undodir, 448, function(err, success)
+mkdirp(undodir, 448, function(err, success)
   if not success then
     print(string.format("Error creating undo directory: %s", err))
   end

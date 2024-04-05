@@ -986,13 +986,56 @@ in
         local status_ok, ftype = pcall(
           vim.api.nvim_buf_get_var, 0, "fugitive_type")
         if status_ok and string.lower(ftype) == "index" then
-          vim.cmd('wincmd c')
+          vim.api.nvim_win_close(0, false)
         end
       end
       keymap("n", "<leader>gp", GitPushAndClose, opts)
 
       keymap("n", "<leader>ut", vim.cmd.UndotreeToggle, opts)
 
+      function InitLineNumbering()
+        -- Global line number settings
+        vim.opt.relativenumber = true;
+        vim.opt.number = true;
+        vim.opt.list = true;
+        vim.o.signcolumn = "auto"
+
+        for _, handle in ipairs(vim.api.nvim_list_wins()) do
+          vim.api.nvim_win_set_option(handle, "relativenumber", false)
+        end
+
+        local enable = string.lower(vim.o.signcolumn) == "auto"
+        vim.api.nvim_win_set_option(0, "relativenumber", enable)
+      end
+
+      function SetLineNumberingForWindow(entering)
+        local ft = string.lower(vim.bo.filetype)
+        if ft == "help" or ft == "nvimtree" then
+          return
+        end
+        if entering then
+          local enable = string.lower(vim.o.signcolumn) == "auto"
+          vim.api.nvim_win_set_option(0, "relativenumber", enable)
+        else
+          vim.api.nvim_win_set_option(0, "relativenumber", false)
+        end
+      end
+
+      autocmd({ 'VimEnter' }, {
+        desc = "Initialize my line numbering setup",
+        group = linenumbers,
+        callback = InitLineNumbering,
+      })
+      autocmd({ 'BufEnter', 'WinEnter' }, {
+        desc = "Set per-window, per-buffer line numbering",
+        group = linenumbers,
+        callback = function() SetLineNumberingForWindow(true) end,
+      })
+      autocmd({ 'WinLeave' }, {
+        desc = "Reset per-window, per-buffer line numbering to normal",
+        group = linenumbers,
+        callback = function() SetLineNumberingForWindow(false) end,
+      })
       -- -----------------------------------------------------------------------
       -- LSP CONFIG
       -- -----------------------------------------------------------------------
@@ -1161,66 +1204,6 @@ in
           end, opts)
         end,
       })
-    '';
-    extraConfig = ''
-      " TODO: add starship prompt config (consider kubectx kubens)
-      " VimScript Reminders:
-      " 1) All autocommands should be in autogroups
-      " 2) All functions should be prefixed with 's:' but use '<SID>' when
-      "    calling from mappings or commands
-
-      " #######################################################################
-      " ****** LINE NUMBERING ******
-      " #######################################################################
-
-      " Show line numbers relative to the current cursor line to make repeated
-      " commands easier to compose. We only do this while in the buffer.  When
-      " focused in another buffer, we use standard numbering.
-
-      function! s:InitLineNumbering()
-        " Keep track of current window, since 'windo' changes current window
-        let l:my_window = winnr()
-
-        " Global line number settings
-        set relativenumber
-        set number
-        set list
-        set signcolumn=auto
-
-        " Setup all windows for line numbering
-        windo call s:SetLineNumberingForWindow(0)
-
-        " Go back to window
-        exec l:my_window . 'wincmd w'
-        "
-        " Set special (relative) numbering for focused window
-        call s:SetLineNumberingForWindow(1)
-      endfunction
-
-      function! s:SetLineNumberingForWindow(entering)
-        " Excluded buffers
-        if &ft ==? "help" || exists("b:NERDTree")
-          return
-        endif
-        if a:entering
-          if &signcolumn ==? "auto"
-            " Normal state, turn on relative number
-            setlocal relativenumber
-          else
-            " Visual Indicators Disabled
-            setlocal norelativenumber
-          endif
-        else
-          setlocal norelativenumber
-        endif
-      endfunction
-
-      augroup MyLineNumbers
-        au!
-        autocmd VimEnter * call <SID>InitLineNumbering()
-        autocmd BufEnter,WinEnter * call <SID>SetLineNumberingForWindow(1)
-        autocmd WinLeave * call <SID>SetLineNumberingForWindow(0)
-      augroup END
     '';
   };
 }

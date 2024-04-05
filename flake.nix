@@ -49,14 +49,6 @@
       url = "github:szw/vim-maximizer";
       flake = false;
     };
-    nvim-colorizer = {
-      url = "github:norcalli/nvim-colorizer.lua";
-      flake = false;
-    };
-    indent-blankline = {
-      url = "github:lukas-reineke/indent-blankline.nvim";
-      flake = false;
-    };
     vim-glaive = {
       url = "github:google/vim-glaive";
       flake = false;
@@ -69,8 +61,8 @@
       url = "github:kana/vim-fakeclip";
       flake = false;
     };
-    conflict-marker = {
-      url = "github:rhysd/conflict-marker.vim";
+    NeoSolarized-nvim = {
+      url = "github:Tsuzat/NeoSolarized.nvim";
       flake = false;
     };
   };
@@ -155,7 +147,7 @@
                 { nixpkgs.pkgs = pkgs; }
               ];
               # Only used for importable arguments
-              specialArgs = { inherit inputs; };
+              specialArgs = { inherit inputs; nix-colors = inputs.nix-colors; };
             };
         in lib.genAttrs configs mkNixosConfig;
 
@@ -168,6 +160,7 @@
           };
           extraArgs = {
             devShells = devShells;
+            nix-colors = inputs.nix-colors;
           };
 
         in mapModules ./home-configs (mkHomeConfig defaultHomeConfig systemPackages extraArgs);

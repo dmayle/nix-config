@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "NeoSolarized-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1708756818,
+        "narHash": "sha256-UxwUvxN5QWjx2xDRerRODVc1dxcjkhYUjWgZIucQCz0=",
+        "owner": "Tsuzat",
+        "repo": "NeoSolarized.nvim",
+        "rev": "208e65a3ede945b8a1d00104a4441217c5e23509",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Tsuzat",
+        "repo": "NeoSolarized.nvim",
+        "type": "github"
+      }
+    },
     "base16-schemes": {
       "flake": false,
       "locked": {
@@ -13,22 +29,6 @@
       "original": {
         "owner": "tinted-theming",
         "repo": "base16-schemes",
-        "type": "github"
-      }
-    },
-    "conflict-marker": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1667290116,
-        "narHash": "sha256-/VEbvm11vXS960CBJD4x4v7C1/UMISmbPkJadzK0TQM=",
-        "owner": "rhysd",
-        "repo": "conflict-marker.vim",
-        "rev": "11a4d42244755505b66b15cd4496a150432eb5e3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "rhysd",
-        "repo": "conflict-marker.vim",
         "type": "github"
       }
     },
@@ -192,19 +192,10 @@
         "type": "github"
       }
     },
-    "indent-blankline": {
-      "flake": false,
       "locked": {
-        "lastModified": 1707806353,
-        "narHash": "sha256-ZzsQVLP7EmHeVEkSvbENce/hk1HANN+qL8Vv7FaOiV0=",
-        "owner": "lukas-reineke",
-        "repo": "indent-blankline.nvim",
-        "rev": "821a7acd88587d966f7e464b0b3031dfe7f5680c",
         "type": "github"
       },
       "original": {
-        "owner": "lukas-reineke",
-        "repo": "indent-blankline.nvim",
         "type": "github"
       }
     },
@@ -350,37 +341,19 @@
         "type": "github"
       }
     },
-    "nvim-colorizer": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1591879145,
-        "narHash": "sha256-6YrnItxExL2C8pNIdLd+hXCjsB2MbZANwWkah6dreD8=",
-        "owner": "norcalli",
-        "repo": "nvim-colorizer.lua",
-        "rev": "36c610a9717cc9ec426a07c8e6bf3b3abcb139d6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "norcalli",
-        "repo": "nvim-colorizer.lua",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
-        "conflict-marker": "conflict-marker",
+        "NeoSolarized-nvim": "NeoSolarized-nvim",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
         "hy3": "hy3",
         "hyprland": "hyprland",
-        "indent-blankline": "indent-blankline",
         "lib-aggregate": "lib-aggregate",
         "nix-colors": "nix-colors",
         "nix-eval-jobs": "nix-eval-jobs",
         "nixgl": "nixgl",
         "nixpkgs": "nixpkgs",
         "nixpkgs-lib": "nixpkgs-lib",
-        "nvim-colorizer": "nvim-colorizer",
         "systems": "systems",
         "vim-fakeclip": "vim-fakeclip",
         "vim-glaive": "vim-glaive",

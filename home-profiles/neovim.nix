@@ -28,6 +28,15 @@ let
     };
   };
 
+  NeoSolarized-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "NeoSolarized-nvim";
+    src = inputs.NeoSolarized-nvim;
+    meta = {
+      homepage = "https://github.com/Tsuzat/NeoSolarized.nvim";
+      maintainers = [ "tsuzat" ];
+    };
+  };
+
   nvim-spell-en-utf8-dictionary = builtins.fetchurl {
     url = "http://ftp.vim.org/vim/runtime/spell/en.utf-8.spl";
     sha256 = "fecabdc949b6a39d32c0899fa2545eab25e63f2ed0a33c4ad1511426384d3070";
@@ -150,7 +159,7 @@ in
       #######################################################################
 
       # solarized
-      NeoSolarized
+      NeoSolarized-nvim
 
       # Configurable text colorizing
       nvim-colorizer-lua
@@ -198,9 +207,6 @@ in
       # NvimTree (faster NerdTree replacement)
       nvim-tree-lua
 
-      # Simple buf list/navigate
-      bufexplorer
-
       # Source code class explorer
       aerial-nvim
 
@@ -213,10 +219,12 @@ in
 
       # Vim Git UI
       vim-fugitive
-      vim-signify
+      gitsigns-nvim
 
       # Configure fuzzy finder integration
-      fzf-vim
+      plenary-nvim # Library dependency
+      telescope-nvim
+      telescope-fzf-native-nvim
 
       #######################################################################
       # ****** FILETYPE SPECIFIC PLUGINS ******
@@ -273,9 +281,11 @@ in
       -- -----------------------------------------------------------------------
       -- LOCAL NAMESPACE VARIABLES
       -- -----------------------------------------------------------------------
+      -- Easy accessors for nvim api calls
       local augroup = vim.api.nvim_create_augroup
       local autocmd = vim.api.nvim_create_autocmd
-      local keymap = vim.api.nvim_set_keymap
+      local keymap = vim.keymap.set
+
       -- Accessor for libuv
       local uv = vim.loop
 
@@ -440,6 +450,13 @@ in
       -- SET COLORSCHEME
       -- -----------------------------------------------------------------------
 
+      require('NeoSolarized').setup {
+        style = "light",
+        transparent = false,
+        terminal_colors = true,
+        enable_italics = true,
+      }
+
       -- Setting colorscheme is not an option, it's a call that needs to be
       -- made into vim. Normally I should check the return value here, but
       -- I don't know what I would do if it fails...
@@ -545,6 +562,62 @@ in
       require('colorizer').attach_to_buffer(0)
       require('lsp-format').setup()
 
+      require('gitsigns').setup {
+        signs = {
+          add = { hl = "GitSignsAdd", text = " ", numhl = "GitSignsAddNr", linehl = "GitSignsAddLn" },
+          change = { hl = "GitSignsChange", text = " ", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
+          delete = { hl = "GitSignsDelete", text = " ", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
+          topdelete = { hl = "GitSignsDelete", text = "󱅁 ", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
+          changedelete = { hl = "GitSignsChange", text = "󰍷 ", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
+        },
+        signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
+        numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
+        linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
+        word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
+        watch_gitdir = {
+          interval = 1000,
+          follow_files = true,
+        },
+        attach_to_untracked = true,
+        current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+        current_line_blame_opts = {
+          virt_text = true,
+          virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
+          delay = 1000,
+          ignore_whitespace = false,
+        },
+        current_line_blame_formatter_opts = {
+          relative_time = false,
+        },
+        sign_priority = 6,
+        update_debounce = 100,
+        status_formatter = nil, -- Use default
+        max_file_length = 40000,
+        preview_config = {
+          -- Options passed to nvim_open_win
+          border = "single",
+          style = "minimal",
+          relative = "cursor",
+          row = 0,
+          col = 1,
+        },
+        yadm = {
+          enable = false,
+        },
+      }
+      require('telescope').setup {
+        extensions = {
+          fzf = {
+            fuzzy = true,
+            override_generic_sorter = true,
+            override_file_sorter = true,
+            case_mode = "smart_case",
+          },
+        },
+      }
+      -- Load native fzf plugin
+      require('telescope').load_extension('fzf')
+
       -- -----------------------------------------------------------------------
       -- AUTOCOMMAND GROUPS
       -- -----------------------------------------------------------------------
@@ -553,7 +626,6 @@ in
       local filesettings = augroup('FileSettings', clear)
       local codefmtsettings = augroup('codefmtsettings', clear)
       local linenumbers = augroup('LineNumbers', clear)
-      local lspconfiggroup = augroup('LSPConfig', clear)
 
       -- -----------------------------------------------------------------------
       -- AUTOCOMMANDS
@@ -780,8 +852,7 @@ in
 
       require('lualine').setup {
         options = {
-          theme = 'solarized_light',
-          --ignore_focus = { 'NvimTree' },
+          theme = 'NeoSolarized',
         },
         sections = {
           lualine_a = {'mode'},
@@ -815,7 +886,7 @@ in
       -- KEY MAPPINGS
       -- -----------------------------------------------------------------------
 
-      local opts = { noremap = true, silent = true }
+      local opts = { silent = true }
 
       -- Make Y mirror y, working like D and C, yank to the end of the line
       keymap("n", "Y", "y$", opts)
@@ -860,11 +931,12 @@ in
       vim.g.maplocalleader = ' '
 
       -- Searches
-      keymap("n", "<leader><space>", ":GFiles<CR>", opts)
-      keymap("n", "<leader>ff", ":Rg<CR>", opts)
-      -- inoremap <expr> <c-x><c-f> fzf#vim#complete#path(
-      --   \ "find . -path '*/\.*' -prune -o print \| sed '1d;s:%..::'",
-      --   \ fzf#wrap({'dir': expand('%:p:h')}))
+      local telescope = require('telescope.builtin')
+      keymap('n', '<leader>fg', telescope.live_grep, {})
+      keymap('n', '<leader>ff', telescope.find_files, {})
+      keymap('n', '<leader><space>', telescope.find_files, {})
+      keymap('n', '<leader>fb', telescope.buffers, {})
+      keymap('n', '<leader>fh', telescope.help_tags, {})
 
       -- Load Git UI
       keymap("n", "<leader>gg", ":G<CR>", opts)
@@ -886,41 +958,20 @@ in
           require('ibl').update { enabled = true }
         end
       end
-      keymap("n", "<leader>sc", "", {
-        noremap = true,
-        silent = true,
-        callback = function(map) ToggleScreenMess() end,
-      })
-
-      -- replace the current buffer (delete) with bufexplorer
-      --nnoremap <silent> <leader>bd :call <SID>BufDelete()<cr>
+      keymap("n", "<leader>sc", ToggleScreenMess, opts)
 
       -- Jump in and out of nvim tree
-      keymap("n", "<leader>nt", "", {
-        noremap = true,
-        silent = true,
-        callback = function(map)
-          require('nvim-tree.api').tree.toggle()
-        end,
-      })
-      keymap("n", "<leader>nf", "", {
-        noremap = true,
-        silent = true,
-        callback = function(map)
-          require('nvim-tree.api').tree.find_file {
-            open = true,
-            focus = true,
-            update_root = true,
-          }
-        end,
-      })
-      keymap("n", "<leader>nn", "", {
-        noremap = true,
-        silent = true,
-        callback = function(map)
-          require('nvim-tree.api').tree.focus()
-        end,
-      })
+      local nvim_tree = require('nvim-tree.api')
+      keymap("n", "<leader>nt", nvim_tree.tree.toggle, opts)
+      keymap("n", "<leader>nn", nvim_tree.tree.focus, opts)
+
+      keymap("n", "<leader>nf", function(map)
+        nvim_tree.tree.find_file {
+          open = true,
+          focus = true,
+          update_root = true,
+        }
+      end, opts)
 
       -- (C)reate (F)ile under cursor (for when `gf` doesn't work)
       --nnoremap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
@@ -930,15 +981,17 @@ in
       --vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
 
       -- Push and close git interface
-      --nnoremap <silent> <leader>gp :call <SID>GitPushAndClose()<CR>
+      function GitPushAndClose()
+        vim.cmd('Gpush')
+        local status_ok, ftype = pcall(
+          vim.api.nvim_buf_get_var, 0, "fugitive_type")
+        if status_ok and string.lower(ftype) == "index" then
+          vim.cmd('wincmd c')
+        end
+      end
+      keymap("n", "<leader>gp", GitPushAndClose, opts)
 
-      keymap("n", "<leader>ut", "", {
-        noremap = true,
-        silent = true,
-        callback = function(map)
-          vim.cmd.UndotreeToggle()
-        end,
-      })
+      keymap("n", "<leader>ut", vim.cmd.UndotreeToggle, opts)
 
       -- -----------------------------------------------------------------------
       -- LSP CONFIG
@@ -1067,26 +1120,10 @@ in
 
       -- Global mappings.
       -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-      keymap('n', '<space>e', "", {
-        noremap = true,
-        silent = true,
-        callback = function(map) vim.diagnostic.open_float() end,
-      })
-      keymap('n', '[d', "", {
-        noremap = true,
-        silent = true,
-        callback = function(map) vim.diagnostic.goto_prev() end,
-      })
-      keymap('n', ']d', "", {
-        noremap = true,
-        silent = true,
-        callback = function(map) vim.diagnostic.goto_next() end,
-      })
-      keymap('n', '<spacq>e', "", {
-        noremap = true,
-        silent = true,
-        callback = function(map) vim.diagnostic.setloclist() end,
-      })
+      keymap('n', '<space>e', vim.diagnostic.open_float, opts)
+      keymap('n', '[d', vim.diagnostic.goto_prev, opts)
+      keymap('n', ']d', vim.diagnostic.goto_next, opts)
+      keymap('n', '<space>q', vim.diagnostic.setloclist, opts)
 
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
@@ -1105,63 +1142,32 @@ in
           -- Buffer local mappings.
           -- See `:help vim.lsp.*` for documentation on any of the below functions
           local opts = { buffer = ev.buf }
-          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-          vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-          vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-          vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-          vim.keymap.set('n', '<space>wl', function()
+          keymap('n', 'gD', vim.lsp.buf.declaration, opts)
+          keymap('n', 'gd', vim.lsp.buf.definition, opts)
+          keymap('n', 'K', vim.lsp.buf.hover, opts)
+          keymap('n', 'gi', vim.lsp.buf.implementation, opts)
+          keymap('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+          keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+          keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+          keymap('n', '<space>wl', function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
           end, opts)
-          vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-          vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-          vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-          vim.keymap.set('n', '<space>f', function()
+          keymap('n', '<space>D', vim.lsp.buf.type_definition, opts)
+          keymap('n', '<space>rn', vim.lsp.buf.rename, opts)
+          keymap({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+          keymap('n', 'gr', vim.lsp.buf.references, opts)
+          keymap('n', '<space>f', function()
             vim.lsp.buf.format { async = true }
           end, opts)
         end,
       })
     '';
     extraConfig = ''
+      " TODO: add starship prompt config (consider kubectx kubens)
       " VimScript Reminders:
       " 1) All autocommands should be in autogroups
       " 2) All functions should be prefixed with 's:' but use '<SID>' when
       "    calling from mappings or commands
-
-      " #######################################################################
-      " ****** PLUGIN SETTINGS ******
-      " #######################################################################
-
-      " #######################################################################
-      " ****** PERSONAL FUNCTIONS ******
-      " #######################################################################
-
-      " Function so that we can push directly from Fugitive git index
-      function! s:GitPushAndClose()
-        exe ":Gpush"
-        if getbufvar("", "fugitive_type") ==? "index"
-          exe "wincmd c"
-        endif
-      endfunction
-
-      " We make a persistent hidden buffer so that we have somewhere to go
-      " while deleting the current buffer
-      let s:BufDeleteBuffer = -1
-
-      function! s:BufDelete()
-        if s:BufDeleteBuffer == -1
-          let s:BufDeleteBuffer = bufnr("BufDelete_".matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:], 1)
-          call setbufvar(s:BufDeleteBuffer, "&buftype", "nofile")
-        endif
-
-        let l:cur_buffer = bufnr('%')
-        exe "b ".s:BufDeleteBuffer
-        exe "bdelete ".l:cur_buffer
-        exe "BufExplorer"
-      endfunction
 
       " #######################################################################
       " ****** LINE NUMBERING ******

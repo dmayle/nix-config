@@ -1,27 +1,24 @@
-{ self, lib, ... }:
+{ lib, flib, ... }:
 
 let
   inherit (builtins) attrValues readDir pathExists concatLists;
   inherit (lib) id mapAttrsToList filterAttrs hasPrefix hasSuffix nameValuePair removeSuffix;
-  inherit (self.attrs) mapFilterAttrs;
+  inherit (flib.attrs) mapFilterAttrs;
 in
 rec {
-  # Convert a string object to a path object
-  asPath = str: ./. + str;
-
   # Function to recursively collect modules from directory (Refactor this)
   findModules = dir:
-    builtins.concatLists (builtins.attrValues (builtins.mapAttrs
+    concatLists (attrValues (builtins.mapAttrs
       (name : type:
         if type == "regular" then [{
           name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
           value = dir + "/${name}";
-        }] else if (builtins.readDir (dir + "/${name}"))
+        }] else if (readDir (dir + "/${name}"))
         ? "default.nix" then [{
           inherit name;
           value = dir + "/${name}";
         }] else
-          findModules (dir + "/${name}")) (builtins.readDir dir)));
+          findModules (dir + "/${name}")) (readDir dir)));
 
   configurePackagesForSystem = pkgs: config: overlays: system:
     import pkgs {

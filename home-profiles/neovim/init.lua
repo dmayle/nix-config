@@ -706,7 +706,16 @@ keymap("n", "<leader>nf", function()
 end, opts)
 
 -- (C)reate (F)ile under cursor (for when `gf` doesn't work)
---nnoremap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
+keymap("n", "<leader>cf", function()
+  local file_under_cursor = vim.fn.expand("<cfile>")
+  uv.fs_open(file_under_cursor, 'xw', 384, function(err, fd) -- 384 == 0600
+    if err then
+      print(string.format("Error creating file: %s", err))
+    else
+      uv.fs_close(fd)
+    end
+  end)
+end, opts)
 
 -- base64 encode encode and decode visual selection
 --vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>

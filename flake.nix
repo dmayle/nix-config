@@ -33,12 +33,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland = {
-      url = "github:hyprwm/Hyprland?ref=v0.36.0";
+      url = "github:hyprwm/Hyprland?ref=v0.38.1";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
     };
     hy3 = {
-      url = "github:outfoxxed/hy3?ref=hl0.36.0";
+      url = "github:outfoxxed/hy3?ref=hl0.38.0";
       inputs.hyprland.follows = "hyprland";
     };
     nix-colors = {

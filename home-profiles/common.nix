@@ -56,6 +56,9 @@
   };
 
   home.packages = with pkgs; [
+    # Might not be permanent, but I find it useful
+    gdb
+
     # Basic utilities
     file
 

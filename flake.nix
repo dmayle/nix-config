@@ -62,8 +62,7 @@
   # The output of this is my nixos configurations and home manager configurations
   outputs = inputs @ { self, systems, nixpkgs, ... }:
     let
-      inherit (flib) configurePackagesForSystem mapModules mkHomeConfig
-        mkNixosConfig;
+      inherit (flib) mkPackages mapModules mkHomeConfig mkNixosConfig;
 
       lib = nixpkgs.lib;
 
@@ -72,7 +71,7 @@
       eachSystem = lib.genAttrs (import systems);
 
       # Load all modules only once.
-      allModules = flib.loadModules [
+      modules = flib.loadModules [
         ./dev-shells
         ./home-modules
         ./home-profiles
@@ -93,25 +92,27 @@
         cudaSupport = true;
       };
 
-      # Global nixpkgs overlays used in this flake, depends on x86_64-linux
-      # packages.
+      # Global nixpkgs overlays used in this flake.
       pkgOverlays = [
+        # Make flake packages available to all configs
         (final: prev: packages)
       ];
 
       # Create an attrset of systems to nixpkgs for each system using config.
       systemPackages = eachSystem (system:
-        configurePackagesForSystem nixpkgs pkgConfig pkgOverlays system);
+        mkPackages nixpkgs pkgConfig pkgOverlays system);
 
       # Load all of the packages from this flake so they can also be used in the
       # packages overlays.
       packages = eachSystem (system:
-        mapModules allModules.packages (p: systemPackages.${system}.callPackage p {}));
+        mapModules modules.packages (p:
+          systemPackages.${system}.callPackage p {}));
 
       # Load all of the devShells from this flake so they can also be used in
       # the module args.
       devShells = eachSystem (system:
-        mapModules allModules.dev-shells (p: import p { pkgs = systemPackages.${system}; }));
+        mapModules modules.dev-shells (p:
+          import p { pkgs = systemPackages.${system}; }));
 
       # Args passed to all modules used for configurations.
       extraArgs = { inherit inputs devShells; };
@@ -120,22 +121,22 @@
     {
       inherit devShells packages;
 
-      homeManagerModules = allModules.home-modules;
+      homeManagerModules = modules.home-modules;
 
-      homeManagerProfiles = allModules.home-profiles;
+      homeManagerProfiles = modules.home-profiles;
 
-      homeManagerRoles = allModules.home-roles;
+      homeManagerRoles = modules.home-roles;
 
-      homeConfigurations = mapModules allModules.home-configs (
+      homeConfigurations = mapModules modules.home-configs (
         mkHomeConfig systemPackages extraArgs);
 
-      nixosModules = allModules.nixos-modules;
+      nixosModules = modules.nixos-modules;
 
-      nixosProfiles = allModules.nixos-profiles;
+      nixosProfiles = modules.nixos-profiles;
 
-      nixosRoles = allModules.nixos-roles;
+      nixosRoles = modules.nixos-roles;
 
-      nixosConfigurations = mapModules allModules.nixos-configs (
+      nixosConfigurations = mapModules modules.nixos-configs (
         mkNixosConfig systemPackages extraArgs);
     };
 }

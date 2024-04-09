@@ -68,7 +68,7 @@
   };
 
   # The output of this is my nixos configurations and home manager configurations
-  outputs = inputs @ { self, nixpkgs, home-manager, nixgl, ... }:
+  outputs = inputs @ { self, systems, nixpkgs, ... }:
     # I need to setup three things in order for the code contained in this
     # flake to work properly:
     # 1) Import and setup library code which is used by my modules, but also by
@@ -77,14 +77,27 @@
     #    overlays, and mixins shared by different configurations
     # 3) Setup nixpkgs to enable unfree modules
     let
-      inherit (flib) findModules configurePackagesForSystem mapModules mapModules' mkHomeConfig systemForConfig;
+      inherit (flib) configurePackagesForSystem mapModules mkHomeConfig;
+
+      eachSystem = nixpkgs.lib.genAttrs (import systems);
 
       lib = nixpkgs.lib;
 
       flib = import ./lib { inherit inputs lib; };
 
-      # This creates an x86_64-linux based package tree for the packages in this flake :-(
-      injectPackages = mapModules ./packages (p: systemPackages.x86_64-linux.callPackage p {});
+      # Load all modules only once
+      allModules = flib.loadModules [
+        ./dev-shells
+        ./home-modules
+        ./home-profiles
+        ./home-roles
+        ./home-configs
+        ./nixos-modules
+        ./nixos-profiles
+        ./nixos-roles
+        ./nixos-configs
+        ./packages
+      ];
 
       # Global nixpkgs config used in this flake
       pkgConfig = {
@@ -100,40 +113,34 @@
       # Curry new config and overlays into nixpkgs as per-system function
       pkgsForSystem = configurePackagesForSystem nixpkgs pkgConfig pkgOverlays;
 
-      # Generate a list systems supported by the nixos and home-manager configs
-      supportedSystems = lib.unique (mapModules' ./home-configs systemForConfig ++ mapModules' ./nixos-configs systemForConfig);
-
       # Create an attrset of systems to nixpkgs for that system
-      systemPackages = lib.genAttrs supportedSystems pkgsForSystem;
+      systemPackages = eachSystem (system: pkgsForSystem system);
     in
 
     rec {
-      #devShells.x86_64-linux = builtins.listToAttrs (findModules ./dev-shells);
-      # flakeSystems is a function that takes a list of shells and makes them available for each supported system
-      # devShells = flakeSystems (findModules ./dev-shells);
-      devShells = lib.genAttrs supportedSystems (system:
-        let
-          shells = builtins.attrNames (builtins.readDir ./dev-shells);
-          myFunc = name:
-            import (./dev-shells + "/${name}") { pkgs = systemPackages.${system}; };
+      mylib = flib;
+      devShells = eachSystem (system: let
+        shells = builtins.attrNames allModules.dev-shells;
+        myFunc = name:
+          import (./dev-shells + "/${name}") { pkgs = systemPackages.${system}; };
         in lib.genAttrs shells myFunc
-      );
+        );
 
-      homeManagerModules = builtins.listToAttrs (findModules ./home-modules);
+      homeManagerModules = allModules.home-modules;
 
-      homeManagerProfiles = builtins.listToAttrs (findModules ./home-profiles);
+      homeManagerProfiles = allModules.home-profiles;
 
-      homeManagerRoles = import ./home-roles;
+      homeManagerRoles = allModules.home-roles;
 
-      nixosModules = builtins.listToAttrs (findModules ./nixos-modules);
+      nixosModules = allModules.nixos-modules;
 
-      nixosProfiles = builtins.listToAttrs (findModules ./nixos-profiles);
+      nixosProfiles = allModules.nixos-profiles;
 
-      nixosRoles = import ./nixos-roles;
+      nixosRoles = allModules.nixos-roles;
 
-      nixosConfigurations = with lib;
+      nixosConfigurations =
         let
-          configs = builtins.attrNames (builtins.readDir ./nixos-configs);
+          configs = builtins.attrNames allModules.nixos-configs;
 
           mkNixosConfig = name:
             let
@@ -151,7 +158,7 @@
             };
         in lib.genAttrs configs mkNixosConfig;
 
-      homeConfigurations = with home-manager.lib;
+      homeConfigurations =
         let
           defaultHomeConfig.home = rec {
             username = "douglas";
@@ -165,9 +172,12 @@
 
         in mapModules ./home-configs (mkHomeConfig defaultHomeConfig systemPackages extraArgs);
 
+      # callPackage imports the package and then calls it
       # packages = mergePackages (fundModules ./packages)
       # mergePackages takes a list of attributes sets, where each set is a mapping of supported systems to a single package
       #builtins.listToAttrs (findModules ./packages);packages.x86_64-linux = builtins.listToAttrs (findModules ./packages);
-      packages.x86_64-linux = mapModules ./packages (p: systemPackages.x86_64-linux.callPackage p {});
+      packages = eachSystem (system:
+        mapModules ./packages (p: systemPackages.${system}.callPackage p {}));
+      # packages.x86_64-linux = mapModules ./packages (p: systemPackages.x86_64-linux.callPackage p {});
     };
 }

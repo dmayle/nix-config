@@ -1,17 +1,24 @@
 { lib, flib, ... }:
 
 let
-  inherit (builtins) attrValues readDir pathExists concatLists;
+  inherit (builtins) attrValues baseNameOf concatLists listToAttrs readDir pathExists;
   inherit (lib) id mapAttrsToList filterAttrs hasPrefix hasSuffix nameValuePair removeSuffix;
   inherit (flib.attrs) mapFilterAttrs;
 in
 rec {
-  # Function to recursively collect modules from directory (Refactor this)
+  # Convert a string object to a path object
+  asPath = str: ./. + str;
+
+  # Function to recursively collect modules from a directory and squish them all
+  # together into a top-level namespace.
+  # A directory containing a "default.nix" file will not be recursed into, and
+  # may contain non-nix files.
+  # Any directory containing sub-modules may not contain non-nix files.
   findModules = dir:
     concatLists (attrValues (builtins.mapAttrs
       (name : type:
         if type == "regular" then [{
-          name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
+          name = removeSuffix ".nix" name;
           value = dir + "/${name}";
         }] else if (readDir (dir + "/${name}"))
         ? "default.nix" then [{
@@ -20,14 +27,31 @@ rec {
         }] else
           findModules (dir + "/${name}")) (readDir dir)));
 
+  # readDir generates { "one.nix" = "regular"; "subdir" = "directory" } for each
+  # directory entry
+  # mapAttrs calls this function that turns that into { "one.nix" = [{ name
+  # = "one"; value = ./rootdir/one.nix }], "subdir" = [{ name = "subdir"; value
+  # = ./rootdir/subdir }]}
+  # attrValues discards the original keys and generates list of lists:
+  # [[{ name = "one"; value = ./rootdir/one.nix }] [{ name = "subdir", value
+  # = ./rootdir/subdir }]]
+  # concatLists makes it a single list
+
   configurePackagesForSystem = pkgs: config: overlays: system:
     import pkgs {
       localSystem = { inherit system; };
       inherit config overlays;
     };
 
-  mapSystems = systems: fn:
-    lib.genAttrs systems (system: fn);
+
+  # Given a list of paths, return an attrset of path name to attrset of modules
+  loadModules = (paths:
+    listToAttrs (
+      map
+        (path: nameValuePair (baseNameOf path) (listToAttrs (findModules path)))
+        paths
+    )
+  );
 
   # Read out a system file from the given path and return the contents
   systemForConfig = path: lib.removeSuffix "\n" (builtins.readFile (path + "/system"));

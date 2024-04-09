@@ -107,15 +107,26 @@
         cudaSupport = true;
       };
 
-      # Global nixpkgs overlays used in this flake, depends on x86_64-linux packages
+      # Global nixpkgs overlays used in this flake, depends on x86_64-linux
+      # packages
       pkgOverlays = [
+        (final: prev: flakePackages)
       ];
 
-      # Curry new config and overlays into nixpkgs as per-system function
-      pkgsForSystem = configurePackagesForSystem nixpkgs pkgConfig pkgOverlays;
+      defaultHomeConfig.home = rec {
+        username = "douglas";
+        stateVersion = "22.05";
+        homeDirectory = "/home/${username}";
+      };
 
-      # Create an attrset of systems to nixpkgs for that system
-      systemPackages = eachSystem (system: pkgsForSystem system);
+      # Create an attrset of systems to nixpkgs for each system using config
+      systemPackages = eachSystem (system:
+        configurePackagesForSystem nixpkgs pkgConfig pkgOverlays system);
+
+      # Load all of the packages from this flake so they can also be used in the
+      # packages overlays
+      flakePackages = eachSystem (system:
+        mapModules allModules.packages (p: systemPackages.${system}.callPackage p {}));
     in
 
     rec {
@@ -150,29 +161,16 @@
                 { nixpkgs.pkgs = pkgs; }
               ];
               # Only used for importable arguments
-              specialArgs = { inherit inputs; nix-colors = inputs.nix-colors; };
+              specialArgs = { inherit inputs devShells; };
             };
         in lib.genAttrs configs mkNixosConfig;
 
       homeConfigurations =
         let
-          defaultHomeConfig.home = rec {
-            username = "douglas";
-            stateVersion = "22.05";
-            homeDirectory = "/home/${username}";
-          };
-          extraArgs = {
-            devShells = devShells;
-            nix-colors = inputs.nix-colors;
-          };
+          extraArgs = { inherit inputs devShells; };
 
         in mapModules allModules.home-configs (mkHomeConfig defaultHomeConfig systemPackages extraArgs);
 
-      # callPackage imports the package and then calls it
-      # packages = mergePackages (fundModules ./packages)
-      # mergePackages takes a list of attributes sets, where each set is a mapping of supported systems to a single package
-      #builtins.listToAttrs (findModules ./packages);packages.x86_64-linux = builtins.listToAttrs (findModules ./packages);
-      packages = eachSystem (system:
-        mapModules allModules.packages (p: systemPackages.${system}.callPackage p {}));
+      packages = flakePackages;
     };
 }

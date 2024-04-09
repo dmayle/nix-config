@@ -1,7 +1,5 @@
 { inputs, lib, flib, ... }:
 
-with lib;
-with flib;
 let sys = "x86_64-linux";
 in
 {
@@ -16,6 +14,6 @@ in
         defaults
       ];
       # Only used for importable arguments
-      extraSpecialArgs = { inherit inputs; } // extraArgs;
+      extraSpecialArgs = extraArgs;
     };
 }

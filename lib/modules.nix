@@ -28,22 +28,11 @@ rec {
             findModules (dir + "/${name}")
         else []) (readDir dir)));
 
-  # readDir generates { "one.nix" = "regular"; "subdir" = "directory" } for each
-  # directory entry
-  # mapAttrs calls this function that turns that into { "one.nix" = [{ name
-  # = "one"; value = ./rootdir/one.nix }], "subdir" = [{ name = "subdir"; value
-  # = ./rootdir/subdir }]}
-  # attrValues discards the original keys and generates list of lists:
-  # [[{ name = "one"; value = ./rootdir/one.nix }] [{ name = "subdir", value
-  # = ./rootdir/subdir }]]
-  # concatLists makes it a single list
-
   configurePackagesForSystem = pkgs: config: overlays: system:
     import pkgs {
       localSystem = { inherit system; };
       inherit config overlays;
     };
-
 
   # Given a list of paths, return an attrset of path name to attrset of modules
   loadModules = (paths:
@@ -56,6 +45,12 @@ rec {
 
   # Read out a system file from the given path and return the contents
   systemForConfig = path: lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
+
+  eachNixConfig = fn: configs:
+  mapModules configs (config:
+  if pathExists "${toString config}/system" then
+  fn config
+  else config);
 
   # For a given directory, return a set of key, value pairs where each key is
   # either the name of a nix file in that directory, or a sub-directory with

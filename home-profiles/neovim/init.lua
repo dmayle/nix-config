@@ -754,8 +754,6 @@ cmp.setup({
     documentation = cmp.config.window.bordered(),
   },
   mapping = cmp.mapping.preset.insert({
-    ['<C-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-    ['<C-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
     ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
     ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
@@ -862,7 +860,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     keymap('n', 'gd', vim.lsp.buf.definition, lsp_opts)
     keymap('n', 'K', vim.lsp.buf.hover, lsp_opts)
     keymap('n', 'gi', vim.lsp.buf.implementation, lsp_opts)
-    keymap('n', '<C-k>', vim.lsp.buf.signature_help, lsp_opts)
+    --keymap('n', '<C-k>', vim.lsp.buf.signature_help, lsp_opts)
     keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, lsp_opts)
     keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, lsp_opts)
     keymap('n', '<space>wl', function()

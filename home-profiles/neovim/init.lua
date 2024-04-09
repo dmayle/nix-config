@@ -343,7 +343,6 @@ require('telescope').load_extension('fzf')
 local clear = { clear = true }
 local visualchars = augroup('VisualChars', clear)
 local filesettings = augroup('FileSettings', clear)
-local codefmtsettings = augroup('codefmtsettings', clear)
 local linenumbers = augroup('LineNumbers', clear)
 
 -- -----------------------------------------------------------------------------
@@ -482,83 +481,6 @@ autocmd({ 'FileType' }, {
   callback = function()
     vim.opt_local.cinoptions = "j1,+2s"
   end,
-})
-
--- -----------------------------------------------------------------------------
--- CODEFORMAT SETTINGS (CURRENTLY UNUSED)
--- -----------------------------------------------------------------------------
-
-autocmd({ 'VimEnter' }, {
-  desc = "Activate Glaive",
-  group = codefmtsettings,
-  callback = function()
-    vim.cmd('Glaive codefmt plugin[mappings]')
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = "bzl",
-  callback = function() vim.cmd('AutoFormatBuffer buildifier') end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = { "c", "cpp", "proto", "javascript", "arduino" },
-  callback = function() vim.cmd('AutoFormatBuffer clang-format') end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = "dart",
-  callback = function() vim.cmd('AutoFormatBuffer dartfmt') end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = "go",
-  callback = function() vim.cmd('AutoFormatBuffer gofmt') end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = { "html", "css", "sass", "scss", "less", "json" },
-  callback = function() vim.cmd('AutoFormatBuffer js-beautify') end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = "java",
-  callback = function()
-    vim.cmd('AutoFormatBuffer google-java-format')
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = "python",
-  callback = function() vim.cmd('AutoFormatBuffer yapf') end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = "rust",
-  callback = function() vim.cmd('AutoFormatBuffer rustfmt') end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Configure codeformat for bazel build files",
-  group = codefmtsettings,
-  pattern = "vue",
-  callback = function() vim.cmd('AutoFormatBuffer prettier') end,
 })
 
 -- -----------------------------------------------------------------------------

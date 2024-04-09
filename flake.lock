@@ -399,9 +399,7 @@
         "nixpkgs-lib": "nixpkgs-lib",
         "systems": "systems_2",
         "vim-fakeclip": "vim-fakeclip",
-        "vim-glaive": "vim-glaive",
-        "vim-maximizer": "vim-maximizer",
-        "vim-syncopate": "vim-syncopate"
+        "vim-maximizer": "vim-maximizer"
       }
     },
     "systems": {
@@ -471,22 +469,6 @@
         "type": "github"
       }
     },
-    "vim-glaive": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1667279797,
-        "narHash": "sha256-uNDz2MZrzzRXfVbS5yUGoJwa6DMV63yZXO31fMUrDe8=",
-        "owner": "google",
-        "repo": "vim-glaive",
-        "rev": "3c5db8d279f86355914200119e8727a085863fcd",
-        "type": "github"
-      },
-      "original": {
-        "owner": "google",
-        "repo": "vim-glaive",
-        "type": "github"
-      }
-    },
     "vim-maximizer": {
       "flake": false,
       "locked": {
@@ -500,22 +482,6 @@
       "original": {
         "owner": "szw",
         "repo": "vim-maximizer",
-        "type": "github"
-      }
-    },
-    "vim-syncopate": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1565802082,
-        "narHash": "sha256-3eMIz0C2Qf4oN2/RE6MGRlHKfNeWaCKy4xRPfgBEZm0=",
-        "owner": "google",
-        "repo": "vim-syncopate",
-        "rev": "cc68632a72c269e8d75f1f22a6fa588fd5b46e02",
-        "type": "github"
-      },
-      "original": {
-        "owner": "google",
-        "repo": "vim-syncopate",
         "type": "github"
       }
     },

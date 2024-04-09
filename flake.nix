@@ -49,14 +49,6 @@
       url = "github:szw/vim-maximizer";
       flake = false;
     };
-    vim-glaive = {
-      url = "github:google/vim-glaive";
-      flake = false;
-    };
-    vim-syncopate = {
-      url = "github:google/vim-syncopate";
-      flake = false;
-    };
     vim-fakeclip = {
       url = "github:kana/vim-fakeclip";
       flake = false;

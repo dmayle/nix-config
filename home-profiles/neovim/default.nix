@@ -10,15 +10,6 @@ let
     };
   };
 
-  vim-glaive = pkgs.vimUtils.buildVimPlugin {
-    name = "vim-glaive";
-    src = inputs.vim-glaive;
-    meta = {
-      homepage = "https://github.com/google/vim-glaive";
-      maintainers = [ "google" ];
-    };
-  };
-
   vim-fakeclip = pkgs.vimUtils.buildVimPlugin {
     name = "vim-fakeclip";
     src = inputs.vim-fakeclip;
@@ -124,7 +115,6 @@ in
 
       # Plugin libraries
       vim-maktaba
-      vim-glaive
 
       #######################################################################
       # ****** ENHANCE EXISTING FUNCTIONALITY ******
@@ -254,10 +244,6 @@ in
       #######################################################################
       # ****** CODE ENHANCEMENT ******
       #######################################################################
-
-      # Autoformatting plugin (to someday be replaced with LSP formatter)
-      # https://www.reddit.com/r/neovim/comments/jvisg5/lets_talk_formatting_again/
-      vim-codefmt
 
       # Builtin Nvim LSP support
       nvim-lspconfig

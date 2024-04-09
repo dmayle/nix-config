@@ -1,17 +1,28 @@
-{ inputs, lib, flib, ... }:
+{ inputs, lib, ... }:
 
-let sys = "x86_64-linux";
-in
 {
-  mkHomeConfig = systemPackages: extraArgs: config:
+  mkHomeConfig = systemPackages: extraSpecialArgs: config:
     let
       system = lib.removeSuffix "\n" (builtins.readFile (config + "/system"));
     in inputs.home-manager.lib.homeManagerConfiguration {
+      inherit extraSpecialArgs;
+
       pkgs = systemPackages.${system};
+
       modules = [
         (import (config))
       ];
-      # Only used for importable arguments
-      extraSpecialArgs = extraArgs;
+    };
+
+  mkNixosConfig = systemPackages: specialArgs: config:
+    let
+      system = lib.removeSuffix "\n" (builtins.readFile (config + "/system"));
+    in lib.nixosSystem {
+      inherit system specialArgs;
+
+      modules = [
+        (import (config))
+        { nixpkgs.pkgs = systemPackages.${system}; }
+      ];
     };
 }

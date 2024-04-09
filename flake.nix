@@ -2,7 +2,7 @@
   description = "dmayle's nix system configurations, both nixos and home-manager";
 
   # This is a collection of sources to have their versions and hashes managed
-  # by this flake
+  # by this flake.
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
@@ -69,15 +69,9 @@
 
   # The output of this is my nixos configurations and home manager configurations
   outputs = inputs @ { self, systems, nixpkgs, ... }:
-    # I need to setup three things in order for the code contained in this
-    # flake to work properly:
-    # 1) Import and setup library code which is used by my modules, but also by
-    #    this flake to easily setup multiple configurations
-    # 2) Import and setup code to be made available by my modules: packages,
-    #    overlays, and mixins shared by different configurations
-    # 3) Setup nixpkgs to enable unfree modules
     let
-      inherit (flib) configurePackagesForSystem mapModules mkHomeConfig;
+      inherit (flib) configurePackagesForSystem mapModules mkHomeConfig
+        mkNixosConfig;
 
       lib = nixpkgs.lib;
 
@@ -85,7 +79,7 @@
 
       eachSystem = lib.genAttrs (import systems);
 
-      # Load all modules only once
+      # Load all modules only once.
       allModules = flib.loadModules [
         ./dev-shells
         ./home-modules
@@ -100,7 +94,7 @@
         ./packages
       ];
 
-      # Global nixpkgs config used in this flake
+      # Global nixpkgs config used in this flake.
       pkgConfig = {
         android_sdk.accept_license = true;
         allowUnfree = true;
@@ -108,23 +102,26 @@
       };
 
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux
-      # packages
+      # packages.
       pkgOverlays = [
         (final: prev: packages)
       ];
 
-      # Create an attrset of systems to nixpkgs for each system using config
+      # Create an attrset of systems to nixpkgs for each system using config.
       systemPackages = eachSystem (system:
         configurePackagesForSystem nixpkgs pkgConfig pkgOverlays system);
 
       # Load all of the packages from this flake so they can also be used in the
-      # packages overlays
+      # packages overlays.
       packages = eachSystem (system:
         mapModules allModules.packages (p: systemPackages.${system}.callPackage p {}));
 
+      # Load all of the devShells from this flake so they can also be used in
+      # the module args.
       devShells = eachSystem (system:
         mapModules allModules.dev-shells (p: import p { pkgs = systemPackages.${system}; }));
 
+      # Args passed to all modules used for configurations.
       extraArgs = { inherit inputs devShells; };
     in
 
@@ -137,33 +134,16 @@
 
       homeManagerRoles = allModules.home-roles;
 
+      homeConfigurations = mapModules allModules.home-configs (
+        mkHomeConfig systemPackages extraArgs);
+
       nixosModules = allModules.nixos-modules;
 
       nixosProfiles = allModules.nixos-profiles;
 
       nixosRoles = allModules.nixos-roles;
 
-      nixosConfigurations =
-        let
-          configs = builtins.attrNames allModules.nixos-configs;
-
-          mkNixosConfig = name:
-            let
-              system = lib.removeSuffix "\n" (builtins.readFile (./nixos-configs + "/${name}/system"));
-              pkgs = systemPackages.${system};
-            in lib.nixosSystem {
-              inherit system;
-              modules = [
-                (import (./nixos-configs + "/${name}"))
-                { _module.args = { inherit flib; }; }
-                { nixpkgs.pkgs = pkgs; }
-              ];
-              # Only used for importable arguments
-              specialArgs = extraArgs;
-            };
-        in lib.genAttrs configs mkNixosConfig;
-
-        homeConfigurations = mapModules allModules.home-configs (
-          mkHomeConfig systemPackages extraArgs);
+      nixosConfigurations = mapModules allModules.nixos-configs (
+        mkNixosConfig systemPackages extraArgs);
     };
 }

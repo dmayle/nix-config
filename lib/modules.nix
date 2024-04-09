@@ -6,10 +6,8 @@ let
 in
 rec {
   # Function to recursively collect modules from a directory and squish them all
-  # together into a top-level namespace.
-  # A directory containing a "default.nix" file will not be recursed into, and
-  # may contain non-nix files.
-  # Any directory containing sub-modules may not contain non-nix files.
+  # together into a top-level namespace. A directory containing a "default.nix"
+  # file will not be recursed into, as it will be considered a top-level module.
   findModules = dir:
     concatLists (attrValues (mapAttrs
       (name : type:

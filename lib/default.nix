@@ -1,15 +1,14 @@
 { inputs, lib, ... }:
 
 let
-  # Load mapModules from ./modules.nix manually; use it to load all of flib.
-  mapModules = (import ./modules.nix {
-    inherit lib;
-    flib.attrs = import ./attrs.nix { inherit lib; };
-  }).mapModules;
+  # Load libModules from ./modules.nix manually; use it to load all of flib.
+  modules = (import ./modules.nix { inherit lib; });
 
-  # Load the modules in this directory, using mapModules
+  subModules = (modules.loadModules [ ./. ]).lib;
+
+  # Load the modules in this directory
   flib = lib.makeExtensible (self:
-    mapModules ./. (f: import f { inherit inputs lib; flib = self; }));
+    modules.mapModules subModules (f: import f { inherit inputs lib; flib = self; }));
 in
 # Take the existing flib attribute set, which is roughly a map of submodule
 # names to submodules (such that flib.attrs contains the module code from

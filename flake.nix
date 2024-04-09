@@ -92,6 +92,7 @@
         ./home-profiles
         ./home-roles
         ./home-configs
+        ./overlays
         ./nixos-modules
         ./nixos-profiles
         ./nixos-roles
@@ -118,7 +119,8 @@
     in
 
     rec {
-      mylib = flib;
+      # devShells is an attribute set of module names to imported modules
+      # dS = eachSystem (system: 
       devShells = eachSystem (system: let
         shells = builtins.attrNames allModules.dev-shells;
         myFunc = name:
@@ -170,14 +172,13 @@
             nix-colors = inputs.nix-colors;
           };
 
-        in mapModules ./home-configs (mkHomeConfig defaultHomeConfig systemPackages extraArgs);
+        in mapModules allModules.home-configs (mkHomeConfig defaultHomeConfig systemPackages extraArgs);
 
       # callPackage imports the package and then calls it
       # packages = mergePackages (fundModules ./packages)
       # mergePackages takes a list of attributes sets, where each set is a mapping of supported systems to a single package
       #builtins.listToAttrs (findModules ./packages);packages.x86_64-linux = builtins.listToAttrs (findModules ./packages);
       packages = eachSystem (system:
-        mapModules ./packages (p: systemPackages.${system}.callPackage p {}));
-      # packages.x86_64-linux = mapModules ./packages (p: systemPackages.x86_64-linux.callPackage p {});
+        mapModules allModules.packages (p: systemPackages.${system}.callPackage p {}));
     };
 }

@@ -59,7 +59,8 @@
     };
   };
 
-  # The output of this is my nixos configurations and home manager configurations
+  # This flake outputs custom packages, development shells, overlays, and
+  # configurations for Home Manager and NixOS that take advantage of them.
   outputs = inputs @ { self, systems, nixpkgs, ... }:
     let
       inherit (flib) mkPackages mapModules mkHomeConfig mkNixosConfig;
@@ -68,6 +69,7 @@
 
       flib = import ./lib { inherit inputs lib; };
 
+      # Use nix-systems to configure supported systems.
       eachSystem = lib.genAttrs (import systems);
 
       # Load all modules only once.
@@ -93,14 +95,14 @@
       };
 
       # Global nixpkgs overlays used in this flake.
-      pkgOverlays = [
+      overlays = [
         # Make flake packages available to all configs
         (final: prev: packages)
       ];
 
       # Create an attrset of systems to nixpkgs for each system using config.
       systemPackages = eachSystem (system:
-        mkPackages nixpkgs pkgConfig pkgOverlays system);
+        mkPackages nixpkgs pkgConfig overlays system);
 
       # Load all of the packages from this flake so they can also be used in the
       # packages overlays.
@@ -119,7 +121,7 @@
     in
 
     {
-      inherit devShells packages;
+      inherit devShells packages overlays;
 
       homeManagerModules = modules.home-modules;
 

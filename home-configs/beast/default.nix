@@ -14,6 +14,12 @@
     homeManagerProfiles.wayland
   ];
 
+  home = rec {
+    username = "douglas";
+    stateVersion = "22.05";
+    homeDirectory = "/home/${username}";
+  };
+
   dconf.settings = {
     "org/gnome/settings-daemon/plugins/power" = {
       sleep-inactive-ac-type = "nothing";

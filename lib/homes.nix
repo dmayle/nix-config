@@ -3,15 +3,13 @@
 let sys = "x86_64-linux";
 in
 {
-  mkHomeConfig = defaults: systemPackages: extraArgs: path:
+  mkHomeConfig = systemPackages: extraArgs: config:
     let
-      system = lib.removeSuffix "\n" (builtins.readFile (path + "/system"));
+      system = lib.removeSuffix "\n" (builtins.readFile (config + "/system"));
     in inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = systemPackages.${system};
       modules = [
-        { _module.args = { inherit flib; }; }
-        (import (path))
-        defaults
+        (import (config))
       ];
       # Only used for importable arguments
       extraSpecialArgs = extraArgs;

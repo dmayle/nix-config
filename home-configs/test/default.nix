@@ -8,4 +8,10 @@
     homeManagerProfiles.sway
     homeManagerProfiles.tmux
   ];
+
+  home = rec {
+    username = "douglas";
+    stateVersion = "22.05";
+    homeDirectory = "/home/${username}";
+  };
 }

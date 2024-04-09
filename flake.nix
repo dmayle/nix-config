@@ -79,11 +79,11 @@
     let
       inherit (flib) configurePackagesForSystem mapModules mkHomeConfig;
 
-      eachSystem = nixpkgs.lib.genAttrs (import systems);
-
       lib = nixpkgs.lib;
 
       flib = import ./lib { inherit inputs lib; };
+
+      eachSystem = lib.genAttrs (import systems);
 
       # Load all modules only once
       allModules = flib.loadModules [
@@ -110,14 +110,8 @@
       # Global nixpkgs overlays used in this flake, depends on x86_64-linux
       # packages
       pkgOverlays = [
-        (final: prev: flakePackages)
+        (final: prev: packages)
       ];
-
-      defaultHomeConfig.home = rec {
-        username = "douglas";
-        stateVersion = "22.05";
-        homeDirectory = "/home/${username}";
-      };
 
       # Create an attrset of systems to nixpkgs for each system using config
       systemPackages = eachSystem (system:
@@ -125,13 +119,17 @@
 
       # Load all of the packages from this flake so they can also be used in the
       # packages overlays
-      flakePackages = eachSystem (system:
+      packages = eachSystem (system:
         mapModules allModules.packages (p: systemPackages.${system}.callPackage p {}));
-    in
 
-    rec {
       devShells = eachSystem (system:
         mapModules allModules.dev-shells (p: import p { pkgs = systemPackages.${system}; }));
+
+      extraArgs = { inherit inputs devShells; };
+    in
+
+    {
+      inherit devShells packages;
 
       homeManagerModules = allModules.home-modules;
 
@@ -161,16 +159,11 @@
                 { nixpkgs.pkgs = pkgs; }
               ];
               # Only used for importable arguments
-              specialArgs = { inherit inputs devShells; };
+              specialArgs = extraArgs;
             };
         in lib.genAttrs configs mkNixosConfig;
 
-      homeConfigurations =
-        let
-          extraArgs = { inherit inputs devShells; };
-
-        in mapModules allModules.home-configs (mkHomeConfig defaultHomeConfig systemPackages extraArgs);
-
-      packages = flakePackages;
+        homeConfigurations = mapModules allModules.home-configs (
+          mkHomeConfig systemPackages extraArgs);
     };
 }

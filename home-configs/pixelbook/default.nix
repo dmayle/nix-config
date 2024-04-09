@@ -6,4 +6,10 @@
     homeManagerProfiles.os-other-linux
     homeManagerProfiles.tmux
   ];
+
+  home = rec {
+    username = "douglas";
+    stateVersion = "22.05";
+    homeDirectory = "/home/${username}";
+  };
 }

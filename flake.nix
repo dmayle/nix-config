@@ -119,14 +119,8 @@
     in
 
     rec {
-      # devShells is an attribute set of module names to imported modules
-      # dS = eachSystem (system: 
-      devShells = eachSystem (system: let
-        shells = builtins.attrNames allModules.dev-shells;
-        myFunc = name:
-          import (./dev-shells + "/${name}") { pkgs = systemPackages.${system}; };
-        in lib.genAttrs shells myFunc
-        );
+      devShells = eachSystem (system:
+        mapModules allModules.dev-shells (p: import p { pkgs = systemPackages.${system}; }));
 
       homeManagerModules = allModules.home-modules;
 

@@ -324,6 +324,25 @@ require('gitsigns').setup {
   yadm = {
     enable = false,
   },
+  on_attach = function(bufnr)
+    local gitsigns = require('gitsigns')
+
+    keymap("n", "]c", function()
+      if vim.wo.diff then
+        vim.cmd.normal({']c', bang = true})
+      else
+        gitsigns.next_hunk()
+      end
+    end)
+
+    keymap("n", "[c", function()
+      if vim.wo.diff then
+        vim.cmd.normal({'[c', bang = true})
+      else
+        gitsigns.prev_hunk()
+      end
+    end)
+  end,
 }
 require('telescope').setup {
   extensions = {
@@ -840,6 +859,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
     keymap('n', 'gd', vim.lsp.buf.definition, lsp_opts)
     keymap('n', 'K', vim.lsp.buf.hover, lsp_opts)
     keymap('n', 'gi', vim.lsp.buf.implementation, lsp_opts)
+    keymap('n', 'gr', vim.lsp.buf.references, lsp_opts)
+    keymap('n', 'gl', vim.diagnostic.open_float, lsp_opts)
     --keymap('n', '<C-k>', vim.lsp.buf.signature_help, lsp_opts)
     keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, lsp_opts)
     keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, lsp_opts)
@@ -849,7 +870,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     keymap('n', '<space>D', vim.lsp.buf.type_definition, lsp_opts)
     keymap('n', '<space>rn', vim.lsp.buf.rename, lsp_opts)
     keymap({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, lsp_opts)
-    keymap('n', 'gr', vim.lsp.buf.references, lsp_opts)
     keymap('n', '<leader>lf', function()
       vim.lsp.buf.format { async = true }
     end, lsp_opts)

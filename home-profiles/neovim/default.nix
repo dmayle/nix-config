@@ -93,13 +93,26 @@ in
 
   # LSP language servers I use
   home.packages = with pkgs; [
+    # Lua
     lua-language-server
+
+    # Nix
     nil
+
+    # YAML
     nodePackages.yaml-language-server
-    nodePackages.vim-language-server
+
+    # Bash
     nodePackages.bash-language-server
+
+    # Python
     nodePackages.pyright
+
+    # Go
     gopls
+
+    # C++
+    ccls
   ];
 
   programs.neovim = {
@@ -263,6 +276,7 @@ in
       cmp-tmux
       cmp-spell
       lsp-format-nvim
+      lspkind-nvim
     ];
 
     extraLuaConfig = builtins.readFile ./init.lua;

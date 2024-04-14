@@ -280,6 +280,7 @@ require('nvim-tree').setup({
 require('colorizer').setup()
 require('colorizer').attach_to_buffer(0)
 require('lsp-format').setup()
+require('nvim-autopairs').setup()
 
 require('gitsigns').setup {
   signs = {
@@ -705,6 +706,7 @@ autocmd({ 'WinLeave' }, {
 -- -----------------------------------------------------------------------------
 
 local cmp = require('cmp')
+local lspkind = require('lspkind')
 local luasnip = require('luasnip')
 
 -- load from friendly-snippets
@@ -715,34 +717,6 @@ local check_backspace = function()
   return col == 0 or vim.fn.getline("."):sub(col, col):match "%s"
 end
 
-local kind_icons = {
-  Text = "󰉿",
-  Method = "󰆧",
-  Function = "󰊕",
-  Constructor = "",
-  Field = " ",
-  Variable = "󰀫",
-  Class = "󰠱",
-  Interface = "",
-  Module = "",
-  Property = "󰜢",
-  Unit = "󰑭",
-  Value = "󰎠",
-  Enum = "",
-  Keyword = "󰌋",
-  Snippet = "",
-  Color = "󰏘",
-  File = "󰈙",
-  Reference = "",
-  Folder = "󰉋",
-  EnumMember = "",
-  Constant = "󰏿",
-  Struct = "",
-  Event = "",
-  Operator = "󰆕",
-  TypeParameter = " ",
-  Misc = " ",
-}
 cmp.setup({
   snippet = {
     expand = function(args)
@@ -793,17 +767,21 @@ cmp.setup({
     }),
   }),
   formatting = {
-    fields = { "kind", "abbr", "menu" },
-    format = function(entry, vim_item)
-      vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
-      vim_item.menu = ({
+    format = lspkind.cmp_format({
+      mode = "symbol_text",
+      menu = ({
+        nvim_lua = "[Lua]",
         nvim_lsp = "[LSP]",
-      })[entry.source_name]
-      return vim_item
-    end,
+        luasnip = "[Snippet]",
+        buffer = "[Buffer]",
+        path = "[Path]",
+        ["nil"] = "[Nil]",
+      }),
+    }),
   },
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
+    { name = 'nvim_lua' },
     { name = 'luasnip' },
     { name = 'path' },
   }, {
@@ -838,6 +816,8 @@ keymap('n', '<space>e', vim.diagnostic.open_float, opts)
 keymap('n', '[d', vim.diagnostic.goto_prev, opts)
 keymap('n', ']d', vim.diagnostic.goto_next, opts)
 keymap('n', '<space>q', vim.diagnostic.setloclist, opts)
+
+-- Verify hover, format, references, implementation, code_action
 
 -- Use LspAttach autocommand to only map the following keys after the language
 -- server attaches to the current buffer

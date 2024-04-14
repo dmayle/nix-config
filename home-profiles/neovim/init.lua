@@ -324,12 +324,12 @@ require('gitsigns').setup {
   yadm = {
     enable = false,
   },
-  on_attach = function(bufnr)
+  on_attach = function()
     local gitsigns = require('gitsigns')
 
     keymap("n", "]c", function()
       if vim.wo.diff then
-        vim.cmd.normal({']c', bang = true})
+        vim.cmd.normal({ ']c', bang = true })
       else
         gitsigns.next_hunk()
       end
@@ -337,11 +337,13 @@ require('gitsigns').setup {
 
     keymap("n", "[c", function()
       if vim.wo.diff then
-        vim.cmd.normal({'[c', bang = true})
+        vim.cmd.normal({ '[c', bang = true })
       else
         gitsigns.prev_hunk()
       end
     end)
+
+    keymap("n", "<leader>hp", gitsigns.preview_hunk)
   end,
 }
 require('telescope').setup {
@@ -584,9 +586,9 @@ keymap("x", "<A-k>", ":m '<-2<CR>gv=gv", opts)
 -- Add comma or semicolon to end of line without breaking flow
 local function append_to_line(content)
   local row = vim.api.nvim_win_get_cursor(0)[1]
-  local line = vim.api.nvim_buf_get_lines(0, row-1, row, false)
+  local line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)
   local column = string.len(line[1])
-  vim.api.nvim_buf_set_text(0, row-1, column, row-1, column, {content})
+  vim.api.nvim_buf_set_text(0, row - 1, column, row - 1, column, { content })
 end
 
 keymap("i", "<C-;>", function() append_to_line(";") end, opts)
@@ -861,17 +863,19 @@ vim.api.nvim_create_autocmd('LspAttach', {
     keymap('n', 'gi', vim.lsp.buf.implementation, lsp_opts)
     keymap('n', 'gr', vim.lsp.buf.references, lsp_opts)
     keymap('n', 'gl', vim.diagnostic.open_float, lsp_opts)
-    --keymap('n', '<C-k>', vim.lsp.buf.signature_help, lsp_opts)
+
+    -- W mappings (Workspace)
     keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, lsp_opts)
     keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, lsp_opts)
     keymap('n', '<space>wl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, lsp_opts)
-    keymap('n', '<space>D', vim.lsp.buf.type_definition, lsp_opts)
-    keymap('n', '<space>rn', vim.lsp.buf.rename, lsp_opts)
-    keymap({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, lsp_opts)
-    keymap('n', '<leader>lf', function()
-      vim.lsp.buf.format { async = true }
-    end, lsp_opts)
+
+    -- L mappings (LSP)
+    keymap('n', '<leader>lf', function() vim.lsp.buf.format { async = true } end, lsp_opts)
+    keymap('n', '<space>li', function() vim.cmd([[:LspInfo]]) end, lsp_opts)
+    keymap({ 'n', 'v' }, '<space>la', vim.lsp.buf.code_action, lsp_opts)
+    keymap('n', '<space>lr', vim.lsp.buf.rename, lsp_opts)
+    keymap('n', '<space>ls', vim.lsp.buf.signature_help, lsp_opts)
   end,
 })

@@ -10,7 +10,9 @@
     extraConfig = ''
       # Use tmux TERM for more features, and 256color for true color
       set -g default-terminal "tmux-256color"
-      set -ag terminal-overrides ",xterm-256color:RGB"
+      set -ag terminal-features ",xterm-256color:RGB"
+      set -ag terminal-features ",xterm-kitty:RGB"
+      set -ag terminal-features ",tmux-256color:RGB"
       set -s extended-keys on
       set -as terminal-features 'xterm*:extkeys'
       set -as terminal-features 'tmux*:extkeys'
@@ -145,7 +147,9 @@
 
     # I like full color terminals
     set -g default-terminal "tmux-256color"
-    set -ag terminal-overrides ",xterm-256color:RGB"
+    set -ag terminal-features ",xterm-256color:RGB"
+    set -ag terminal-features ",xterm-kitty:RGB"
+    set -ag terminal-features ",tmux-256color:RGB"
 
     # I think this is obsolete
     # set -ga terminal-overrides ",*256col*:Tc"

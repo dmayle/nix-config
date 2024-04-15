@@ -1,4 +1,4 @@
-# Douglas Mayle's Personal Nix Config Flake
+# Douglas Mayle's Personal Nix Configuration Flake
 ## About This Flake
 The code for this flake is designed to be as simple and readable as possible.
 It is also designed to support all of the features that I want from a personal
@@ -8,7 +8,7 @@ flake:
  * Development shells for my software projects.
  * Packaged software not yet supported in nixpkgs.
 
-Additionally, I want to impose some additonial contraints upon this flake:
+Additionally, I want to impose some additional contraints upon this flake:
  * Package definitions should be available to system configurations.
  * Development shells should be available to system configurations.
  * Nixpkgs should be configured to my needs and shared across configurations.
@@ -85,7 +85,7 @@ update them here.  In the meantime, you can read an overview of the process:
 ## On a NixOS system
 1. Follow the NixOS installation instructions in order to get started.
 2. Copy the bootstrap NixOS configuration from nixos-configs folder over the
-   generated config files.
+   generated configuration files.
 3. Build the system with the bootstrapped configuration.
 4. Clone this flake into the user's home directory and follow the steps below.
 
@@ -97,7 +97,7 @@ update them here.  In the meantime, you can read an overview of the process:
 2. Use home-manager to install this flake
 
 ## On a NixOS system that has been bootstrapped
-3. Use sudo to install this flake's NixOS config
+3. Use sudo to install this flake's NixOS configuration.
 
 ```
 nix path-info --derivation .#homeConfigurations.<hostname>.activationPackage

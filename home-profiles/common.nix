@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
 
@@ -21,6 +21,7 @@
 
   home.sessionVariables = {
     EDITOR = "vi";
+    FLAKE_CONFIG_URI = "path:${config.home.homeDirectory}/src/nix-config#homeConfigurations.beast";
   };
 
   nix = {

@@ -7,6 +7,7 @@ flake:
  * Home Manager configurations for my hosts whether or not on NixOS.
  * Development shells for my software projects.
  * Packaged software not yet supported in nixpkgs.
+
 Additionally, I want to impose some additonial contraints upon this flake:
  * Package definitions should be available to system configurations.
  * Development shells should be available to system configurations.

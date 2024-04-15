@@ -4,34 +4,26 @@
   # This is a collection of sources to have their versions and hashes managed
   # by this flake.
   inputs = {
+    # ##########################################################################
+    # Core Flake Inputs (nixpkgs, systems, home-manager)
+    # ##########################################################################
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # ##########################################################################
+    # NixGL: Fixup OpenGL of nix programs on non-NixOS systems
+    # ##########################################################################
     nixgl = {
       url = "github:guibou/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
-    # Transient dependency, but I want it to use my nixpkgs
-    nix-eval-jobs = {
-      url = "github:nix-community/nix-eval-jobs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    lib-aggregate = {
-      url = "github:nix-community/lib-aggregate";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
-    };
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-      inputs.systems.follows = "systems";
-    };
-    nixpkgs-lib = {
-      url = "github:nix-community/nixpkgs.lib";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # ##########################################################################
+    # Hyperland and Hy3 (tiled WM)
+    # ##########################################################################
     hyprland = {
       url = "github:hyprwm/Hyprland?ref=v0.38.1";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -41,14 +33,16 @@
       url = "github:outfoxxed/hy3?ref=hl0.38.0";
       inputs.hyprland.follows = "hyprland";
     };
+    # ##########################################################################
+    # Nix Colors (theming support)
+    # ##########################################################################
     nix-colors = {
       url = "github:misterio77/nix-colors";
       inputs.nixpkgs-lib.follows = "nixpkgs-lib";
     };
-    vim-maximizer = {
-      url = "github:szw/vim-maximizer";
-      flake = false;
-    };
+    # ##########################################################################
+    # Neovim inputs (unpackaged plugins and spelling dictionaries)
+    # ##########################################################################
     vim-fakeclip = {
       url = "github:kana/vim-fakeclip";
       flake = false;
@@ -96,6 +90,25 @@
     nvim-spell-fr-latin1-suggestions = {
       url = "file+http://ftp.vim.org/vim/runtime/spell/fr.latin1.sug";
       flake = false;
+    };
+    # ##########################################################################
+    # Transient dependencies (input dependencies that I want to use my inputs)
+    # ##########################################################################
+    nixpkgs-lib = {
+      url = "github:nix-community/nixpkgs.lib";
+    };
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
+    nix-eval-jobs = {
+      url = "github:nix-community/nix-eval-jobs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    lib-aggregate = {
+      url = "github:nix-community/lib-aggregate";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
     };
   };
 

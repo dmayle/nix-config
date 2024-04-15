@@ -528,8 +528,7 @@
         "nvim-spell-fr-utf8-dictionary": "nvim-spell-fr-utf8-dictionary",
         "nvim-spell-fr-utf8-suggestions": "nvim-spell-fr-utf8-suggestions",
         "systems": "systems_2",
-        "vim-fakeclip": "vim-fakeclip",
-        "vim-maximizer": "vim-maximizer"
+        "vim-fakeclip": "vim-fakeclip"
       }
     },
     "systems": {
@@ -596,22 +595,6 @@
       "original": {
         "owner": "kana",
         "repo": "vim-fakeclip",
-        "type": "github"
-      }
-    },
-    "vim-maximizer": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1440196645,
-        "narHash": "sha256-+VPcMn4NuxLRpY1nXz7APaXlRQVZD3Y7SprB/hvNKww=",
-        "owner": "szw",
-        "repo": "vim-maximizer",
-        "rev": "2e54952fe91e140a2e69f35f22131219fcd9c5f1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "szw",
-        "repo": "vim-maximizer",
         "type": "github"
       }
     },

@@ -1,15 +1,5 @@
 { pkgs, inputs, ... }:
 let
-  # Custom neovim plugins
-  vim-maximizer = pkgs.vimUtils.buildVimPlugin {
-    name = "vim-maximizer";
-    src = inputs.vim-maximizer;
-    meta = {
-      homepage = "https://github.com/szw/vim-maximizer";
-      maintainers = [ "szw" ];
-    };
-  };
-
   vim-fakeclip = pkgs.vimUtils.buildVimPlugin {
     name = "vim-fakeclip";
     src = inputs.vim-fakeclip;
@@ -126,10 +116,6 @@ in
 
       # Code commenting
       vim-commentary
-
-      # Toggle between maximizing current split, and then restoring previous
-      # split state
-      vim-maximizer
 
       # Tools for working with doxygen comments
       DoxygenToolkit-vim

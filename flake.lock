@@ -384,6 +384,126 @@
         "type": "github"
       }
     },
+    "nvim-spell-en-ascii-dictionary": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-EEhcfL7kVbEjJ1gMc0mmVIqGXzdAQ++zoxH/u2nTYpE=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.ascii.spl"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.ascii.spl"
+      }
+    },
+    "nvim-spell-en-ascii-suggestions": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-uj03wgvm02yiF378H5o/+EL4x4Fx8T5HinyqD1WbiN0=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.ascii.sug"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.ascii.sug"
+      }
+    },
+    "nvim-spell-en-latin1-dictionary": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-+oBr9rXhBsZCZUR4C8QBljCWm1dMiKTEFUeaJQhuzsM=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.latin1.spl"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.latin1.spl"
+      }
+    },
+    "nvim-spell-en-latin1-suggestions": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-pw1VjnZZKU7qhNZQc0mNMccpSfQyOJ/Yc1yNuI++ovg=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.latin1.sug"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.latin1.sug"
+      }
+    },
+    "nvim-spell-en-utf8-dictionary": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-D7PU4+gCrrshtSQTg3WGzk0UaD9mzpb1EdjW5/O13nM=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.utf-8.spl"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.utf-8.spl"
+      }
+    },
+    "nvim-spell-en-utf8-suggestions": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-Qj81zFWCP8nM9kqgYm1B/hhRmk3NxhQoV8xpFbjS6Pc=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.utf-8.sug"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/en.utf-8.sug"
+      }
+    },
+    "nvim-spell-fr-latin1-dictionary": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-38cFGTaI/qHBDceGwg6MlqXuEl8RcJ1BtibUkGVHiUc=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.latin1.spl"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.latin1.spl"
+      }
+    },
+    "nvim-spell-fr-latin1-suggestions": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-fuSmrPc54j/yvoj2a1NVKApQKXzO0Js8C6wZi65GgXU=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.latin1.sug"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.latin1.sug"
+      }
+    },
+    "nvim-spell-fr-utf8-dictionary": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-j+wfp6dAw7IrFUOb5YXvvqTgdkb+TnlHpQeL8VLZrJU=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.spl"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.spl"
+      }
+    },
+    "nvim-spell-fr-utf8-suggestions": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-TUoZeAch1ROh31MNi+d2dDJubwyvnXj8ZOciXEQ6UYE=",
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.sug"
+      },
+      "original": {
+        "type": "file",
+        "url": "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.sug"
+      }
+    },
     "root": {
       "inputs": {
         "NeoSolarized-nvim": "NeoSolarized-nvim",
@@ -397,6 +517,16 @@
         "nixgl": "nixgl",
         "nixpkgs": "nixpkgs",
         "nixpkgs-lib": "nixpkgs-lib",
+        "nvim-spell-en-ascii-dictionary": "nvim-spell-en-ascii-dictionary",
+        "nvim-spell-en-ascii-suggestions": "nvim-spell-en-ascii-suggestions",
+        "nvim-spell-en-latin1-dictionary": "nvim-spell-en-latin1-dictionary",
+        "nvim-spell-en-latin1-suggestions": "nvim-spell-en-latin1-suggestions",
+        "nvim-spell-en-utf8-dictionary": "nvim-spell-en-utf8-dictionary",
+        "nvim-spell-en-utf8-suggestions": "nvim-spell-en-utf8-suggestions",
+        "nvim-spell-fr-latin1-dictionary": "nvim-spell-fr-latin1-dictionary",
+        "nvim-spell-fr-latin1-suggestions": "nvim-spell-fr-latin1-suggestions",
+        "nvim-spell-fr-utf8-dictionary": "nvim-spell-fr-utf8-dictionary",
+        "nvim-spell-fr-utf8-suggestions": "nvim-spell-fr-utf8-suggestions",
         "systems": "systems_2",
         "vim-fakeclip": "vim-fakeclip",
         "vim-maximizer": "vim-maximizer"

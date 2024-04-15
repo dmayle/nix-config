@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ inputs, ... }:
 {
   imports = with inputs.self; [
     homeManagerRoles.desktop

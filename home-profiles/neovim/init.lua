@@ -611,6 +611,10 @@ keymap("n", "<leader>bd", function() bufdelete(0) end, opts)
 
 keymap("n", "<leader>ol", function() vim.cmd("Outline!") end)
 
+local illuminate = require('illuminate')
+keymap('n', '[i', illuminate.goto_next_reference, opts)
+keymap('n', ']i', illuminate.goto_prev_reference, opts)
+
 -- Searches
 local telescope = require('telescope.builtin')
 keymap('n', '<leader>fg', telescope.live_grep, {})

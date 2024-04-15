@@ -27,6 +27,9 @@ vim.g.loaded_netrwPlugin = 1
 -- Default to bash support in shell scripts
 vim.g.is_bash = 1
 
+-- Enable conflict marker mappings
+vim.g.conflict_marker_enable_mappings = 1
+
 -- Lua table of options which will be set directly into vim options
 local options = {
   -- ---------------------------------------------------------------------------
@@ -280,7 +283,6 @@ require('nvim-tree').setup({
 require('colorizer').setup()
 require('colorizer').attach_to_buffer(0)
 require('lsp-format').setup()
-require('nvim-autopairs').setup()
 
 require('gitsigns').setup {
   signs = {
@@ -540,6 +542,12 @@ require('lualine').setup {
 }
 
 -- -----------------------------------------------------------------------------
+-- NVIM-AUTOPAIRS CONFIG
+-- -----------------------------------------------------------------------------
+
+require('nvim-autopairs').setup()
+
+-- -----------------------------------------------------------------------------
 -- INDENT BLANKLINE CONFIG
 -- -----------------------------------------------------------------------------
 
@@ -575,10 +583,6 @@ keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
 keymap("n", "<A-j>", ":m .+1<CR>==", opts)
 keymap("n", "<A-k>", ":m .-2<CR>==", opts)
 
--- Keep visual selection after changing indent
-keymap("v", "<", "<gv^", opts)
-keymap("v", ">", ">gv^", opts)
-
 -- Move visual selection up or down
 keymap("v", "<A-j>", ":m '>+1<CR>gv=gv", opts)
 keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", opts)
@@ -606,6 +610,7 @@ keymap("", "<Space>", "<Nop>", opts)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Delete buffer without closing window
 local bufdelete = require("bufdelete").bufdelete
 keymap("n", "<leader>bd", function() bufdelete(0) end, opts)
 
@@ -833,7 +838,7 @@ lspconfig.lua_ls.setup {
   settings = {
     Lua = {
       diagnostics = {
-        globals = { "vim" }
+        globals = { "vim" },
       },
     },
   },
@@ -846,9 +851,9 @@ lspconfig.pyright.setup {}
 keymap('n', '<space>e', vim.diagnostic.open_float, opts)
 keymap('n', '[d', vim.diagnostic.goto_prev, opts)
 keymap('n', ']d', vim.diagnostic.goto_next, opts)
+keymap('n', '[D', function() vim.diagnostic.goto_prev({ cursor_position = { 1, 0 }, wrap = true }) end, opts)
+keymap('n', ']D', function() vim.diagnostic.goto_next({ cursor_position = { 1, 0 } }) end, opts)
 keymap('n', '<space>q', vim.diagnostic.setloclist, opts)
-
--- Verify hover, format, references, implementation, code_action
 
 -- Use LspAttach autocommand to only map the following keys after the language
 -- server attaches to the current buffer

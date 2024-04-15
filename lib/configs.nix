@@ -16,7 +16,7 @@ rec {
     };
 
   # Load the module as a Home Manager configuration
-  mkHomeConfig = systemPackages: extraSpecialArgs: config:
+  mkHomeConfig = systemPackages: extraSpecialArgs: name: config:
     let
       system = systemForConfig config;
     in inputs.home-manager.lib.homeManagerConfiguration {
@@ -30,7 +30,7 @@ rec {
     };
 
   # Load the module as a Nixos configuration
-  mkNixosConfig = systemPackages: specialArgs: config:
+  mkNixosConfig = systemPackages: specialArgs: name: config:
     let
       system = systemForConfig config;
     in lib.nixosSystem {

@@ -103,7 +103,8 @@
   # configurations for Home Manager and NixOS that take advantage of them.
   outputs = inputs @ { self, systems, nixpkgs, ... }:
     let
-      inherit (flib) mkPackages mapModules mkHomeConfig mkNixosConfig;
+      inherit (builtins) mapAttrs;
+      inherit (flib) mkPackages mkHomeConfig mkNixosConfig;
 
       lib = nixpkgs.lib;
 
@@ -146,15 +147,14 @@
 
       # Load all of the packages from this flake so they can also be used in the
       # packages overlays.
-      packages = eachSystem (system:
-        mapModules modules.packages (p:
-          systemPackages.${system}.callPackage p {}));
+      packages = eachSystem (system: mapAttrs (name: p:
+          systemPackages.${system}.callPackage p {}) modules.packages);
 
       # Load all of the devShells from this flake so they can also be used in
       # the module args.
       devShells = eachSystem (system:
-        mapModules modules.dev-shells (p:
-          import p { pkgs = systemPackages.${system}; }));
+        mapAttrs (name: p:
+          import p { pkgs = systemPackages.${system}; }) modules.dev-shells);
 
       # Args passed to all modules used for configurations.
       extraArgs = { inherit inputs devShells; };
@@ -169,8 +169,8 @@
 
       homeManagerRoles = modules.home-roles;
 
-      homeConfigurations = mapModules modules.home-configs (
-        mkHomeConfig systemPackages extraArgs);
+      homeConfigurations = mapAttrs (
+        mkHomeConfig systemPackages extraArgs) modules.home-configs;
 
       nixosModules = modules.nixos-modules;
 
@@ -178,7 +178,7 @@
 
       nixosRoles = modules.nixos-roles;
 
-      nixosConfigurations = mapModules modules.nixos-configs (
-        mkNixosConfig systemPackages extraArgs);
+      nixosConfigurations = mapAttrs (
+        mkNixosConfig systemPackages extraArgs) modules.nixos-configs;
     };
 }

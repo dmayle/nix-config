@@ -7,8 +7,8 @@ let
   subModules = (modules.loadModules [ ./. ]).lib;
 
   # Load the modules in this directory
-  flib = lib.makeExtensible (self:
-    modules.mapModules subModules (f: import f { inherit inputs lib; flib = self; }));
+  flib = lib.makeExtensible (self: builtins.mapAttrs (name: f:
+    import f { inherit inputs lib; flib = self; }) subModules);
 in
 # Take the existing flib attribute set, which is roughly a map of submodule
 # names to submodules (such that flib.attrs contains the module code from

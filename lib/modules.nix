@@ -2,7 +2,7 @@
 
 let
   inherit (builtins) attrValues baseNameOf concatLists listToAttrs mapAttrs pathExists readDir;
-  inherit (lib) hasSuffix mapAttrs' nameValuePair removeSuffix;
+  inherit (lib) hasSuffix nameValuePair removeSuffix;
 in
 rec {
   # Function to recursively collect modules from a directory and squish them all
@@ -31,9 +31,4 @@ rec {
         paths
     )
   );
-
-  # For a given attrset mapping names to module paths, run the supplied function
-  # on each module.
-  mapModules = modules: fn:
-    mapAttrs' (name: value: nameValuePair name (fn value)) modules;
 }

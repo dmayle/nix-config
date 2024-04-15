@@ -277,6 +277,12 @@ in
       cmp-spell
       lsp-format-nvim
       lspkind-nvim
+
+      # Highlight code symbol under cursor
+      vim-illuminate
+
+      # Create a code structure explorer based on LSP
+      vista-vim
     ];
 
     extraLuaConfig = builtins.readFile ./init.lua;

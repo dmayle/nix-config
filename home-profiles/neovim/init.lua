@@ -346,6 +346,7 @@ require('gitsigns').setup {
     keymap("n", "<leader>hp", gitsigns.preview_hunk)
   end,
 }
+
 require('telescope').setup {
   extensions = {
     fzf = {
@@ -791,7 +792,7 @@ cmp.setup({
     format = lspkind.cmp_format({
       mode = "symbol_text",
       menu = ({
-        nvim_lua = "[Lua]",
+        nvim_lua = "[Lua Nvim]",
         nvim_lsp = "[LSP]",
         luasnip = "[Snippet]",
         buffer = "[Buffer]",
@@ -801,8 +802,8 @@ cmp.setup({
     }),
   },
   sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
     { name = 'nvim_lua' },
+    { name = 'nvim_lsp' },
     { name = 'luasnip' },
     { name = 'path' },
   }, {

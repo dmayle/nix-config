@@ -1,115 +1,104 @@
-# Douglas Mayle's Nix Config Flake
+# Douglas Mayle's Personal Nix Config Flake
 ## About This Flake
-### Contained in this flake:
- * NixOS configurations
- * Home Manager configurations
- * Development shells for projects I work on that don't have their own flakes
-### Properties of this flake:
- * Configs support `roles` and `profiles`, where profiles are logical groupings of configuration, and roles are logical groupings of profiles.
- * Shared package repo for my custom packages
- * Shared modules repo for my custom modules
- * Custom lib used in this flake
- * Separation of concerns:
-   * Main flake loads lib and uses it to load configs (TODO)
-   * Separate directories for configs, roles, modules, packages, etc.
+The code for this flake is designed to be as simple and readable as possible.
+It is also designed to support all of the features that I want from a personal
+flake:
+ * NixOS configurations for my hosts.
+ * Home Manager configurations for my hosts whether or not on NixOS.
+ * Development shells for my software projects.
+ * Packaged software not yet supported in nixpkgs.
+Additionally, I want to impose some additonial contraints upon this flake:
+ * Package definitions should be available to system configurations.
+ * Development shells should be available to system configurations.
+ * Nixpkgs should be configured to my needs and shared across configurations.
+ * The packages used by Home Manager on NixOS systems should be in sync.
 
-### On NixPkgs in Configurations
-At this point, for flakes there is no such thing as system, instead there is just a set of packages (which is itself system-dependent).
+## Flake Structure
+This flake contains a small nix library that supports the needs of a flake. It
+is designed to load itself and support loading and working with nix modules.
+Additionally, it has configuration-specific helper functions for use with NixOS
+and Home Manager configurations.
 
-Since I want to be able to support home-manager for a MacOS system (or an arm one), then there needs to be a way to select a different set of nixpkgs
-### This repo host a flake which contains NixOS and Home Manager configurations
-This git repository contains a nix flake used to configure the systems I work
-with using home-manager and NixOS.
+The configurations in this flake have a specific structure, but none of the
+code in the flake and the library are tied to that structure. It can be used
+with any nix code that is stored in modules.
 
-Much of the code is borrowed from other public examples of combined
-home-manager and NixOS flakes, however it is important to note what is specific
-about this repo.
+## Configuration Structure
+My NixOS and Home Manager configurations are split into configurations,
+profiles, and roles.
 
-The code here assumes that the owner (me) works across many different kinds of
-computers and OS's, sometimes in NixOS machines, sometimes on other flavors of
-Linux, and sometimes in Linux VM's without control of the system GUI (e.g.
-Chromebooks).  As such, the NixOS configs only contain enough config to setup
-the unique hardware for a given host, and a base layer, and as much as possible
-is delegated to the home-manager layer, so that it can be consistent across
-machines, whether NixOS or not.
+### Configuration
+A NixOS or Home Manager configuration is a nix module containing a function
+that can be used to configure a system (standard configuration format).
+Additionally, the configurations in this repository are required to contain
+a file called `system` that specify the system they are expected to work with
+(e.g. `x86_64-linux`).
 
-Finally, the config is broken apart into 'mixins', which contain configuration
-which may be used across different kinds of machines.  There is common config,
-shared across all hosts, code that is specific to running a user GUI (e.g. sway
-config), code that is specific to running GUI on non-NixOS hosts (e.g. nixGL,
-used to bridge between non-NixOS graphics drivers and nix binaries), etc.
-Machine configurations pick and choose the mixins they use, and contain any
-machine-specific configuration.
+### Role
+These are just collections of nix modules from the profiles specified below.
+They are a convenience to enable quickly composing related features into
+groups.
 
-# Commands to run
+### Profile
+This is where any shareable configuration nix code belongs. These modules may
+be grouped into roles for consumption on multiple machines (e.g. desktop-only
+modules, laptop-only modules) or imported directly for machines with specific
+needs.
+
+# Flake Library (flib)
+The library in this flake is broken down into three files:
+
+## Core Library `default.nix`
+This is the code that looks the most magic, and is the least written by me. It
+bootstraps itself using the module loading code, and then exports all of
+functionality from all of the files using nixpkgs extensibility.
+
+## Module Loading `modules.nix`
+This module consists of only two functions:
+1. `findModules` recurses through a directory to collect all nix modules
+   contained within, and exports them all at the top level as an attribute set
+   that maps module name to the path of the module.
+2. `loadModules` takes a list of paths and returns an attribute set of path
+   names to modules by calling `findModules` on each path.
+
+## Configuration Helpers `configs.nix`
+This module contains three functions which are useful to the flake:
+1. `mkPackages` takes a nixpkgs input, a package configuration, a list of
+   overlays, and a system (e.g. `x86_64-linux`), then imports and configures
+   the nixpkgs.
+2. `mkHomeConfig` takes a configured nixpkgs import, an attribute set of module
+   arguments (these become arguments to all modules in the configuration), the
+   name of the configuration (unused argument but makes this function
+   compatible with mapAttrs) and the path to nix module containing a Home
+   Manager configuration.
+2. `mkNixosConfig` takes a configured nixpkgs import, an attribute set of module
+   arguments (these become arguments to all modules in the configuration), the
+   name of the configuration (unused argument but makes this function
+   compatible with mapAttrs) and the path to nix module containing a NixOS
+   configuration.
+
+# Installation
+These instructions are out of date. When I next bootstrap a machine, I will
+update them here.  In the meantime, you can read an overview of the process:
+
+## On a NixOS system
+1. Follow the NixOS installation instructions in order to get started.
+2. Copy the bootstrap NixOS configuration from nixos-configs folder over the
+   generated config files.
+3. Build the system with the bootstrapped configuration.
+4. Clone this flake into the user's home directory and follow the steps below.
+
+## On a Linux system other than NixOS
+1. Install the Nix package manager
+
+## Once Nix package manager is installed
+1. Instantiate the home-manager command
+2. Use home-manager to install this flake
+
+## On a NixOS system that has been bootstrapped
+3. Use sudo to install this flake's NixOS config
+
 ```
 nix path-info --derivation .#homeConfigurations.<hostname>.activationPackage
 nix path-info --derivation .#nixosConfigurations.<hostname>.config.system.build.toplevel
 ```
-# Roles, profiles, and configs
-There are three basic types on parade here:
- * Configs represent a top-level configuration, either Home Manager, or NixOS,
-   and an individual config can have roles, or even specific profiles.
- * Profiles represent configuration that has been broken down by concept
- * Roles represent a grouping of profiles common to that role
-
-# Some musings on Flakes and Nix
-The end result that we care about is top-level attribute mapping to the result
-of calling the nixosSystem or homeManagerConfiguration function. All the rest
-of this structure is about refactoring and making it simple to organize code.
-I want to explore the loading methods available to us and write about them here
-(e.g. imports attribute, vs. manually merging vs. preloading code vs. overlays)
-
-The imports attribute is a list of paths that will be called, and results
-merged. It's a recursive mechanism for merging
-
-# Overlays
-The purpose of an overlay is to alter some part of the config tree such that
-other code in the config tree uses the altered part. (If we only care about
-changing a package, you can just create your own package and use it. If you
-need to make a change such that an existing module or an existing package that
-uses a specific package now uses your changed package, than you need an
-overlay)
-
-# On Flakes and Home Manager
-A flake-based configuration of home-manager is just the result of calling the
-home-manager.lib.homeManagerConfiguration function.
-
-# Docs
-<dl>
-  <dt>homeManagerConfiguration</dt>
-  <dd><a href="https://nix-community.github.io/home-manager/index.html#ch-nix-flakes">Manual</a></dd>
-  <dd><a href="https://github.com/nix-community/home-manager/blob/master/flake.nix#L42">Code</a></dd>
-  <dt>nixosSystem</dt>
-  <dd><a href="https://github.com/NixOS/nixpkgs/blob/master/flake.nix#L22">Code</a></dd>
-</dl>
-
-# Directory Structure
-<dl>
-  <dt>HomeConfigs</dt>
-  <dd>Each file in this sub-directory contains a named Home Manager configuration</dd>
-  <dt>NixOSConfigs</dt>
-  <dd>Each file in this sub-directory contains a named NixOS configuration</dd>
-  <dt>Mixins</dt>
-  <dd>Each file in this sub-directory contains configuration that can be imported and used in multiple configurations.</dd>
-  <dt>Packages</dt>
-  <dd>Each file or module in this directory is for a single package custom to this flake</dd>
-  <dt>Overlays</dt>
-  <dd>This directory contains nixpkgs overlay functions inside of a default.nix file.</dd>
-  <dt>Lib</dt>
-  <dd>This directory contains helper functions used by the rest of this repository.</dd>
-</dl>
-
-# V2 Notes
-## Outputs
-This top-level flake has four significant outputs:
-1. Packages: any custom packages I've written, either for packages that will never be in nixpkgs, or a staging area before that's ready
-2. NixOS configurations: just enough to get a machine working, and anything hardware-linked (e.g. some games stuff)
-3. Home Manager configurations: the majority of my config, tailoring things so they're just right no matter the host
-4. Dev Shells: Configs for custom environments used just for software development / tinkering
-
-## Structure
- * Library code: custom code used by this flake to make it easier to read and write
- * Package configuration: nixpkgs needs global configuration for licensing and hardware support, this happens here
- * Overlays: nixpkgs as it's made available to my configs needs to contain my custom packages
- * Roles, Profiles, Configs: explained above, Home Manager and NixOS Configs have this breakdown to make them composable across hosts

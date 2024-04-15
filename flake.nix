@@ -176,16 +176,12 @@
     {
       inherit devShells packages overlays;
 
-      homeManagerModules = modules.home-modules;
-
       homeManagerProfiles = modules.home-profiles;
 
       homeManagerRoles = modules.home-roles;
 
       homeConfigurations = mapAttrs (
         mkHomeConfig systemPackages extraArgs) modules.home-configs;
-
-      nixosModules = modules.nixos-modules;
 
       nixosProfiles = modules.nixos-profiles;
 

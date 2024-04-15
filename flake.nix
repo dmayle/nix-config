@@ -117,7 +117,7 @@
   outputs = inputs @ { self, systems, nixpkgs, ... }:
     let
       inherit (builtins) mapAttrs;
-      inherit (flib) mkPackages mkHomeConfig mkNixosConfig;
+      inherit (flib) loadModules mkPackages mkHomeConfig mkNixosConfig;
 
       lib = nixpkgs.lib;
 
@@ -127,7 +127,7 @@
       eachSystem = lib.genAttrs (import systems);
 
       # Load all modules only once.
-      modules = flib.loadModules [
+      modules = loadModules [
         ./dev-shells
         ./home-modules
         ./home-profiles

@@ -282,7 +282,7 @@ in
       vim-illuminate
 
       # Create a code structure explorer based on LSP
-      vista-vim
+      outline-nvim
     ];
 
     extraLuaConfig = builtins.readFile ./init.lua;

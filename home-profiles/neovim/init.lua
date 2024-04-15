@@ -360,6 +360,9 @@ require('telescope').setup {
 -- Load native fzf plugin
 require('telescope').load_extension('fzf')
 
+-- Code Symbol Map
+require('outline').setup {}
+
 -- -----------------------------------------------------------------------------
 -- AUTOCOMMAND GROUPS
 -- -----------------------------------------------------------------------------
@@ -605,6 +608,8 @@ vim.g.maplocalleader = ' '
 
 local bufdelete = require("bufdelete").bufdelete
 keymap("n", "<leader>bd", function() bufdelete(0) end, opts)
+
+keymap("n", "<leader>ol", function() vim.cmd("Outline!") end)
 
 -- Searches
 local telescope = require('telescope.builtin')

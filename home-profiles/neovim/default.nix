@@ -148,9 +148,6 @@ in
       # NvimTree (faster NerdTree replacement)
       nvim-tree-lua
 
-      # Source code class explorer
-      aerial-nvim
-
       # Status bar with coloring
       lualine-nvim
       lualine-lsp-progress
@@ -224,7 +221,8 @@ in
       outline-nvim
 
       # Two possible diagnostics displays
-      trouble_v3
+      trouble-nvim
+      # trouble_v3 requires Neovim nightly (0.10+)
       lsp_lines-nvim
     ];
 

@@ -804,6 +804,18 @@ keymap('n', '<leader>fb', telescope.buffers, {})
 keymap('n', '<leader>fh', telescope.help_tags, {})
 
 -- -----------------------------------------------------------------------------
+-- TROUBLE (Diagnostic viewer)
+-- -----------------------------------------------------------------------------
+local trouble = require('trouble')
+trouble.setup()
+keymap('n', '<leader>xx', function() trouble.toggle() end, {})
+keymap('n', '<leader>xw', function() trouble.toggle("workspace_diagnostics") end, {})
+keymap('n', '<leader>xd', function() trouble.toggle("document_diagnostics") end, {})
+keymap('n', '<leader>xq', function() trouble.toggle("quickfix") end, {})
+keymap('n', '<leader>xl', function() trouble.toggle("loclist") end, {})
+keymap('n', '<leader>xr', function() trouble.toggle("lsp_references") end, {})
+
+-- -----------------------------------------------------------------------------
 -- Clear visual aids so screen copy works
 -- -----------------------------------------------------------------------------
 

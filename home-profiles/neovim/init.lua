@@ -780,12 +780,12 @@ keymap("n", "<leader>ut", vim.cmd.UndotreeToggle, kopts)
 keymap("n", "<leader>ol", function() vim.cmd("Outline!") end)
 
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-keymap('n', '<space>e', vim.diagnostic.open_float, kopts)
+keymap('n', '<leader>e', vim.diagnostic.open_float, kopts)
 keymap('n', '[d', vim.diagnostic.goto_prev, kopts)
 keymap('n', ']d', vim.diagnostic.goto_next, kopts)
 keymap('n', '[D', function() vim.diagnostic.goto_prev({ cursor_position = { 1, 0 }, wrap = true }) end, kopts)
 keymap('n', ']D', function() vim.diagnostic.goto_next({ cursor_position = { 1, 0 } }) end, kopts)
-keymap('n', '<space>q', vim.diagnostic.setloclist, kopts)
+keymap('n', '<leader>q', vim.diagnostic.setloclist, kopts)
 
 keymap('n', '<leader>ll', lsp_lines.toggle, kopts)
 
@@ -938,17 +938,17 @@ autocmd('LspAttach', {
     keymap('n', 'gl', vim.diagnostic.open_float, lsp_opts)
 
     -- W mappings (Workspace)
-    keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, lsp_opts)
-    keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, lsp_opts)
-    keymap('n', '<space>wl', function()
+    keymap('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, lsp_opts)
+    keymap('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, lsp_opts)
+    keymap('n', '<leader>wl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, lsp_opts)
 
     -- L mappings (LSP)
     keymap('n', '<leader>lf', function() vim.lsp.buf.format { async = true } end, lsp_opts)
-    keymap('n', '<space>li', function() vim.cmd([[:LspInfo]]) end, lsp_opts)
-    keymap({ 'n', 'v' }, '<space>la', vim.lsp.buf.code_action, lsp_opts)
-    keymap('n', '<space>lr', vim.lsp.buf.rename, lsp_opts)
-    keymap('n', '<space>ls', vim.lsp.buf.signature_help, lsp_opts)
+    keymap('n', '<leader>li', function() vim.cmd([[:LspInfo]]) end, lsp_opts)
+    keymap({ 'n', 'v' }, '<leader>la', vim.lsp.buf.code_action, lsp_opts)
+    keymap('n', '<leader>lr', vim.lsp.buf.rename, lsp_opts)
+    keymap('n', '<leader>ls', vim.lsp.buf.signature_help, lsp_opts)
   end,
 })

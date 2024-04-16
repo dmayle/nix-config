@@ -51,6 +51,10 @@
       url = "github:Tsuzat/NeoSolarized.nvim";
       flake = false;
     };
+    trouble_v3 = {
+      url = "github:folke/trouble.nvim/dev";
+      flake = false;
+    };
     nvim-spell-en-utf8-dictionary = {
       url = "file+http://ftp.vim.org/vim/runtime/spell/en.utf-8.spl";
       flake = false;

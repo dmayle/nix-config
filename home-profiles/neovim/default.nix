@@ -17,6 +17,15 @@ let
       maintainers = [ "tsuzat" ];
     };
   };
+
+  trouble_v3 = pkgs.vimUtils.buildVimPlugin {
+    name = "trouble.nvim";
+    src = inputs.trouble_v3;
+    meta = {
+      homepage = "https://github.com/folke/trouble.nvim/tree/dev";
+      maintainers = [ "folke" ];
+    };
+  };
 in
 {
 
@@ -63,13 +72,6 @@ in
     vimdiffAlias = true;
     plugins = with pkgs.vimPlugins; [
       #######################################################################
-      # ****** BASIC TOOLING ******
-      #######################################################################
-
-      # Plugin libraries
-      vim-maktaba
-
-      #######################################################################
       # ****** ENHANCE EXISTING FUNCTIONALITY ******
       #######################################################################
 
@@ -115,7 +117,7 @@ in
       #######################################################################
 
       # Code commenting
-      vim-commentary
+      comment-nvim
 
       # Tools for working with doxygen comments
       DoxygenToolkit-vim
@@ -159,6 +161,10 @@ in
       # Vim Git UI
       vim-fugitive
       gitsigns-nvim
+
+      # Buffers as 'tabs'
+      nvim-web-devicons # Dependency
+      bufferline-nvim
 
       # Configure fuzzy finder integration
       plenary-nvim # Library dependency
@@ -218,7 +224,7 @@ in
       outline-nvim
 
       # Two possible diagnostics displays
-      trouble-nvim
+      trouble_v3
       lsp_lines-nvim
     ];
 

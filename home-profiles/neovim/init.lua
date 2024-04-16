@@ -5,6 +5,7 @@
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 local keymap = vim.keymap.set
+local kopts = { silent = true }
 
 -- Accessor for libuv
 local uv = vim.loop
@@ -30,6 +31,9 @@ vim.g.is_bash = 1
 -- Enable conflict marker mappings
 vim.g.conflict_marker_enable_mappings = 1
 
+-- Use treesitter for indent blanklines plugin
+vim.g.indent_blankline_use_treesitter = true
+
 -- Lua table of options which will be set directly into vim options
 local options = {
   -- ---------------------------------------------------------------------------
@@ -50,7 +54,7 @@ local options = {
   background    = "light",
 
   -- Always show available completion options, but selection must be manual
-  completeopt   = { "menuone", "noinsert" },
+  completeopt   = { "menuone", "noselect", "noinsert" },
 
   -- Default to case insensitive searching
   ignorecase    = true,
@@ -169,22 +173,6 @@ vim.opt.formatoptions:append 'rcoqnl1j'
 vim.opt.diffopt:append "vertical"
 
 -- -----------------------------------------------------------------------------
--- SET COLORSCHEME
--- -----------------------------------------------------------------------------
-
-require('NeoSolarized').setup {
-  style = "light",
-  transparent = false,
-  terminal_colors = true,
-  enable_italics = true,
-}
-
--- Setting colorscheme is not an option, it's a call that needs to be made into
--- vim. Normally I should check the return value here, but I don't know what
--- I would do if it fails...
-pcall(vim.cmd, "colorscheme NeoSolarized")
-
--- -----------------------------------------------------------------------------
 -- MKDIRP: UTILITY FOR RECURSIVE DIRECTORY CREATION
 -- -----------------------------------------------------------------------------
 
@@ -271,7 +259,247 @@ mkdirp(undodir, 448, function(err, success)
 end)
 
 -- -----------------------------------------------------------------------------
--- LOAD PLUGINS
+-- AUTOCOMMAND GROUPS
+-- -----------------------------------------------------------------------------
+local clear = { clear = true }
+local visualchars = augroup('VisualChars', clear)
+local filesettings = augroup('FileSettings', clear)
+local linenumbers = augroup('LineNumbers', clear)
+
+-- -----------------------------------------------------------------------------
+-- AUTOCOMMANDS
+-- -----------------------------------------------------------------------------
+-- VISUAL CHARACTERS
+-- -----------------------------------------------------------------------------
+
+autocmd({ 'FileType' }, {
+  desc = "Use visual characters to show tab and trailing whitespace",
+  group = visualchars,
+  callback = function()
+    vim.opt.listchars = { tab = "▸ ", trail = "☐" }
+  end,
+})
+
+autocmd({ 'FileType' }, {
+  desc = "Use visual characters specific to go language",
+  group = visualchars,
+  pattern = "go",
+  callback = function()
+    vim.opt.listchars = { tab = "| ", trail = "☐" }
+  end,
+})
+
+-- Make sure that trailing whitespace is Red
+vim.cmd([[match errorMsg /\s\+$/]])
+
+-- -----------------------------------------------------------------------------
+-- FILETYPE SETTINGS
+-- -----------------------------------------------------------------------------
+
+autocmd({ 'FileType' }, {
+  desc = "Set up default spacing and tabs for a few filetypes.  I've left off \z
+          Go, since the filetype plugin handles it for me.",
+  group = filesettings,
+  pattern = { "mail", "text", "python", "gitcommit", "c", "cpp", "java", "sh",
+    "vim", "puppet", "xml", "json", "javascript", "html", "yaml", "dart" },
+  callback = function()
+    vim.opt_local.tabstop = 8
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+  end,
+})
+
+autocmd({ 'FileType' }, {
+  desc = "Use 80-column lines for some file types",
+  group = filesettings,
+  pattern = { "mail", "text", "lua", "vim", "c", "cpp", "nix" },
+  callback = function()
+    vim.opt_local.textwidth = 80
+  end,
+})
+
+autocmd({ 'FileType' }, {
+  desc = "Standard GO tab settings (tabs, not spaces)",
+  group = filesettings,
+  pattern = "go",
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.tabstop = 4
+    vim.opt_local.expandtab = false
+  end,
+})
+
+autocmd({ 'FileType' }, {
+  desc = "Ensure that we autowrap git commits to 72 characters, per tpope's \z
+          guidelines for good git comments.",
+  group = filesettings,
+  pattern = "gitcommit",
+  callback = function()
+    vim.opt_local.textwidth = 72
+  end,
+})
+
+autocmd({ 'FileType' }, {
+  desc = "For Java, I use custom continuation rules and 100-column lines.",
+  group = filesettings,
+  pattern = "java",
+  callback = function()
+    vim.opt_local.textwidth = 100
+    -- Change line continuation rules for Java. j1 is for Java anonymous
+    -- classes, +2s says indent 2xshiftwidth on line continuations.
+    vim.opt_local.cinoptions = "j1,+2s"
+  end,
+})
+autocmd({ 'FileType' }, {
+  desc = "Turn on spellchecking for some filetypes",
+  group = filesettings,
+  pattern = { "mail", "text", "python", "gitcommit", "c", "cpp" },
+  callback = function()
+    vim.opt_local.spell = true
+  end,
+})
+
+autocmd({ 'FileType' }, {
+  desc = "Help files are both text and help, triggering spellchecking, so we \z
+          manually disable it for them",
+  group = filesettings,
+  pattern = "help",
+  callback = function()
+    vim.opt_local.spell = false
+  end,
+})
+
+autocmd({ 'FileType' }, {
+  desc = "Don't hide markdown punctuation",
+  group = filesettings,
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.conceallevel = 0
+  end,
+})
+
+-- -----------------------------------------------------------------------------
+-- CUSTOM LINE NUMBERING
+-- -----------------------------------------------------------------------------
+
+function InitLineNumbering()
+  -- Global line number settings
+  vim.opt.relativenumber = true;
+  vim.opt.number = true;
+  vim.opt.list = true;
+  vim.o.signcolumn = "auto"
+
+  for _, handle in ipairs(vim.api.nvim_list_wins()) do
+    vim.api.nvim_win_set_option(handle, "relativenumber", false)
+  end
+
+  local enable = string.lower(vim.o.signcolumn) == "auto"
+  vim.api.nvim_win_set_option(0, "relativenumber", enable)
+end
+
+function SetLineNumberingForWindow(entering)
+  local ft = string.lower(vim.bo.filetype)
+  if ft == "help" or ft == "nvimtree" then
+    return
+  end
+  if entering then
+    local enable = string.lower(vim.o.signcolumn) == "auto"
+    vim.api.nvim_win_set_option(0, "relativenumber", enable)
+  else
+    vim.api.nvim_win_set_option(0, "relativenumber", false)
+  end
+end
+
+autocmd({ 'VimEnter' }, {
+  desc = "Initialize my line numbering setup",
+  group = linenumbers,
+  callback = InitLineNumbering,
+})
+autocmd({ 'BufEnter', 'WinEnter' }, {
+  desc = "Set per-window, per-buffer line numbering",
+  group = linenumbers,
+  callback = function() SetLineNumberingForWindow(true) end,
+})
+autocmd({ 'WinLeave' }, {
+  desc = "Reset per-window, per-buffer line numbering to normal",
+  group = linenumbers,
+  callback = function() SetLineNumberingForWindow(false) end,
+})
+
+-- -----------------------------------------------------------------------------
+-- PLUGIN SETTINGS
+-- -----------------------------------------------------------------------------
+-- NEOSOLARIZED.NVIM (Solarized color scheme)
+-- -----------------------------------------------------------------------------
+
+require('NeoSolarized').setup {
+  style = "light",
+  transparent = false,
+  terminal_colors = true,
+  enable_italics = true,
+}
+
+-- Setting colorscheme is not an option, it's a call that needs to be made into
+-- vim. Normally I should check the return value here, but I don't know what
+-- I would do if it fails...
+pcall(vim.cmd, "colorscheme NeoSolarized")
+
+-- -----------------------------------------------------------------------------
+-- LUA PLUGINS (Default Configurations)
+-- -----------------------------------------------------------------------------
+
+require('Comment').setup()        -- Mappings for code comments
+require('bufferline').setup()     -- Buffers as 'tabs'
+require('outline').setup {}       -- Code outline window like tagbar.vim
+require('nvim-autopairs').setup() -- Add closing parens, quotes, etc.
+require('ibl').setup()            -- Add indentation visual aids
+
+
+-- -----------------------------------------------------------------------------
+-- COLORIZER CONFIG (Colorizes words: Blue White Red or symbols: #00FF00)
+-- -----------------------------------------------------------------------------
+
+local colorizer = require('colorizer')
+colorizer.setup()
+colorizer.attach_to_buffer(0)
+
+-- -----------------------------------------------------------------------------
+-- LSP-FORMAT CONFIG (Code formatter)
+-- -----------------------------------------------------------------------------
+
+-- on_attach must be called for each language server
+require('lsp-format').setup()
+
+-- -----------------------------------------------------------------------------
+-- LUALINE CONFIG (Status bar at bottom of window)
+-- -----------------------------------------------------------------------------
+
+require('lualine').setup {
+  options = {
+    theme = 'NeoSolarized',
+  },
+  sections = {
+    lualine_a = { 'mode' },
+    lualine_b = { 'branch', 'diff', {
+      'diagnostics',
+      sources = { 'nvim_lsp', 'nvim_diagnostic' },
+      sections = { 'error', 'warn', 'info', 'hint' },
+      colored = true,
+      update_in_insert = false,
+      always_visible = false,
+    } },
+    lualine_c = { 'filename', 'lsp_progress' },
+    lualine_x = { 'encoding', 'fileformat', 'filetype' },
+    lualine_y = { 'progress' },
+    lualine_z = { 'location' },
+  },
+  extensions = {
+    'fzf', 'fugitive', 'man', 'nvim-tree',
+  },
+}
+
+-- -----------------------------------------------------------------------------
+-- NVIM-TREE CONFIG (File Explorer)
 -- -----------------------------------------------------------------------------
 
 require('nvim-tree').setup({
@@ -280,17 +508,17 @@ require('nvim-tree').setup({
   }
 })
 
-require('colorizer').setup()
-require('colorizer').attach_to_buffer(0)
-require('lsp-format').setup()
+-- -----------------------------------------------------------------------------
+-- GITSIGNS CONFIG (Git status markers)
+-- -----------------------------------------------------------------------------
 
 require('gitsigns').setup {
   signs = {
-    add = { hl = "GitSignsAdd", text = " ", numhl = "GitSignsAddNr", linehl = "GitSignsAddLn" },
-    change = { hl = "GitSignsChange", text = " ", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
-    delete = { hl = "GitSignsDelete", text = " ", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
-    topdelete = { hl = "GitSignsDelete", text = "󱅁 ", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
-    changedelete = { hl = "GitSignsChange", text = "󰍷 ", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
+    add = { hl = "GitSignsAdd", text = "▎", numhl = "GitSignsAddNr", linehl = "GitSignsAddLn" },
+    change = { hl = "GitSignsChange", text = "▎", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
+    delete = { hl = "GitSignsDelete", text = "▎", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
+    topdelete = { hl = "GitSignsDelete", text = "▎", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
+    changedelete = { hl = "GitSignsChange", text = "▎", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
   },
   signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
   numhl = false,     -- Toggle with `:Gitsigns toggle_numhl`
@@ -349,6 +577,10 @@ require('gitsigns').setup {
   end,
 }
 
+-- -----------------------------------------------------------------------------
+-- TELESCOPE CONFIG (Floating fuzzy search window)
+-- -----------------------------------------------------------------------------
+
 require('telescope').setup {
   extensions = {
     fzf = {
@@ -362,388 +594,16 @@ require('telescope').setup {
 -- Load native fzf plugin
 require('telescope').load_extension('fzf')
 
--- Code Symbol Map
-require('outline').setup {}
-
 -- -----------------------------------------------------------------------------
--- AUTOCOMMAND GROUPS
--- -----------------------------------------------------------------------------
-local clear = { clear = true }
-local visualchars = augroup('VisualChars', clear)
-local filesettings = augroup('FileSettings', clear)
-local linenumbers = augroup('LineNumbers', clear)
-
--- -----------------------------------------------------------------------------
--- AUTOCOMMANDS
--- -----------------------------------------------------------------------------
--- VISUAL CHARACTERS
--- -----------------------------------------------------------------------------
-
-autocmd({ 'FileType' }, {
-  desc = "Use visual characters to show tab and trailing whitespace",
-  group = visualchars,
-  callback = function()
-    vim.opt.listchars = { tab = "▸ ", trail = "☐" }
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Use visual characters specific to go language",
-  group = visualchars,
-  pattern = "go",
-  callback = function()
-    vim.opt.listchars = { tab = "| ", trail = "☐" }
-  end,
-})
-
--- Make sure that trailing whitespace is Red
-vim.cmd([[match errorMsg /\s\+$/]])
-
--- -----------------------------------------------------------------------------
--- FILETYPE SETTINGS
--- -----------------------------------------------------------------------------
-
-autocmd({ 'FileType' }, {
-  desc = "Set up default spacing and tabs for a few filetypes.  I've left off \z
-          Go, since the filetype plugin handles it for me.",
-  group = filesettings,
-  pattern = { "mail", "text", "python", "gitcommit", "c", "cpp", "java", "sh",
-    "vim", "puppet", "xml", "json", "javascript", "html", "yaml", "dart" },
-  callback = function()
-    vim.opt_local.tabstop = 8
-    vim.opt_local.shiftwidth = 2
-    vim.opt_local.expandtab = true
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Turn on spellchecking for some filetypes",
-  group = filesettings,
-  pattern = { "mail", "text", "python", "gitcommit", "c", "cpp" },
-  callback = function()
-    vim.opt_local.spell = true
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Use 80-column lines for some file types",
-  group = filesettings,
-  pattern = { "mail", "text", "vim", "c", "cpp", "nix" },
-  callback = function()
-    vim.opt_local.textwidth = 80
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Fix the comment handling, which is set to c-style by default",
-  group = filesettings,
-  pattern = "puppet",
-  callback = function()
-    vim.opt_local.commentstring = "# %s"
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Standard GO tab settings (tabs, not spaces)",
-  group = filesettings,
-  pattern = "go",
-  callback = function()
-    vim.opt_local.tabstop = 4
-    vim.opt_local.tabstop = 4
-    vim.opt_local.expandtab = false
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Help files are both text and help, triggering spellchecking, so we \z
-          manually disable it for them",
-  group = filesettings,
-  pattern = "help",
-  callback = function()
-    vim.opt_local.spell = false
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Don't hide markdown punctuation",
-  group = filesettings,
-  pattern = "markdown",
-  callback = function()
-    vim.opt_local.conceallevel = 0
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Teach vim-commentary about nasm comments",
-  group = filesettings,
-  pattern = "asm",
-  callback = function()
-    vim.opt_local.commentstring = "; %s"
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Ensure that we autowrap git commits to 72 characters, per tpope's \z
-          guidelines for good git comments.",
-  group = filesettings,
-  pattern = "gitcommit",
-  callback = function()
-    vim.opt_local.textwidth = 72
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "I use 100-column lines in Java files",
-  group = filesettings,
-  pattern = "java",
-  callback = function()
-    vim.opt_local.textwidth = 100
-  end,
-})
-
-autocmd({ 'FileType' }, {
-  desc = "Change line continuation rules for Java. j1 is for Java anonymous \z
-          classes, +2s says indent 2xshiftwidth on line continuations.",
-  group = filesettings,
-  pattern = "java",
-  callback = function()
-    vim.opt_local.cinoptions = "j1,+2s"
-  end,
-})
-
--- -----------------------------------------------------------------------------
--- PLUGIN SETTINGS
--- -----------------------------------------------------------------------------
--- LUALINE CONFIG
--- -----------------------------------------------------------------------------
-
-require('lualine').setup {
-  options = {
-    theme = 'NeoSolarized',
-  },
-  sections = {
-    lualine_a = { 'mode' },
-    lualine_b = { 'branch', 'diff', {
-      'diagnostics',
-      sources = { 'nvim_lsp', 'nvim_diagnostic' },
-      sections = { 'error', 'warn', 'info', 'hint' },
-      colored = true,
-      update_in_insert = false,
-      always_visible = false,
-    } },
-    lualine_c = { 'filename', 'lsp_progress' },
-    lualine_x = { 'encoding', 'fileformat', 'filetype' },
-    lualine_y = { 'progress' },
-    lualine_z = { 'location' },
-  },
-  extensions = {
-    'fzf', 'fugitive', 'man', 'nvim-tree',
-  },
-}
-
--- -----------------------------------------------------------------------------
--- NVIM-AUTOPAIRS CONFIG
--- -----------------------------------------------------------------------------
-
-require('nvim-autopairs').setup()
-
--- -----------------------------------------------------------------------------
--- INDENT BLANKLINE CONFIG
--- -----------------------------------------------------------------------------
-
-vim.g.indent_blankline_use_treesitter = true
-
-require('ibl').setup()
-
--- -----------------------------------------------------------------------------
--- KEY MAPPINGS
--- -----------------------------------------------------------------------------
-
-local opts = { silent = true }
-
--- Make Y mirror y, working like D and C, yank to the end of the line
-keymap("n", "Y", "y$", opts)
-
--- Add an insert mode mapping to reflow the current line.
-keymap("i", "<C-G>q", "<C-O>gqq<C-O>A", opts)
-
--- Better window navigation
-keymap("n", "<C-h>", "<C-w>h", opts)
-keymap("n", "<C-j>", "<C-w>j", opts)
-keymap("n", "<C-k>", "<C-w>k", opts)
-keymap("n", "<C-l>", "<C-w>l", opts)
-
--- Allow arrows to resize windows
-keymap("n", "<C-Up>", ":resize -2<CR>", opts)
-keymap("n", "<C-Down>", ":resize +2<CR>", opts)
-keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
-keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
-
--- Move current line up or down
-keymap("n", "<A-j>", ":m .+1<CR>==", opts)
-keymap("n", "<A-k>", ":m .-2<CR>==", opts)
-
--- Move visual selection up or down
-keymap("v", "<A-j>", ":m '>+1<CR>gv=gv", opts)
-keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", opts)
-
--- Move visual block selection up or down
-keymap("x", "<A-j>", ":m '>+1<CR>gv=gv", opts)
-keymap("x", "<A-k>", ":m '<-2<CR>gv=gv", opts)
-
--- Add comma or semicolon to end of line without breaking flow
-local function append_to_line(content)
-  local row = vim.api.nvim_win_get_cursor(0)[1]
-  local line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)
-  local column = string.len(line[1])
-  vim.api.nvim_buf_set_text(0, row - 1, column, row - 1, column, { content })
-end
-
-keymap("i", "<C-;>", function() append_to_line(";") end, opts)
-keymap("i", "<C-,>", function() append_to_line(",") end, opts)
-
--- -----------------------------------------------------------------------------
--- PERSONAL SHORTCUTS (LEADER)
--- -----------------------------------------------------------------------------
-
-keymap("", "<Space>", "<Nop>", opts)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
--- Delete buffer without closing window
-local bufdelete = require("bufdelete").bufdelete
-keymap("n", "<leader>bd", function() bufdelete(0) end, opts)
-
-keymap("n", "<leader>ol", function() vim.cmd("Outline!") end)
-
-local illuminate = require('illuminate')
-keymap('n', '[i', illuminate.goto_next_reference, opts)
-keymap('n', ']i', illuminate.goto_prev_reference, opts)
-
--- Searches
-local telescope = require('telescope.builtin')
-keymap('n', '<leader>fg', telescope.live_grep, {})
-keymap('n', '<leader>ff', telescope.find_files, {})
-keymap('n', '<leader><space>', telescope.find_files, {})
-keymap('n', '<leader>fb', telescope.buffers, {})
-keymap('n', '<leader>fh', telescope.help_tags, {})
-
--- Load Git UI
-keymap("n", "<leader>gg", ":G<CR>", opts)
-
--- When copying from the buffer in tmux, we want to get rid of visual aids like
--- indent lines, line numbering, gutter
-function ToggleScreenMess()
-  if string.lower(vim.o.signcolumn) == "auto" then
-    vim.opt.number = false
-    vim.opt.list = false
-    vim.opt.relativenumber = false
-    vim.o.signcolumn = "no"
-    require('ibl').update { enabled = false }
-  else
-    vim.opt.number = true
-    vim.opt.list = true
-    vim.opt_local.relativenumber = false
-    vim.o.signcolumn = "auto"
-    require('ibl').update { enabled = true }
-  end
-end
-
-keymap("n", "<leader>sc", ToggleScreenMess, opts)
-
--- Jump in and out of nvim tree
-local nvim_tree = require('nvim-tree.api').tree
-keymap("n", "<leader>nt", nvim_tree.toggle, opts)
-keymap("n", "<leader>nn", nvim_tree.focus, opts)
-
-keymap("n", "<leader>nf", function()
-  nvim_tree.find_file {
-    open = true,
-    focus = true,
-    update_root = true,
-  }
-end, opts)
-
--- (C)reate (F)ile under cursor (for when `gf` doesn't work)
-keymap("n", "<leader>cf", function()
-  local file_under_cursor = vim.fn.expand("<cfile>")
-  uv.fs_open(file_under_cursor, 'xw', 384, function(err, fd) -- 384 == 0600
-    if err then
-      print(string.format("Error creating file: %s", err))
-    else
-      uv.fs_close(fd)
-    end
-  end)
-end, opts)
-
--- base64 encode encode and decode visual selection
---vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
---vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
-
--- Push and close git interface
-function GitPushAndClose()
-  vim.cmd('Gpush')
-  local status_ok, ftype = pcall(
-    vim.api.nvim_buf_get_var, 0, "fugitive_type")
-  if status_ok and string.lower(ftype) == "index" then
-    vim.api.nvim_win_close(0, false)
-  end
-end
-
-keymap("n", "<leader>gp", GitPushAndClose, opts)
-
-keymap("n", "<leader>ut", vim.cmd.UndotreeToggle, opts)
-
-function InitLineNumbering()
-  -- Global line number settings
-  vim.opt.relativenumber = true;
-  vim.opt.number = true;
-  vim.opt.list = true;
-  vim.o.signcolumn = "auto"
-
-  for _, handle in ipairs(vim.api.nvim_list_wins()) do
-    vim.api.nvim_win_set_option(handle, "relativenumber", false)
-  end
-
-  local enable = string.lower(vim.o.signcolumn) == "auto"
-  vim.api.nvim_win_set_option(0, "relativenumber", enable)
-end
-
-function SetLineNumberingForWindow(entering)
-  local ft = string.lower(vim.bo.filetype)
-  if ft == "help" or ft == "nvimtree" then
-    return
-  end
-  if entering then
-    local enable = string.lower(vim.o.signcolumn) == "auto"
-    vim.api.nvim_win_set_option(0, "relativenumber", enable)
-  else
-    vim.api.nvim_win_set_option(0, "relativenumber", false)
-  end
-end
-
-autocmd({ 'VimEnter' }, {
-  desc = "Initialize my line numbering setup",
-  group = linenumbers,
-  callback = InitLineNumbering,
-})
-autocmd({ 'BufEnter', 'WinEnter' }, {
-  desc = "Set per-window, per-buffer line numbering",
-  group = linenumbers,
-  callback = function() SetLineNumberingForWindow(true) end,
-})
-autocmd({ 'WinLeave' }, {
-  desc = "Reset per-window, per-buffer line numbering to normal",
-  group = linenumbers,
-  callback = function() SetLineNumberingForWindow(false) end,
-})
--- -----------------------------------------------------------------------------
--- LSP CONFIG
+-- CMP CONFIG (Autocomplete suport)
 -- -----------------------------------------------------------------------------
 
 local cmp = require('cmp')
 local lspkind = require('lspkind')
 local luasnip = require('luasnip')
+
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
 
 -- load from friendly-snippets
 require("luasnip/loaders/from_vscode").lazy_load()
@@ -833,7 +693,23 @@ cmp.setup({
   },
 })
 
+-- -----------------------------------------------------------------------------
+-- LSP CONFIG
+-- -----------------------------------------------------------------------------
+
 local lspconfig = require('lspconfig')
+
+-- -----------------------------------------------------------------------------
+-- LANGUAGE SERVERS (Default Configurations)
+-- -----------------------------------------------------------------------------
+
+lspconfig.nil_ls.setup {}
+lspconfig.pyright.setup {}
+
+-- -----------------------------------------------------------------------------
+-- LUA LANGUAGE SERVERS (Recognize vim global)
+-- -----------------------------------------------------------------------------
+
 lspconfig.lua_ls.setup {
   settings = {
     Lua = {
@@ -843,21 +719,181 @@ lspconfig.lua_ls.setup {
     },
   },
 }
-lspconfig.nil_ls.setup {}
-lspconfig.pyright.setup {}
 
--- Global mappings.
+-- -----------------------------------------------------------------------------
+-- KEY MAPPINGS
+-- -----------------------------------------------------------------------------
+-- PERSONAL SHORTCUTS (LEADER)
+-- -----------------------------------------------------------------------------
+
+keymap("", "<Space>", "<Nop>", kopts)
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
+-- Make Y mirror y, working like D and C, yank to the end of the line
+keymap("n", "Y", "y$", kopts)
+
+-- Add an insert mode mapping to reflow the current line.
+keymap("i", "<C-G>q", "<C-O>gqq<C-O>A", kopts)
+
+-- Better window navigation
+keymap("n", "<C-h>", "<C-w>h", kopts)
+keymap("n", "<C-j>", "<C-w>j", kopts)
+keymap("n", "<C-k>", "<C-w>k", kopts)
+keymap("n", "<C-l>", "<C-w>l", kopts)
+
+-- Allow arrows to resize windows
+keymap("n", "<C-Up>", ":resize -2<CR>", kopts)
+keymap("n", "<C-Down>", ":resize +2<CR>", kopts)
+keymap("n", "<C-Left>", ":vertical resize -2<CR>", kopts)
+keymap("n", "<C-Right>", ":vertical resize +2<CR>", kopts)
+
+-- Move current line up or down
+keymap("n", "<A-j>", ":m .+1<CR>==", kopts)
+keymap("n", "<A-k>", ":m .-2<CR>==", kopts)
+
+-- Move visual selection up or down
+keymap("v", "<A-j>", ":m '>+1<CR>gv=gv", kopts)
+keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", kopts)
+
+-- Move visual block selection up or down
+keymap("x", "<A-j>", ":m '>+1<CR>gv=gv", kopts)
+keymap("x", "<A-k>", ":m '<-2<CR>gv=gv", kopts)
+
+-- Load Git UI
+keymap("n", "<leader>gg", ":G<CR>", kopts)
+
+-- base64 encode encode and decode visual selection
+--vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
+--vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
+
+keymap("n", "<leader>ut", vim.cmd.UndotreeToggle, kopts)
+
+keymap("n", "<leader>ol", function() vim.cmd("Outline!") end)
+
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-keymap('n', '<space>e', vim.diagnostic.open_float, opts)
-keymap('n', '[d', vim.diagnostic.goto_prev, opts)
-keymap('n', ']d', vim.diagnostic.goto_next, opts)
-keymap('n', '[D', function() vim.diagnostic.goto_prev({ cursor_position = { 1, 0 }, wrap = true }) end, opts)
-keymap('n', ']D', function() vim.diagnostic.goto_next({ cursor_position = { 1, 0 } }) end, opts)
-keymap('n', '<space>q', vim.diagnostic.setloclist, opts)
+keymap('n', '<space>e', vim.diagnostic.open_float, kopts)
+keymap('n', '[d', vim.diagnostic.goto_prev, kopts)
+keymap('n', ']d', vim.diagnostic.goto_next, kopts)
+keymap('n', '[D', function() vim.diagnostic.goto_prev({ cursor_position = { 1, 0 }, wrap = true }) end, kopts)
+keymap('n', ']D', function() vim.diagnostic.goto_next({ cursor_position = { 1, 0 } }) end, kopts)
+keymap('n', '<space>q', vim.diagnostic.setloclist, kopts)
 
--- Use LspAttach autocommand to only map the following keys after the language
--- server attaches to the current buffer
-vim.api.nvim_create_autocmd('LspAttach', {
+-- -----------------------------------------------------------------------------
+-- BUFDELETE (Delete buffer without closing window)
+-- -----------------------------------------------------------------------------
+
+local bufdelete = require("bufdelete").bufdelete
+keymap("n", "<leader>bd", function() bufdelete(0) end, kopts)
+
+-- -----------------------------------------------------------------------------
+-- ILLUMINATE (Navigate to next highlighted word)
+-- -----------------------------------------------------------------------------
+local illuminate = require('illuminate')
+keymap('n', '[i', illuminate.goto_next_reference, kopts)
+keymap('n', ']i', illuminate.goto_prev_reference, kopts)
+
+-- -----------------------------------------------------------------------------
+-- TELESCOPE (Common searches)
+-- -----------------------------------------------------------------------------
+local telescope = require('telescope.builtin')
+keymap('n', '<leader>fg', telescope.live_grep, {})
+keymap('n', '<leader>ff', telescope.find_files, {})
+keymap('n', '<leader><space>', telescope.find_files, {})
+keymap('n', '<leader>fb', telescope.buffers, {})
+keymap('n', '<leader>fh', telescope.help_tags, {})
+
+-- -----------------------------------------------------------------------------
+-- Clear visual aids so screen copy works
+-- -----------------------------------------------------------------------------
+
+local function toggle_screen_mess()
+  if string.lower(vim.o.signcolumn) == "auto" then
+    vim.opt.number = false
+    vim.opt.list = false
+    vim.opt.relativenumber = false
+    vim.o.signcolumn = "no"
+    require('ibl').update { enabled = false }
+  else
+    vim.opt.number = true
+    vim.opt.list = true
+    vim.opt_local.relativenumber = false
+    vim.o.signcolumn = "auto"
+    require('ibl').update { enabled = true }
+  end
+end
+
+keymap("n", "<leader>sc", toggle_screen_mess, kopts)
+
+-- -----------------------------------------------------------------------------
+-- Add comma or semicolon to end of line without breaking flow
+-- -----------------------------------------------------------------------------
+
+local function append_to_line(content)
+  local row = vim.api.nvim_win_get_cursor(0)[1]
+  local line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)
+  local column = string.len(line[1])
+  vim.api.nvim_buf_set_text(0, row - 1, column, row - 1, column, { content })
+end
+
+keymap("i", "<C-;>", function() append_to_line(";") end, kopts)
+keymap("i", "<C-,>", function() append_to_line(",") end, kopts)
+
+
+-- -----------------------------------------------------------------------------
+-- NVIM-TREE (Toggle, focus, find current file)
+-- -----------------------------------------------------------------------------
+
+local nvim_tree = require('nvim-tree.api').tree
+keymap("n", "<leader>nt", nvim_tree.toggle, kopts)
+keymap("n", "<leader>nn", nvim_tree.focus, kopts)
+
+keymap("n", "<leader>nf", function()
+  nvim_tree.find_file {
+    open = true,
+    focus = true,
+    update_root = true,
+  }
+end, kopts)
+
+-- -----------------------------------------------------------------------------
+-- (C)reate (F)ile under cursor (for when `gf` doesn't work)
+-- -----------------------------------------------------------------------------
+
+local function create_file_under_cursor()
+  local file_under_cursor = vim.fn.expand("<cfile>")
+  uv.fs_open(file_under_cursor, 'xw', 384, function(err, fd) -- 384 == 0600
+    if err then
+      print(string.format("Error creating file: %s", err))
+    else
+      uv.fs_close(fd)
+    end
+  end)
+end
+
+keymap("n", "<leader>cf", create_file_under_cursor, kopts)
+
+-- -----------------------------------------------------------------------------
+-- FUGITIVE GIT PUSH AND CLOSE WINDOW
+-- -----------------------------------------------------------------------------
+
+-- Push and close git interface
+local function git_push_and_close()
+  vim.cmd('Gpush')
+  local status_ok, ftype = pcall(
+    vim.api.nvim_buf_get_var, 0, "fugitive_type")
+  if status_ok and string.lower(ftype) == "index" then
+    vim.api.nvim_win_close(0, false)
+  end
+end
+
+keymap("n", "<leader>gp", git_push_and_close, kopts)
+
+-- -----------------------------------------------------------------------------
+-- LSP KEYMAPPINGS (Use LspAttach to only map after language server is attached)
+-- -----------------------------------------------------------------------------
+
+autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),
   callback = function(ev)
     -- Enable completion triggered by <c-x><c-o>

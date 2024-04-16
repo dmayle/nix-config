@@ -52,7 +52,7 @@
       flake = false;
     };
     trouble_v3 = {
-      url = "github:folke/trouble.nvim/dev";
+      url = "github:dmayle/trouble.nvim/vim_uv";
       flake = false;
     };
     nvim-spell-en-utf8-dictionary = {

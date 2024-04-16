@@ -586,16 +586,16 @@
     "trouble_v3": {
       "flake": false,
       "locked": {
-        "lastModified": 1711753067,
-        "narHash": "sha256-8YtdGtm7f678fMBR5FzvRHs+QYAKtDNbSiJ1rIMTP0o=",
-        "owner": "folke",
+        "lastModified": 1713285476,
+        "narHash": "sha256-3WvqGpERbYUgeGuuN6VZz0klnAjzg3wYTO56BXaNw/M=",
+        "owner": "dmayle",
         "repo": "trouble.nvim",
-        "rev": "10eff94809ecd6ee6cc59f42e9521b9b8a14e9ce",
+        "rev": "95d73fd44e00391abd019298baad6eaeadde30b3",
         "type": "github"
       },
       "original": {
-        "owner": "folke",
-        "ref": "dev",
+        "owner": "dmayle",
+        "ref": "vim_uv",
         "repo": "trouble.nvim",
         "type": "github"
       }

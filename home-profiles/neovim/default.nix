@@ -221,8 +221,8 @@ in
       outline-nvim
 
       # Two possible diagnostics displays
-      trouble-nvim
-      # trouble_v3 requires Neovim nightly (0.10+)
+      # trouble-nvim
+      trouble_v3 # requires Neovim nightly (0.10+) (locally fixed)
       lsp_lines-nvim
     ];
 

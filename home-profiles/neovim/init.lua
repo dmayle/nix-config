@@ -456,6 +456,14 @@ require('ibl').setup()            -- Add indentation visual aids
 
 
 -- -----------------------------------------------------------------------------
+-- LSPLINES CONFIG (Inline floating diagnostics)
+-- -----------------------------------------------------------------------------
+
+local lsp_lines = require('lsp_lines')
+lsp_lines.setup()
+vim.diagnostic.config({ virtual_lines = true, virtual_text = false })
+
+-- -----------------------------------------------------------------------------
 -- COLORIZER CONFIG (Colorizes words: Blue White Red or symbols: #00FF00)
 -- -----------------------------------------------------------------------------
 
@@ -779,6 +787,8 @@ keymap('n', '[D', function() vim.diagnostic.goto_prev({ cursor_position = { 1, 0
 keymap('n', ']D', function() vim.diagnostic.goto_next({ cursor_position = { 1, 0 } }) end, kopts)
 keymap('n', '<space>q', vim.diagnostic.setloclist, kopts)
 
+keymap('n', '<leader>ll', lsp_lines.toggle, kopts)
+
 -- -----------------------------------------------------------------------------
 -- BUFDELETE (Delete buffer without closing window)
 -- -----------------------------------------------------------------------------
@@ -808,7 +818,7 @@ keymap('n', '<leader>fh', telescope.help_tags, {})
 -- -----------------------------------------------------------------------------
 local trouble = require('trouble')
 trouble.setup()
-keymap('n', '<leader>xx', function() trouble.toggle() end, {})
+keymap('n', '<leader>xx', function() trouble.toggle("diagnostics") end, {})
 keymap('n', '<leader>xw', function() trouble.toggle("workspace_diagnostics") end, {})
 keymap('n', '<leader>xd', function() trouble.toggle("document_diagnostics") end, {})
 keymap('n', '<leader>xq', function() trouble.toggle("quickfix") end, {})

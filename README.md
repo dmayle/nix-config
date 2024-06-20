@@ -100,6 +100,5 @@ update them here.  In the meantime, you can read an overview of the process:
 3. Use sudo to install this flake's NixOS configuration.
 
 ```
-nix path-info --derivation .#homeConfigurations.<hostname>.activationPackage
-nix path-info --derivation .#nixosConfigurations.<hostname>.config.system.build.toplevel
+F=--extra-experimental-features V="nix-command flakes" bash -c 'nix $F "$V" run home-manager -- $F "$V" switch --flake .#<hostname>'
 ```

@@ -1,6 +1,11 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
+  # programs.starship = {
+  #   enable = true;
+  #   enableBashIntegration = true;
+  # };
+  # TODO: add starship prompt config (consider kubectx kubens)
   programs.bash = {
     enable = true;
     historyControl = [ "ignoredups" "ignorespace" "erasedups" ];

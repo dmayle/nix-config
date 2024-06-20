@@ -57,11 +57,20 @@ in
     # Python
     nodePackages.pyright
 
+    # Javascript
+    nodePackages.typescript-language-server
+
     # Go
     gopls
 
     # C++
     ccls
+
+    # Rust
+    rustfmt # dependency
+    rustc   # dependency
+    cargo   # dependency
+    rust-analyzer
   ];
 
   programs.neovim = {

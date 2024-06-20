@@ -800,8 +800,8 @@ keymap("n", "<leader>bd", function() bufdelete(0) end, kopts)
 -- ILLUMINATE (Navigate to next highlighted word)
 -- -----------------------------------------------------------------------------
 local illuminate = require('illuminate')
-keymap('n', '[i', illuminate.goto_next_reference, kopts)
-keymap('n', ']i', illuminate.goto_prev_reference, kopts)
+keymap('n', ']i', illuminate.goto_next_reference, kopts)
+keymap('n', '[i', illuminate.goto_prev_reference, kopts)
 
 -- -----------------------------------------------------------------------------
 -- TELESCOPE (Common searches)

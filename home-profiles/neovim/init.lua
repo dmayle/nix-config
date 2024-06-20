@@ -750,6 +750,10 @@ keymap("n", "<C-j>", "<C-w>j", kopts)
 keymap("n", "<C-k>", "<C-w>k", kopts)
 keymap("n", "<C-l>", "<C-w>l", kopts)
 
+-- Easier buffer navigation
+keymap("n", "H", ":bprev <CR>", kopts)
+keymap("n", "L", ":bnext <CR>", kopts)
+
 -- Allow arrows to resize windows
 keymap("n", "<C-Up>", ":resize -2<CR>", kopts)
 keymap("n", "<C-Down>", ":resize +2<CR>", kopts)

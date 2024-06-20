@@ -2,9 +2,11 @@
 
 (pkgs.buildFHSUserEnv {
   name = "go_bazel";
-  targetPkgs = pkgs: [
-    pkgs.bazel
-    pkgs.glibc
-    pkgs.gcc
+  targetPkgs = pkgs: with pkgs; [
+    bazel
+    glibc
+    gcc
+    go
+    jdk11
   ];
 }).env

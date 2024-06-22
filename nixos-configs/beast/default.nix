@@ -36,17 +36,16 @@
   # support for wayland
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
     powerManagement.enable = true;
     powerManagement.finegrained = false;
     modesetting.enable = true;
     nvidiaSettings = true;
   };
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
     extraPackages = with pkgs; [
       vaapiVdpau
       libvdpau-va-gl
@@ -88,7 +87,7 @@
     variant = "extd";
     model = "pc105";
   };
-  services.xserver.libinput.enable = true;
+  services.libinput.enable = true;
   services.xserver.enable = true;
 
   services.xserver.resolutions = [{ x = 7680; y = 4320; }];

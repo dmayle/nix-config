@@ -55,7 +55,7 @@ in
     nodePackages.bash-language-server
 
     # Python
-    nodePackages.pyright
+    pyright
 
     # Javascript
     nodePackages.typescript-language-server

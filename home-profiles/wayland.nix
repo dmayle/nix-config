@@ -235,19 +235,25 @@ in
   services.kanshi = {
     enable = true;
     systemdTarget = "hyprland-session.target";
-    profiles = {
-      home_office = {
-        outputs = [
-          {
-            criteria = "Technical Concepts Ltd 65R648 Unknown";
-            mode = "7680x4320";
-            position = "0,0";
-            transform = "normal";
-            status = "enable";
-          }
-        ];
-      };
-    };
+    settings = [
+      {
+        profile = {
+          name = "home_office";
+          outputs = [
+            {
+              criteria = "Technical Concepts Ltd 65R648 Unknown";
+              mode = "7680x4320";
+              position = "0,0";
+              transform = "normal";
+              status = "enable";
+            }
+            {
+              criteria = "Unknown Unknown Unknown";
+            }
+          ];
+        };
+      }
+    ];
   };
   xdg.portal = {
     enable = true;

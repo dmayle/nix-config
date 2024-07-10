@@ -23,6 +23,9 @@
       # Support manual resolution change for convenience
       function set4k() {
         case "$XDG_CURRENT_DESKTOP" in
+          Hyprland)
+            hyprctl keyword monitor "HDMI-A-1,3840x2160@119.88Hz,1x1"
+            ;;
           sway)
             swaymsg output HDMI-A-1 res 3840x2160@119.880Hz scale 1
             ;;
@@ -34,6 +37,9 @@
       # Effectively 5760x3240
       function set5k() {
         case "$XDG_CURRENT_DESKTOP" in
+          Hyprland)
+            hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1.5x1.5"
+            ;;
           sway)
             swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1.5
             ;;
@@ -44,6 +50,9 @@
       }
       function set8k() {
         case "$XDG_CURRENT_DESKTOP" in
+          Hyprland)
+            hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1x1"
+            ;;
           sway)
             swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1
             ;;

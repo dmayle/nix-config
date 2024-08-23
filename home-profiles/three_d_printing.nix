@@ -6,7 +6,7 @@
     openscad
 
     # 3D slicing software
-    cura
+    #cura
     prusa-slicer
   ];
 }

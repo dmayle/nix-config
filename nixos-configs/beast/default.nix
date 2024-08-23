@@ -36,11 +36,12 @@
   # support for wayland
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
     powerManagement.enable = true;
     powerManagement.finegrained = false;
     modesetting.enable = true;
     nvidiaSettings = true;
+    open = true;
   };
 
   hardware.graphics = {

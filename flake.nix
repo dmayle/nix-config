@@ -26,13 +26,18 @@
     # ##########################################################################
     hyprland = {
       type = "git";
-      url = "https://github.com/hyprwm/Hyprland?ref=v0.41.2";
+      url = "https://github.com/hyprwm/hyprland";
+      #ref = "v0.42.0";
+      rev = "9a09eac79b85c846e3a865a9078a3f8ff65a9259";
       submodules = true;
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
     };
     hy3 = {
-      url = "github:outfoxxed/hy3?ref=hl0.41.2";
+      type = "git";
+      url = "https://github.com/outfoxxed/hy3";
+      #ref = "hl0.42.0";
+      rev = "6af5f6004180664d883bd428f1da117bb6b1b6dc";
       inputs.hyprland.follows = "hyprland";
     };
     # ##########################################################################

@@ -241,14 +241,11 @@ in
           name = "home_office";
           outputs = [
             {
-              criteria = "Technical Concepts Ltd 65R648 Unknown";
+              criteria = "HDMI-A-1";
               mode = "7680x4320";
               position = "0,0";
               transform = "normal";
               status = "enable";
-            }
-            {
-              criteria = "Unknown Unknown Unknown";
             }
           ];
         };

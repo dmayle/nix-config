@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -13,6 +13,9 @@
     wl-clipboard
 
     libreoffice
+
+    # Add Godoto Game Development engine
+    godot_4
 
     kitty
     google-chrome

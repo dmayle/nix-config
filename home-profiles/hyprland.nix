@@ -173,6 +173,9 @@ in
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
       #monitor = "HDMI-A-1,7680x4320@59.940,0x0,1";
+      render = {
+        explicit_sync = false;
+      };
       debug = {
         disable_logs = false;
       };

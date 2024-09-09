@@ -56,6 +56,17 @@
     '';
   };
 
+  # Use GnuPG for signing and encryption
+  programs.gpg = {
+    enable = true;
+    mutableKeys = true;
+  };
+  services.gpg-agent = {
+    enable = true;
+    enableBashIntegration = true;
+    pinentryPackage = pkgs.pinentry-curses;
+  };
+
   home.packages = with pkgs; [
     # Might not be permanent, but I find it useful
     gdb

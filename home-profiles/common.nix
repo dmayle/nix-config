@@ -113,6 +113,9 @@
 
     # Kubernetes tools
     kubectx
+
+    # Hetzner tools
+    hcloud
   ];
 
   programs.dircolors = {

@@ -23,7 +23,7 @@
   networking.hostName = "beast";
 
   # Set your time zone and locale
-  time.timeZone = "America/Los_Angeles";
+  time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
 
   # Basic console configuration supporting latin languages

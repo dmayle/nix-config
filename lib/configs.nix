@@ -40,6 +40,7 @@ rec {
         (import (config))
         { nixpkgs.pkgs = systemPackages.${system}; }
         inputs.disko.nixosModules.disko
+        inputs.sops-nix.nixosModules.sops
       ];
     };
 }

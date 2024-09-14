@@ -1,0 +1,14 @@
+keys:
+  - &admin_douglas 251DD91D6924C206B70EBB93F2DDEC00E62953A3
+  - &host_fox age1g92zj25h7yucv8nmswcvhat7vqsnk3zlky32dyfk5k2973au04aqtmxc9q
+creation_rules:
+  - path_regex: secrets/secrets\.yaml
+    key_groups:
+      - pgp:
+          - *admin_douglas
+  - path_regex: secrets/fox\.yaml
+    key_groups:
+      - pgp:
+          - *admin_douglas
+        age:
+          - *host_fox

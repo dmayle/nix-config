@@ -6,14 +6,17 @@
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk-config.nix
     nixosProfiles.docker
+    nixosProfiles.web-servers
   ];
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub = {
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
 
   # Setup the machine name
-  networking.hostName = "fox.mayle.org";
+  networking.hostName = "fox";
 
   # Set your time zone and locale
   time.timeZone = "America/New_York";
@@ -45,11 +48,23 @@
   users.users.douglas = {
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" ];
+    hashedPasswordFile = config.sops.secrets."users/douglas".path;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgeON0VkK4mu9XOalV1Alp5vFztuhT8T/g75JpJjFwe douglas@beast"
     ];
   };
   nix.settings.allowed-users = [ "@wheel" ];
+
+  # Setup sops
+  sops = {
+    defaultSopsFile = ../../secrets/fox.yaml;
+    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    secrets = {
+      "ttyd/username" = {};
+      "ttyd/password" = {};
+      "users/douglas".neededForUsers = true;
+    };
+  };
 
   # Some basic packages I want available if I use the system as root
   environment.systemPackages = with pkgs; [

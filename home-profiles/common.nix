@@ -116,6 +116,9 @@
 
     # Hetzner tools
     hcloud
+
+    # Secret management
+    sops
   ];
 
   programs.dircolors = {

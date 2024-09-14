@@ -11,7 +11,7 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "fox.plezen.tech" = {
+      "fox.mayle.org" = {
         forceSSL = true;
         enableACME = true;
         locations."/" = {
@@ -30,6 +30,9 @@
   imports = [ ./ttyd.nix ];
   services.ttyd = {
     enable = true;
+    # for client cert verification:
+    # caFile = ./foo;
+    # enableSSL = true;
     checkOrigin = true;
     writeable = true;
     passwordFile = config.sops.secrets."ttyd/password".path;

@@ -3,10 +3,10 @@
   # * Fix color of default terminal
   # * Fix font so that nvim_tree icons work
   # * Fix font so that it uses font I like
+  # * Encrypt config
   security.acme = {
     acceptTerms = true;
     defaults.email = "dmayle@dmayle.com";
-    defaults.server = "https://acme-staging-v02.api.letsencrypt.org/directory";
   };
   services.nginx = {
     enable = true;

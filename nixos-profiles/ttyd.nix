@@ -39,6 +39,13 @@ in
     services.ttyd = {
       enable = lib.mkEnableOption ("ttyd daemon");
 
+      package = mkOption {
+        type = types.package;
+        default = pkgs.ttyd;
+        defaultText = "pkgs.ttyd";
+        description = "Package to use for ttyd";
+      };
+
       port = mkOption {
         type = types.port;
         default = 7681;
@@ -219,12 +226,12 @@ in
 
       script = if cfg.passwordFile != null then ''
         PASSWORD=$(cat "$CREDENTIALS_DIRECTORY/TTYD_PASSWORD_FILE")
-        ${pkgs.ttyd}/bin/ttyd ${lib.escapeShellArgs args} \
+        ${cfg.package}/bin/ttyd ${lib.escapeShellArgs args} \
           --credential ${lib.escapeShellArg cfg.username}:"$PASSWORD" \
           ${cfg.entrypoint}
       ''
       else ''
-        ${pkgs.ttyd}/bin/ttyd ${lib.escapeShellArgs args} \
+        ${cfg.package}/bin/ttyd ${lib.escapeShellArgs args} \
           ${cfg.entrypoint}
       '';
     };

@@ -1,9 +1,15 @@
-{ config, pkgs, ... }: {
-  # TODO
-  # * Fix color of default terminal
-  # * Fix font so that nvim_tree icons work
-  # * Fix font so that it uses font I like
-  # * Encrypt config
+{ config, pkgs, ... }:
+let
+  ttyd = pkgs.ttyd.overrideAttrs (oldAttrs: {
+    src = pkgs.fetchFromGitHub {
+      owner = "metorm";
+      repo = "ttyd-nerd-font";
+      rev = "27c033fe046420d5308119d20220b7d009f3176f";
+      sha256 = "sha256-qBOH6iwB1cG6qf/dGEZqoeMw6ytym/9YQks4EYVhB8g=";
+    };
+  });
+in
+{
   security.acme = {
     acceptTerms = true;
     defaults.email = "dmayle@dmayle.com";
@@ -30,6 +36,7 @@
   imports = [ ./ttyd.nix ];
   services.ttyd = {
     enable = true;
+    package = ttyd;
     # for client cert verification:
     # caFile = ./foo;
     # enableSSL = true;
@@ -60,6 +67,8 @@
 
       # Solarized Theme
       theme = "{\"background\":\"#fdf6e3\",\"foreground\":\"#657b83\",\"cursor\":\"#586e75\",\"selectionBackground\":\"#586e75\",\"selectionForeground\":\"#eae3cb\",\"black\":\"#073642\",\"brightBlack\":\"#002b36\",\"red\":\"#dc322f\",\"brightRed\":\"#cb4b16\",\"green\":\"#859900\",\"brightGreen\":\"#586e75\",\"yellow\":\"#b58900\",\"brightYellow\":\"#657b83\",\"blue\":\"#268bd2\",\"brightBlue\":\"#839496\",\"magenta\":\"#d33682\",\"brightMagenta\":\"#6c71c4\",\"cyan\":\"#2aa198\",\"brightCyan\":\"#93a1a1\",\"white\":\"#eee8d5\",\"brightWhite\":\"#fdf6e3\"}";
+
+      fontFamily = "JetBrains";
     };
   };
 }

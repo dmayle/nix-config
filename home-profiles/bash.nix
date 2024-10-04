@@ -1,6 +1,86 @@
 { config, pkgs, ... }:
-
+let
+  # Support manual resolution change for convenience
+  set4k = pkgs.writeShellScriptBin "set4k" ''
+    case "$XDG_CURRENT_DESKTOP" in
+      Hyprland)
+        hyprctl keyword monitor "HDMI-A-1,3840x2160@119.88Hz,1x1"
+        ;;
+      sway)
+        swaymsg output HDMI-A-1 res 3840x2160@119.880Hz scale 1
+        ;;
+      gnome)
+        xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1
+        ;;
+    esac
+  '';
+  # Effectively 5760x3240
+  set5k = pkgs.writeShellScriptBin "set5k" ''
+    case "$XDG_CURRENT_DESKTOP" in
+      Hyprland)
+        hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1.5x1.5"
+        ;;
+      sway)
+        swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1.5
+        ;;
+      gnome)
+        xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75
+        ;;
+    esac
+  '';
+  set8k = pkgs.writeShellScriptBin "set8k" ''
+    case "$XDG_CURRENT_DESKTOP" in
+      Hyprland)
+        hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1x1"
+        ;;
+      sway)
+        swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1
+        ;;
+      gnome)
+        xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1
+        ;;
+    esac
+  '';
+in
 {
+  home.packages = [
+    set4k
+    set5k
+    set8k
+  ];
+  xdg.desktopEntries = {
+    set4k = {
+      name = "Set Resolution to 4k";
+      genericName = "Utility";
+      exec = "set4k";
+      terminal = false;
+      icon = ../icons/4k_48dp_5F6368_FILL0_wght400_GRAD0_opsz48.png;
+      categories = [ "Utility" ];
+      mimeType = [];
+    };
+  };
+  xdg.desktopEntries = {
+    set5k = {
+      name = "Set Resolution to 5k";
+      genericName = "Utility";
+      exec = "set5k";
+      terminal = false;
+      icon = ../icons/5k_48dp_5F6368_FILL0_wght400_GRAD0_opsz48.png;
+      categories = [ "Utility" ];
+      mimeType = [];
+    };
+  };
+  xdg.desktopEntries = {
+    set8k = {
+      name = "Set Resolution to 8k";
+      genericName = "Utility";
+      exec = "set8k";
+      terminal = false;
+      icon = ../icons/8k_48dp_5F6368_FILL0_wght400_GRAD0_opsz48.png;
+      categories = [ "Utility" ];
+      mimeType = [];
+    };
+  };
   # programs.starship = {
   #   enable = true;
   #   enableBashIntegration = true;
@@ -20,47 +100,6 @@
       # Command hashing is used by various shell scripts, so enable it
       set -h
 
-      # Support manual resolution change for convenience
-      function set4k() {
-        case "$XDG_CURRENT_DESKTOP" in
-          Hyprland)
-            hyprctl keyword monitor "HDMI-A-1,3840x2160@119.88Hz,1x1"
-            ;;
-          sway)
-            swaymsg output HDMI-A-1 res 3840x2160@119.880Hz scale 1
-            ;;
-          gnome)
-            xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1
-            ;;
-        esac
-      }
-      # Effectively 5760x3240
-      function set5k() {
-        case "$XDG_CURRENT_DESKTOP" in
-          Hyprland)
-            hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1.5x1.5"
-            ;;
-          sway)
-            swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1.5
-            ;;
-          gnome)
-            xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75
-            ;;
-        esac
-      }
-      function set8k() {
-        case "$XDG_CURRENT_DESKTOP" in
-          Hyprland)
-            hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1x1"
-            ;;
-          sway)
-            swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1
-            ;;
-          gnome)
-            xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1
-            ;;
-        esac
-      }
       # A number of support functions to make tmux work the way I want it to
       function _inside_local_tmux() {
         if [ -n "$TMUX" ]; then

@@ -131,6 +131,14 @@
     package = pkgs.writeTextDir "/git" "";
     userName = "Douglas Mayle";
     userEmail = "douglas@mayle.org";
+    diff-so-fancy = {
+      enable = true;
+    };
+    extraConfig = {
+      pull = {
+        rebase = true;
+      };
+    };
   };
 
   #

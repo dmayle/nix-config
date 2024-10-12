@@ -1,16 +1,19 @@
 { config, pkgs, ... }:
 let
   # Support manual resolution change for convenience
+  # The background disconnect and delay allow a GUI program that calls the
+  # script to finish it's processing before getting killed by the resolution
+  # change.
   set4k = pkgs.writeShellScriptBin "set4k" ''
     case "$XDG_CURRENT_DESKTOP" in
       Hyprland)
-        hyprctl keyword monitor "HDMI-A-1,3840x2160@119.88Hz,1x1"
+        bash -c 'sleep 0.5 && hyprctl keyword monitor "HDMI-A-1,3840x2160@119.88Hz,1x1"' &
         ;;
       sway)
-        swaymsg output HDMI-A-1 res 3840x2160@119.880Hz scale 1
+        bash -c 'sleep 0.5 && swaymsg output HDMI-A-1 res 3840x2160@119.880Hz scale 1' &
         ;;
       gnome)
-        xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1
+        bash -c 'sleep 0.5 && xrandr --output HDMI-0 --mode 3840x2160 --refresh 119.88 --scale 1x1' &
         ;;
     esac
   '';
@@ -18,26 +21,26 @@ let
   set5k = pkgs.writeShellScriptBin "set5k" ''
     case "$XDG_CURRENT_DESKTOP" in
       Hyprland)
-        hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1.5x1.5"
+        bash -c 'sleep 0.5 && hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1.5x1.5"' &
         ;;
       sway)
-        swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1.5
+        bash -c 'sleep 0.5 && swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1.5' &
         ;;
       gnome)
-        xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75
+        bash -c 'sleep 0.5 && xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 0.75x0.75' &
         ;;
     esac
   '';
   set8k = pkgs.writeShellScriptBin "set8k" ''
     case "$XDG_CURRENT_DESKTOP" in
       Hyprland)
-        hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1x1"
+        bash -c 'sleep 0.5 && hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1x1"' &
         ;;
       sway)
-        swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1
+        bash -c 'sleep 0.5 && swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1' &
         ;;
       gnome)
-        xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1
+        bash -c 'sleep 0.5 && xrandr --output HDMI-0 --mode 7680x4320 --refresh 59.94 --scale 1x1' &
         ;;
     esac
   '';

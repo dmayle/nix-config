@@ -84,6 +84,6 @@
     material-design-icons
     material-icons
     material-symbols
-    (nerdfonts.override { fonts = [ "DroidSansMono" ]; })
+    nerd-fonts.droid-sans-mono
   ];
 }

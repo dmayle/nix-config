@@ -77,43 +77,43 @@
       flake = false;
     };
     nvim-spell-en-utf8-dictionary = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/en.utf-8.spl";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.utf-8.spl";
       flake = false;
     };
     nvim-spell-en-utf8-suggestions = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/en.utf-8.sug";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.utf-8.sug";
       flake = false;
     };
     nvim-spell-en-ascii-dictionary = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/en.ascii.spl";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.ascii.spl";
       flake = false;
     };
     nvim-spell-en-ascii-suggestions = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/en.ascii.sug";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.ascii.sug";
       flake = false;
     };
     nvim-spell-en-latin1-dictionary = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/en.latin1.spl";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.latin1.spl";
       flake = false;
     };
     nvim-spell-en-latin1-suggestions = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/en.latin1.sug";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.latin1.sug";
       flake = false;
     };
     nvim-spell-fr-utf8-dictionary = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/fr.utf-8.spl";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/fr.utf-8.spl";
       flake = false;
     };
     nvim-spell-fr-utf8-suggestions = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/fr.utf-8.sug";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/fr.utf-8.sug";
       flake = false;
     };
     nvim-spell-fr-latin1-dictionary = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/fr.latin1.spl";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/fr.latin1.spl";
       flake = false;
     };
     nvim-spell-fr-latin1-suggestions = {
-      url = "file+http://ftp.vim.org/vim/runtime/spell/fr.latin1.sug";
+      url = "file+https://ftp.nluug.nl/vim/runtime/spell/fr.latin1.sug";
       flake = false;
     };
     # ##########################################################################

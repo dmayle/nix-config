@@ -147,7 +147,7 @@
   # Allow swaylock configured in home-manager to work.
   security.pam.services.swaylock = {};
 
-  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+  services.udev.packages = with pkgs; [ gnome-settings-daemon ];
 
   # Very basic neovim config for root because vanilla vim is frustrating when
   # unconfigured

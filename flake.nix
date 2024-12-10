@@ -27,8 +27,8 @@
     hyprland = {
       type = "git";
       url = "https://github.com/hyprwm/hyprland";
-      #ref = "v0.42.0";
-      rev = "9a09eac79b85c846e3a865a9078a3f8ff65a9259";
+      #ref = "v0.45.0";
+      rev = "a425fbebe4cf4238e48a42f724ef2208959d66cf";
       submodules = true;
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
@@ -36,8 +36,8 @@
     hy3 = {
       type = "git";
       url = "https://github.com/outfoxxed/hy3";
-      #ref = "hl0.42.0";
-      rev = "6af5f6004180664d883bd428f1da117bb6b1b6dc";
+      #ref = "hl0.45.0-pre";
+      rev = "4c79361db9c065886c163d1cf873889e1e641e44";
       inputs.hyprland.follows = "hyprland";
     };
     # ##########################################################################

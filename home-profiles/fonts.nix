@@ -1,6 +1,10 @@
 { pkgs, ... }:
 
 {
+  # If, after changing fonts, you can't seem to use them, manually update the
+  # font cache:
+  # `fc-cache -f`
+
   # Don't know what font to use for coding? Play a coding font tournament (best
   # with font names hidden) to figure out what you like:
   # https://www.codingfont.com/

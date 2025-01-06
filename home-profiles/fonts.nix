@@ -72,18 +72,18 @@
   home.packages = with pkgs; [
     # Fonts
     corefonts
-    dejavu_fonts
-    fira-code
-    freefont_ttf
     fira-code-symbols
+    freefont_ttf
     gyre-fonts
     helvetica-neue-lt-std
-    iosevka
-    noto-fonts
-    jetbrains-mono
     material-design-icons
     material-icons
     material-symbols
     nerd-fonts.droid-sans-mono
+    nerd-fonts.fira-code
+    nerd-fonts.hack
+    nerd-fonts.iosevka
+    nerd-fonts.jetbrains-mono
+    noto-fonts
   ];
 }

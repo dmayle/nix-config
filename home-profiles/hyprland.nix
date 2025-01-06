@@ -187,7 +187,10 @@ in
         "HYPRLAND_LOG_WLR,1"
       ];
       bindm = [
+        # Mod+Left Button Drag Window
         "$mod, mouse:272, movewindow"
+        # Mod+Right Button Resize Window
+        "$mod, mouse:273, resizewindow"
       ];
       bind = [
         # Terminal, menu

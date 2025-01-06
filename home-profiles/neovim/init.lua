@@ -709,7 +709,8 @@ local lspconfig = require('lspconfig')
 lspconfig.nil_ls.setup {}
 lspconfig.pyright.setup {}
 lspconfig.rust_analyzer.setup {}
-lspconfig.tsserver.setup {}
+-- Use ts_ls instead
+lspconfig.ts_ls.setup {}
 
 -- -----------------------------------------------------------------------------
 -- LUA LANGUAGE SERVERS (Recognize vim global)

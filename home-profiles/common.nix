@@ -1,7 +1,6 @@
 { config, pkgs, inputs, ... }:
 
 {
-
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -67,13 +66,8 @@
   };
 
   home.packages = with pkgs; [
-    # Might not be permanent, but I find it useful
-    gdb
-
     # Basic utilities
     file
-
-    git
 
     # Usefull process tool
     killall
@@ -84,9 +78,6 @@
     # Easier to read diffs
     colordiff
 
-    # Per-directory dev setup
-    direnv
-
     # Linux tools to learn
     fzf
     ripgrep
@@ -96,19 +87,10 @@
     # Terminal session management
     tmux
 
-    # Fantastic interface for breaking up commits into better units
-    git-crecord
-
     # Compression tools
     unzip
     p7zip
     unrar
-
-    # Kubernetes tools
-    kubectx
-
-    # Hetzner tools
-    hcloud
 
     # Secret management
     sops
@@ -118,27 +100,6 @@
   programs.dircolors = {
     enable = true;
     enableBashIntegration = true;
-  };
-
-  programs.direnv = {
-    enable = true;
-    enableBashIntegration = true;
-    nix-direnv.enable = true;
-  };
-
-  programs.git = {
-    enable = true;
-    package = pkgs.writeTextDir "/git" "";
-    userName = "Douglas Mayle";
-    userEmail = "douglas@mayle.org";
-    diff-so-fancy = {
-      enable = true;
-    };
-    extraConfig = {
-      pull = {
-        rebase = true;
-      };
-    };
   };
 
   #

@@ -22,6 +22,9 @@
     # Secret management
     # Python dev env management
     uv
+
+    # Visual Studio for Stephanie
+    vscode-fhs
   ];
 
   programs.direnv = {

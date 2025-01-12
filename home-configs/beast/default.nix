@@ -2,14 +2,15 @@
 {
   imports = with inputs.self; [
     homeManagerRoles.desktop
-    homeManagerProfiles.three_d_printing
+    homeManagerProfiles.dev
     homeManagerProfiles.fonts
     homeManagerProfiles.games
     homeManagerProfiles.hyprland
     homeManagerProfiles.jupyterlab
     homeManagerProfiles.neovim
-    #homeManagerProfiles.syncthing
     homeManagerProfiles.swaync
+    # homeManagerProfiles.syncthing
+    homeManagerProfiles.three_d_printing
     homeManagerProfiles.tmux
     homeManagerProfiles.wayland
   ];

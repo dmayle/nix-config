@@ -13,6 +13,7 @@
     homeManagerProfiles.three_d_printing
     homeManagerProfiles.tmux
     homeManagerProfiles.wayland
+    homeManagerProfiles.vscode-web
   ];
 
   home = rec {

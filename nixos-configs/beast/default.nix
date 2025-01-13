@@ -10,6 +10,8 @@
     inputs.self.nixosProfiles.games
     inputs.self.nixosProfiles.cachix-cuda
     inputs.self.nixosProfiles.cachix-nixpkgs-wayland
+    #inputs.self.nixosProfiles.web-servers
+    ./acme-default.nix
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -180,4 +182,45 @@
   networking.firewall.enable = false;
 
   system.stateVersion = "22.05"; # Did you read the comment?
+
+  disabledModules = [ "security/acme/default.nix" "security/acme" ];
+  security.acme = {
+    acceptTerms = true;
+    certs."beast.home.mayle.org" = {
+      dnsProvider = "cloudflare";
+      dnsResolver = "1.1.1.1:53";
+      dnsPropagationCheck = true;
+      environmentFile = config.sops.secrets."acme/cloudflare".path;
+      domain = "beast.home.mayle.org";
+    };
+  };
+
+  services.nginx = {
+    enable = true;
+    virtualHosts = {
+      "beast.home.mayle.org" = {
+        forceSSL = true;
+        enableACME = true;
+        acmeRoot = null; # Use the DNS-01 certificate from security.acme
+        locations."/" = {
+          proxyPass = "http://localhost:4000/";
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          '';
+        };
+      };
+    };
+  };
+
+  # Setup sops
+  sops = {
+    defaultSopsFile = ../../secrets/secrets.yaml;
+    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    secrets = {
+      "acme/cloudflare" = {};
+    };
+  };
 }

@@ -214,8 +214,8 @@ in
   };
   services.wlsunset = {
     enable = true;
-    latitude = "37.7";
-    longitude = "-122.5";
+    latitude = "39.3";
+    longitude = "-76.6";
     systemdTarget = "hyprland-session.target";
   };
   xdg.configFile."keymap_backtick.xkb".source = ../keymap_backtick.xkb;

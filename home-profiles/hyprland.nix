@@ -297,15 +297,7 @@ in
       };
       device = [
         {
-          name = "matias-ergo-pro-keyboard";
-          kb_layout = "gb";
-          kb_variant = "extd";
-          kb_options = "caps:swapescape";
-          numlock_by_default = true;
-          kb_file = "${config.xdg.configHome}/keymap_backtick.xkb";
-        }
-        {
-          name = "keychron-keychron-q11";
+          name = "keychron-keychron-q11-keyboard";
           kb_layout = "gb";
           kb_variant = "extd";
           kb_options = "caps:swapescape";

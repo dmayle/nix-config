@@ -5,6 +5,7 @@
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk-config.nix
+    inputs.self.nixosRoles.base
     nixosProfiles.docker
     nixosProfiles.web-servers
   ];

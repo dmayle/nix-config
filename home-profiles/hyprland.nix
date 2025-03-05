@@ -192,6 +192,9 @@ in
         # Mod+Right Button Resize Window
         "$mod, mouse:273, resizewindow"
       ];
+      misc = {
+        vrr=1;
+      };
       bind = [
         # Terminal, menu
         "$mod, Return, exec, $terminal"

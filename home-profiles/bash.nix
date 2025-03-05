@@ -7,7 +7,7 @@ let
   set4k = pkgs.writeShellScriptBin "set4k" ''
     case "$XDG_CURRENT_DESKTOP" in
       Hyprland)
-        bash -c 'sleep 0.5 && hyprctl keyword monitor "HDMI-A-1,3840x2160@119.88Hz,1x1"' &
+        bash -c 'sleep 0.5 && hyprctl keyword monitor "HDMI-A-1,3840x2160@119.88Hz,0x0,1"' &
         ;;
       sway)
         bash -c 'sleep 0.5 && swaymsg output HDMI-A-1 res 3840x2160@119.880Hz scale 1' &
@@ -34,7 +34,7 @@ let
   set8k = pkgs.writeShellScriptBin "set8k" ''
     case "$XDG_CURRENT_DESKTOP" in
       Hyprland)
-        bash -c 'sleep 0.5 && hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,1x1"' &
+        bash -c 'sleep 0.5 && hyprctl keyword monitor "HDMI-A-1,7680x4320@59.940Hz,0x0,1"' &
         ;;
       sway)
         bash -c 'sleep 0.5 && swaymsg output HDMI-A-1 res 7680x4320@59.940Hz scale 1' &

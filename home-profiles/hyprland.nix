@@ -36,8 +36,16 @@ let
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.libsForQt5.kguiaddons ];
   });
   service-restart-command = "service-restart";
+  service-start-command = "service-start";
+  service-stop-command = "service-stop";
   serviceRestart = pkgs.writeShellScriptBin service-restart-command ''
-        ${pkgs.systemd}/bin/systemctl list-units --type=service --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
+        ${pkgs.systemd}/bin/systemctl list-units --type=service --state=active --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
+  '';
+  serviceStart = pkgs.writeShellScriptBin service-start-command ''
+        ${pkgs.systemd}/bin/systemctl list-units --type=service --state=inactive --state=dead --state=failed --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user start --
+  '';
+  serviceStop = pkgs.writeShellScriptBin service-stop-command ''
+        ${pkgs.systemd}/bin/systemctl list-units --type=service --user --state=active --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user stop --
   '';
   wlogout-command = "wlogout-wrapped";
   wlogoutWrapped = pkgs.writeShellScriptBin wlogout-command ''
@@ -286,6 +294,8 @@ in
         "$modShift, e, exec, ${wlogoutWrapped}/bin/${wlogout-command}"
 
         "$modShift, r, exec, ${serviceRestart}/bin/${service-restart-command}"
+        "$modShift, s, exec, ${serviceStart}/bin/${service-start-command}"
+        "$modShift, t, exec, ${serviceStop}/bin/${service-stop-command}"
       ];
       bindle = [
         ",XF86AudioRaiseVolume, exec, ${swayosdUpdated}/bin/swayosd-client --output-volume raise"

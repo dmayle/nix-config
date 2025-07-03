@@ -18,14 +18,14 @@ let
     };
   };
 
-  trouble_v3 = pkgs.vimUtils.buildVimPlugin {
-    name = "trouble.nvim";
-    src = inputs.trouble_v3;
-    meta = {
-      homepage = "https://github.com/folke/trouble.nvim/tree/dev";
-      maintainers = [ "folke" ];
-    };
-  };
+  # trouble_v3 = pkgs.vimUtils.buildVimPlugin {
+  #   name = "trouble.nvim";
+  #   src = inputs.trouble_v3;
+  #   meta = {
+  #     homepage = "https://github.com/folke/trouble.nvim";
+  #     maintainers = [ "folke" ];
+  #   };
+  # };
 in
 {
 
@@ -185,7 +185,7 @@ in
       vim-nix
 
       # Vim browser markdown preview
-      vim-markdown-composer
+      #vim-markdown-composer
 
       # Better YAML support
       vim-yaml
@@ -231,7 +231,7 @@ in
 
       # Two possible diagnostics displays
       # trouble-nvim
-      trouble_v3 # requires Neovim nightly (0.10+) (locally fixed)
+      #trouble_v3 # requires Neovim nightly (0.10+) (locally fixed)
       lsp_lines-nvim
     ];
 

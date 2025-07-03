@@ -1,22 +1,22 @@
 { config, pkgs, lib, inputs, ... }:
 let
   hyprlandPackage = inputs.hyprland.packages.x86_64-linux.hyprland;
-  swayosdUpdated = pkgs.swayosd.overrideAttrs (oldAttrs: rec {
-    pname = "swayosd";
-    version = "unstable-2024-03-10";
-    src = pkgs.fetchFromGitHub {
-      owner = "ErikReider";
-      repo = "SwayOSD";
-      rev = "a0709bcd89d6ca19889486972bac35e69f1fa8e4";
-      sha256 = "sha256-3NJHZv4Ed7haUUmE9JV9Yl4rRnJlPqQFv53Xuw0q+IY=";
-    };
-    cargoDeps = pkgs.rustPlatform.fetchCargoTarball {
-      inherit src;
-      name = "${pname}-${version}";
-      sha256 = "sha256-2/ssRBk4vpk9kRhPRsQKHCRC3VHOCKQe3HGj06XfUvQ=";
-    };
-    buildInputs = oldAttrs.buildInputs ++ [ pkgs.sassc ];
-  });
+  # swayosdUpdated = pkgs.swayosd.overrideAttrs (oldAttrs: rec {
+  #   pname = "swayosd";
+  #   version = "unstable-2024-03-10";
+  #   src = pkgs.fetchFromGitHub {
+  #     owner = "ErikReider";
+  #     repo = "SwayOSD";
+  #     rev = "a0709bcd89d6ca19889486972bac35e69f1fa8e4";
+  #     sha256 = "sha256-3NJHZv4Ed7haUUmE9JV9Yl4rRnJlPqQFv53Xuw0q+IY=";
+  #   };
+  #   cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+  #     inherit src;
+  #     name = "${pname}-${version}";
+  #     hash = "sha256-xP2+VH06nl1+RdpfHHywgY6eOuJqYfEMjbtwc/JNuFo=";
+  #   };
+  #   buildInputs = oldAttrs.buildInputs ++ [ pkgs.sassc ];
+  # });
   # This is just a default background image for the lock screen
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
@@ -137,7 +137,7 @@ in
   # SwayOSD shows volume notifications and caps lock changes
   # This is placed here to share a package with keyboard bindings
   services.swayosd = {
-    package = swayosdUpdated;
+    #package = swayosdUpdated;
     enable = true;
     topMargin = 0.5;
   };
@@ -158,7 +158,7 @@ in
       Type = "dbus";
       User = "root";
       BusName = "org.erikreider.swayosd";
-      ExecStart = "${swayosdUpdated}/bin/swayosd-libinput-backend";
+      ExecStart = "${pkgs.swayosd}/bin/swayosd-libinput-backend";
       Restart = "on-failure";
     };
   };
@@ -298,12 +298,12 @@ in
         "$modShift, t, exec, ${serviceStop}/bin/${service-stop-command}"
       ];
       bindle = [
-        ",XF86AudioRaiseVolume, exec, ${swayosdUpdated}/bin/swayosd-client --output-volume raise"
-        ",XF86AudioLowerVolume, exec, ${swayosdUpdated}/bin/swayosd-client --output-volume lower"
-        ",XF86AudioMute, exec, ${swayosdUpdated}/bin/swayosd-client --output-volume mute-toggle"
+        ",XF86AudioRaiseVolume, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume raise"
+        ",XF86AudioLowerVolume, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume lower"
+        ",XF86AudioMute, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume mute-toggle"
       ];
       bindr = [
-        ", Caps_Lock, exec, ${swayosdUpdated}/bin/swayosd-client --caps-lock"
+        ", Caps_Lock, exec, ${pkgs.swayosd}/bin/swayosd-client --caps-lock"
       ];
       general = {
         layout = "hy3";
@@ -335,7 +335,7 @@ in
   };
 
   home.packages = with pkgs; [
-    dolphin
+    kdePackages.dolphin
     xfce.thunar
   ];
 }

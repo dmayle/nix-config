@@ -5,6 +5,7 @@ keys:
       - &host_fox_old age1g92zj25h7yucv8nmswcvhat7vqsnk3zlky32dyfk5k2973au04aqtmxc9q
       - &host_fox age1yseqt6ek0vapy80sgltzmze7pd8ttw4rf9a4644p327vnacxdstsx83q25
       - &host_beast_home_mayle_org age1vh4mwu86c3q8h2qg30tmjr9pex58ulpg88cvxcnhkpcw6s6fuf0s7hn8uk
+      - &host_serenity age16c4sh2qpjme3ns0fd4s6krn7qv7seazg9jc42rha7pnxddv29u8qt05608
 creation_rules:
   - path_regex: secrets/secrets\.yaml
     key_groups:
@@ -18,3 +19,9 @@ creation_rules:
           - *admin_douglas
         age:
           - *host_fox
+  - path_regex: secrets/serenity\.yaml
+    key_groups:
+      - pgp:
+          - *admin_douglas
+        age:
+          - *host_serenity

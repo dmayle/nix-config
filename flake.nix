@@ -27,7 +27,7 @@
     hyprland = {
       type = "git";
       url = "https://github.com/hyprwm/hyprland";
-      ref = "refs/tags/v0.47.0";
+      ref = "refs/tags/v0.49.0";
       submodules = true;
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
@@ -35,7 +35,7 @@
     hy3 = {
       type = "git";
       url = "https://github.com/outfoxxed/hy3";
-      ref = "refs/tags/hl0.47.0";
+      ref = "refs/tags/hl0.49.0";
       inputs.hyprland.follows = "hyprland";
     };
     # ##########################################################################
@@ -71,8 +71,10 @@
       flake = false;
     };
     trouble_v3 = {
-      url = "github:dmayle/trouble.nvim/vim_uv";
       flake = false;
+      type = "git";
+      url = "https://github.com/folke/trouble.nvim";
+      ref = "refs/tags/v3.7.1";
     };
     nvim-spell-en-utf8-dictionary = {
       url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.utf-8.spl";

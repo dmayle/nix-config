@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "home_maps"
+version = "0.1.0"
+description = ""
+authors = ["Douglas Mayle <douglas@mayle.org>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^4.1.7"
+django-treebeard = "^4.6.1"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+home_maps = 'home_maps:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

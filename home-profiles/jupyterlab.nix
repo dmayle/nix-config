@@ -19,8 +19,10 @@ let
       python_torch = let python_torch = (builtins.head devShells.x86_64-linux.python_torch.nativeBuildInputs); in {
         displayName = "PyTorch";
         language = "python";
-        logo32 = "${pkgs.jupyter.sitePackages}/ipykernel/resources/logo-32x32.png";
-        logo64 = "${pkgs.jupyter.sitePackages}/ipykernel/resources/logo-64x64.png";
+        # I don't like this absolute reference, but it's not too big of a deal.
+        # I should fix it at somem point
+        logo32 = "${pkgs.python313Packages.ipykernel}/lib/python3.13/site-packages/ipykernel/resources/logo-32x32.png";
+        logo64 = "${pkgs.python313Packages.ipykernel}/lib/python3.13/site-packages/ipykernel/resources/logo-64x64.png";
         argv = [
           "${python_torch}/bin/python"
           "-m"

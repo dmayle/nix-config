@@ -241,7 +241,7 @@ in
           name = "home_office";
           outputs = [
             {
-              criteria = "HDMI-A-1";
+              criteria = "HDMI-A-2";
               mode = "7680x4320";
               position = "0,0";
               transform = "normal";
@@ -265,7 +265,7 @@ in
     xdgOpenUsePortal = true;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      hyprlandPortal
+      #hyprlandPortal
     ];
     configPackages = [ hyprlandPackage ];
   };

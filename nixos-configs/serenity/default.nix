@@ -52,14 +52,14 @@
       libvdpau-va-gl
       nvidia-vaapi-driver
       vulkan-validation-layers
-      mesa.drivers
+      mesa
     ];
     extraPackages32 = with pkgs.pkgsi686Linux; [
       vaapiVdpau
       libvdpau-va-gl
       nvidia-vaapi-driver
       vulkan-validation-layers
-      mesa.drivers
+      mesa
     ];
   };
 
@@ -80,7 +80,7 @@
 
   services.xserver.enable = true;
   services.xserver.resolutions = [{ x = 7680; y = 4320; }];
-  services.xserver.displayManager.gdm = {
+  services.displayManager.gdm = {
     enable = true;
     wayland = true;
     autoSuspend = false;
@@ -89,7 +89,7 @@
   # We enable desktop managers in order to setup a graphical login with gnome
   # and hyprland. We want those to be configured by home-manager, so we'll have
   # to fixup this config a bit
-  services.xserver.desktopManager.gnome.enable = true;
+  services.desktopManager.gnome.enable = true;
   # This adds a hyprland session to gdm, but the session just selects hyprland
   # from the current environment. My home manager config will override that
   # version, so all config should be done there.

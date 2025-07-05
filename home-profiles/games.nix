@@ -1,9 +1,20 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   home.packages = with pkgs; [
     joycond-cemuhook
     ryujinx
+
+    # 64 and 32-bit Wine
+    wineWowPackages.stable
+    winetricks
+
+    # For benchmarking
+    furmark
+
+    # For undervolting
+    lact
+
     (lutris.override {
       extraLibraries = pkgs: [
         SDL2_net

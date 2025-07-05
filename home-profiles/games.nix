@@ -12,9 +12,6 @@
     # For benchmarking
     furmark
 
-    # For undervolting
-    lact
-
     (lutris.override {
       extraLibraries = pkgs: [
         SDL2_net

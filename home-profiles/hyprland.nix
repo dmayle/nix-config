@@ -232,6 +232,12 @@ in
         "$modShift, 9, movetoworkspace, 9"
         "$modShift, 0, movetoworkspace, 10"
 
+        # Cycle through windows (useful for overlapping windows)
+        "$mod, tab, cyclenext,"
+        "$modShift, tab, cyclenext, prev"
+        "$mod, tab, bringactivetotop"
+        "$mod, tab, bringactivetotop"
+
         # Move focus
         "$mod, left, hy3:movefocus, l"
         "$mod, down, hy3:movefocus, d"

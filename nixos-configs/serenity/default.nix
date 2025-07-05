@@ -19,6 +19,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Add NTFS support
+  boot.supportedFilesystems = [ "ntfs" ];
+
   # Setup the machine name
   networking.hostName = "serenity";
 

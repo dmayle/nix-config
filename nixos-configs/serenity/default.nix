@@ -5,14 +5,15 @@
     (modulesPath + "/installer/scan/not-detected.nix")
     ./hardware-configuration.nix
     ./disk-config.nix
-    inputs.self.nixosRoles.desktop
-    inputs.self.nixosProfiles.docker
-    inputs.self.nixosProfiles.virtualbox
-    inputs.self.nixosProfiles.sound
-    inputs.self.nixosProfiles.games
-    inputs.self.nixosProfiles.cachix-cuda
-    inputs.self.nixosProfiles.cachix-nixpkgs-wayland
-    # inputs.self.web-servers
+    nixosRoles.desktop
+    nixosProfiles.docker
+    nixosProfiles.virtualbox
+    nixosProfiles.sound
+    nixosProfiles.games
+    nixosProfiles.cachix-cuda
+    nixosProfiles.cachix-nixpkgs-wayland
+    nixosProfiles.prometheus
+    # nixsProfiles.web-servers
   ];
 
   # Use the systemd-boot EFI boot loader.

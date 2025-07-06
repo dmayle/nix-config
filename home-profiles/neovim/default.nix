@@ -17,15 +17,6 @@ let
       maintainers = [ "tsuzat" ];
     };
   };
-
-  # trouble_v3 = pkgs.vimUtils.buildVimPlugin {
-  #   name = "trouble.nvim";
-  #   src = inputs.trouble_v3;
-  #   meta = {
-  #     homepage = "https://github.com/folke/trouble.nvim";
-  #     maintainers = [ "folke" ];
-  #   };
-  # };
 in
 {
 
@@ -230,8 +221,7 @@ in
       outline-nvim
 
       # Two possible diagnostics displays
-      # trouble-nvim
-      #trouble_v3 # requires Neovim nightly (0.10+) (locally fixed)
+      trouble-nvim
       lsp_lines-nvim
     ];
 

@@ -70,12 +70,6 @@
       url = "github:Tsuzat/NeoSolarized.nvim";
       flake = false;
     };
-    trouble_v3 = {
-      flake = false;
-      type = "git";
-      url = "https://github.com/folke/trouble.nvim";
-      ref = "refs/tags/v3.7.1";
-    };
     nvim-spell-en-utf8-dictionary = {
       url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.utf-8.spl";
       flake = false;

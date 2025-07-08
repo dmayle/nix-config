@@ -43,6 +43,7 @@ in
     checkOrigin = true;
     writeable = true;
     passwordFile = config.sops.secrets."ttyd/password".path;
+    usernameFile = config.sops.secrets."ttyd/username".path;
     clientOptions = {
       # /* Solarized */
       # @define-color base03 #002b36;

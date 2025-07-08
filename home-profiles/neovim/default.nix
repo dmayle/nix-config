@@ -223,6 +223,9 @@ in
       # Two possible diagnostics displays
       trouble-nvim
       lsp_lines-nvim
+
+      # AI Tools
+      avante-nvim
     ];
 
     extraLuaConfig = builtins.readFile ./init.lua;

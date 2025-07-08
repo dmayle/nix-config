@@ -83,6 +83,17 @@ in
         '';
       };
 
+      usernameFile = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        apply = value: if value == null then null else toString value;
+        description = ''
+          File containing the password to use for basic http authentication.
+          For insecurely putting the password in the globally readable store use
+          `pkgs.writeText "ttydpw" "MyPassword"`.
+        '';
+      };
+
       signal = mkOption {
         type = types.ints.u8;
         default = 1;
@@ -210,8 +221,8 @@ in
           message = "services.ttyd.writeable must be set"; }
         { assertion = ! (cfg.interface != null && cfg.socket != null);
           message = "Cannot set both interface and socket for ttyd."; }
-        { assertion = (cfg.username != null) == (cfg.passwordFile != null);
-          message = "Need to set both username and passwordFile for ttyd"; }
+        { assertion = (cfg.username != null || cfg.usernameFile != null) == (cfg.passwordFile != null);
+          message = "Need to set both passwordFile and usernname or usernameFile for ttyd"; }
       ];
 
     systemd.services.ttyd = {
@@ -221,10 +232,20 @@ in
 
       serviceConfig = {
         User = cfg.user;
-        LoadCredential = lib.optionalString (cfg.passwordFile != null) "TTYD_PASSWORD_FILE:${cfg.passwordFile}";
+        LoadCredential = [
+          (lib.optionalString (cfg.passwordFile != null) "TTYD_PASSWORD_FILE:${cfg.passwordFile}")
+          (lib.optionalString (cfg.usernameFile != null) "TTYD_USERNAME_FILE:${cfg.usernameFile}")
+        ];
       };
 
-      script = if cfg.passwordFile != null then ''
+      script = if cfg.passwordFile != null && cfg.usernameFile != null then ''
+        PASSWORD=$(cat "$CREDENTIALS_DIRECTORY/TTYD_PASSWORD_FILE")
+        USERNAME=$(cat "$CREDENTIALS_DIRECTORY/TTYD_USERNAME_FILE")
+        ${cfg.package}/bin/ttyd ${lib.escapeShellArgs args} \
+          --credential "$USERNAME":"$PASSWORD" \
+          ${cfg.entrypoint}
+      ''
+      else if cfg.passwordFile != null then ''
         PASSWORD=$(cat "$CREDENTIALS_DIRECTORY/TTYD_PASSWORD_FILE")
         ${cfg.package}/bin/ttyd ${lib.escapeShellArgs args} \
           --credential ${lib.escapeShellArg cfg.username}:"$PASSWORD" \

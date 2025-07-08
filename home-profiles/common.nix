@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, hostname, ... }:
 
 {
   # Let Home Manager install and manage itself.
@@ -20,7 +20,7 @@
 
   home.sessionVariables = {
     EDITOR = "vi";
-    FLAKE_CONFIG_URI = "path:${config.home.homeDirectory}/src/nix-config#homeConfigurations.beast";
+    FLAKE_CONFIG_URI = "path:${config.home.homeDirectory}/src/nix-config#homeConfigurations.$(hostname)";
   };
 
   nix = {

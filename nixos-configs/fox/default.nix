@@ -61,6 +61,7 @@
     defaultSopsFile = ../../secrets/fox.yaml;
     age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
     secrets = {
+      "acme/email" = {};
       "ttyd/username" = {};
       "ttyd/password" = {};
       "users/douglas".neededForUsers = true;

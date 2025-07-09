@@ -6,6 +6,7 @@
     ./hardware-configuration.nix
     ./disk-config.nix
     nixosRoles.desktop
+    nixosProfiles.ai
     nixosProfiles.docker
     nixosProfiles.virtualbox
     nixosProfiles.sound

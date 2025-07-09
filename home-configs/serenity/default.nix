@@ -2,6 +2,7 @@
 {
   imports = with inputs.self; [
     homeManagerRoles.desktop
+    homeManagerProfiles.ai-gui
     homeManagerProfiles.dev
     homeManagerProfiles.fonts
     homeManagerProfiles.games

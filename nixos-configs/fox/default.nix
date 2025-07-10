@@ -26,9 +26,7 @@
 
   # Preload AI models specific to this machine
   services.ollama.loadModels = [
-    "llama3.2:3b"
-    "deepseek-r1:1.5b"
-    "qwen3:30b-a3b"
+    "qwen3:14b-q4_K_M"
   ];
 
   # Setup the machine name

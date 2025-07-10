@@ -1,4 +1,7 @@
-{ pkgs ? import <nixpkgs> {}, ... }:
+{
+  pkgs ? import <nixpkgs> { },
+  ...
+}:
 
 pkgs.stdenv.mkDerivation rec {
   name = "waynergy";
@@ -10,8 +13,18 @@ pkgs.stdenv.mkDerivation rec {
     sha256 = "sha256-RQNzRuM+3HDw2TM2zfiZjB5uAa94HezC6ewg6vign/0=";
   };
 
-  nativeBuildInputs = with pkgs; [ pkg-config meson ninja ];
-  buildInputs = with pkgs; [ libressl libxkbcommon wl-clipboard wayland wayland-protocols ];
+  nativeBuildInputs = with pkgs; [
+    pkg-config
+    meson
+    ninja
+  ];
+  buildInputs = with pkgs; [
+    libressl
+    libxkbcommon
+    wl-clipboard
+    wayland
+    wayland-protocols
+  ];
   meta = with pkgs.lib; {
     description = "Synergy client for Wayland";
     homepage = "https://github.com/r-c-f/waynergy";

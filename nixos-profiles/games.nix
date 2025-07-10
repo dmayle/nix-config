@@ -1,6 +1,7 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   environment.systemPackages = with pkgs; [
-    pstree #Test
+    pstree # Test
 
     # For undervolting
     lact

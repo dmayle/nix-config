@@ -59,7 +59,7 @@ in
       terminal = false;
       icon = ../icons/4k_48dp_5F6368_FILL0_wght400_GRAD0_opsz48.png;
       categories = [ "Utility" ];
-      mimeType = [];
+      mimeType = [ ];
     };
   };
   xdg.desktopEntries = {
@@ -70,7 +70,7 @@ in
       terminal = false;
       icon = ../icons/5k_48dp_5F6368_FILL0_wght400_GRAD0_opsz48.png;
       categories = [ "Utility" ];
-      mimeType = [];
+      mimeType = [ ];
     };
   };
   xdg.desktopEntries = {
@@ -81,7 +81,7 @@ in
       terminal = false;
       icon = ../icons/8k_48dp_5F6368_FILL0_wght400_GRAD0_opsz48.png;
       categories = [ "Utility" ];
-      mimeType = [];
+      mimeType = [ ];
     };
   };
   # programs.starship = {
@@ -91,7 +91,11 @@ in
   # TODO: add starship prompt config (consider kubectx kubens)
   programs.bash = {
     enable = true;
-    historyControl = [ "ignoredups" "ignorespace" "erasedups" ];
+    historyControl = [
+      "ignoredups"
+      "ignorespace"
+      "erasedups"
+    ];
     historyFileSize = 20000;
     shellAliases = {
       # Command to find a swaysock file in use by a current sway process

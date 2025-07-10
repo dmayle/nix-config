@@ -1,4 +1,5 @@
-{ config, ... }: {
+{ config, ... }:
+{
   services.grafana = {
     enable = true;
     settings = {
@@ -32,12 +33,14 @@
     scrapeConfigs = [
       {
         job_name = "node";
-        static_configs = [{
-          targets = with config.services.prometheus.exporters; [
-            "localhost:${toString node.port}"
-            "localhost:${toString nvidia-gpu.port}"
-          ];
-        }];
+        static_configs = [
+          {
+            targets = with config.services.prometheus.exporters; [
+              "localhost:${toString node.port}"
+              "localhost:${toString nvidia-gpu.port}"
+            ];
+          }
+        ];
       }
     ];
   };

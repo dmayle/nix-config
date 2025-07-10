@@ -66,7 +66,6 @@ in
       # selectionInactiveBackground = "";
       # cursorAccent = "";
 
-
       # Solarized Theme
       theme = "{\"background\":\"#fdf6e3\",\"foreground\":\"#657b83\",\"cursor\":\"#586e75\",\"selectionBackground\":\"#586e75\",\"selectionForeground\":\"#eae3cb\",\"black\":\"#073642\",\"brightBlack\":\"#002b36\",\"red\":\"#dc322f\",\"brightRed\":\"#cb4b16\",\"green\":\"#859900\",\"brightGreen\":\"#586e75\",\"yellow\":\"#b58900\",\"brightYellow\":\"#657b83\",\"blue\":\"#268bd2\",\"brightBlue\":\"#839496\",\"magenta\":\"#d33682\",\"brightMagenta\":\"#6c71c4\",\"cyan\":\"#2aa198\",\"brightCyan\":\"#93a1a1\",\"white\":\"#eee8d5\",\"brightWhite\":\"#fdf6e3\"}";
 

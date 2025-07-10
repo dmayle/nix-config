@@ -1,25 +1,33 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   # Wrap native google-chrome and add the flags to run using the native wayland
   # renderer, and gnome keyring for password storage
   google-chrome-wrapper = pkgs.writeShellScriptBin "google-chrome" ''
-      env XDG_CURRENT_DESKTOP=gnome \
-      /usr/bin/google-chrome-stable \
-        "--password-store=gnome" \
-        "$@"
+    env XDG_CURRENT_DESKTOP=gnome \
+    /usr/bin/google-chrome-stable \
+      "--password-store=gnome" \
+      "$@"
   '';
   # Same wrapper as above, but with the other binary name used for google-chrome
   google-chrome-stable-wrapper = pkgs.writeShellScriptBin "google-chrome-stable" ''
-      env XDG_CURRENT_DESKTOP=gnome \
-      /usr/bin/google-chrome-stable \
-        "--password-store=gnome" \
-        "$@"
+    env XDG_CURRENT_DESKTOP=gnome \
+    /usr/bin/google-chrome-stable \
+      "--password-store=gnome" \
+      "$@"
   '';
 in
 {
   wayland.windowManager.sway = {
     enable = true;
-    extraOptions = [ "--unsupported-gpu" "-Dlegacy-wl-drm" ];
+    extraOptions = [
+      "--unsupported-gpu"
+      "-Dlegacy-wl-drm"
+    ];
     extraSessionCommands = ''
       # Test fix for external monitor being black
       #export WLR_DRM_NO_MODIFIERS=1
@@ -114,7 +122,7 @@ in
       floating = {
         titlebar = true;
       };
-      bars = [];
+      bars = [ ];
       focus = {
         mouseWarping = true;
         wrapping = "force";
@@ -135,20 +143,29 @@ in
       };
       modifier = "Mod4";
       terminal = "${pkgs.kitty}/bin/kitty";
-      keybindings = let
-        modifier = config.wayland.windowManager.sway.config.modifier;
-      in lib.mkOptionDefault {
-        "${modifier}+Shift+e" = "exec ${pkgs.sway}/bin/swaynag -t warning -m 'Exit Sway?' -b 'Exit Sway' '${pkgs.sway}/bin/swaymsg exit'";
-        "${modifier}+Shift+p" = "exec loginctl lock-session";
-        "${modifier}+c" = "focus child";
-        "${modifier}+Shift+r" =  "exec ${pkgs.systemd}/bin/systemctl list-units --type=service --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --";
-        "XF86AudioRaiseVolume" = "exec '${pkgs.pamixer}/bin/pamixer -ui 2 && ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
-        "XF86AudioLowerVolume" = "exec '${pkgs.pamixer}/bin/pamixer -ud 2 && ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
-        "XF86AudioMute" = "exec '${pkgs.pamixer}/bin/pamixer --toggle-mute && (${pkgs.pamixer}/bin/pamixer --get-mute && echo 0 > $XDG_RUNTIME_DIR/wob.sock) || ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
-        "Print" = "exec 'flameshot gui'";
-        "${modifier}+Shift+y" =  "exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs | ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') enable";
-        "${modifier}+Shift+n" =  "exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs | ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') disable";
-      };
+      keybindings =
+        let
+          modifier = config.wayland.windowManager.sway.config.modifier;
+        in
+        lib.mkOptionDefault {
+          "${modifier}+Shift+e" =
+            "exec ${pkgs.sway}/bin/swaynag -t warning -m 'Exit Sway?' -b 'Exit Sway' '${pkgs.sway}/bin/swaymsg exit'";
+          "${modifier}+Shift+p" = "exec loginctl lock-session";
+          "${modifier}+c" = "focus child";
+          "${modifier}+Shift+r" =
+            "exec ${pkgs.systemd}/bin/systemctl list-units --type=service --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --";
+          "XF86AudioRaiseVolume" =
+            "exec '${pkgs.pamixer}/bin/pamixer -ui 2 && ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
+          "XF86AudioLowerVolume" =
+            "exec '${pkgs.pamixer}/bin/pamixer -ud 2 && ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
+          "XF86AudioMute" =
+            "exec '${pkgs.pamixer}/bin/pamixer --toggle-mute && (${pkgs.pamixer}/bin/pamixer --get-mute && echo 0 > $XDG_RUNTIME_DIR/wob.sock) || ${pkgs.pamixer}/bin/pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock'";
+          "Print" = "exec 'flameshot gui'";
+          "${modifier}+Shift+y" =
+            "exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs | ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') enable";
+          "${modifier}+Shift+n" =
+            "exec ${pkgs.sway}/bin/swaymsg output $(${pkgs.sway}/bin/swaymsg -t get_outputs | ${pkgs.jq}/bin/jq '.[] | select(.focused) | .name') disable";
+        };
       startup = [
         {
           command = "${pkgs.systemd}/bin/systemctl --user restart waybar";
@@ -166,6 +183,5 @@ in
       menu = "${pkgs.dmenu}/bin/dmenu_path | ${pkgs.wofi}/bin/wofi --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
     };
   };
-
 
 }

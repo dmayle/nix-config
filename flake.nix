@@ -133,10 +133,21 @@
 
   # This flake outputs custom packages, development shells, overlays, and
   # configurations for Home Manager and NixOS that take advantage of them.
-  outputs = inputs @ { self, systems, nixpkgs, ... }:
+  outputs =
+    inputs@{
+      self,
+      systems,
+      nixpkgs,
+      ...
+    }:
     let
       inherit (builtins) mapAttrs;
-      inherit (flib) loadModules mkPackages mkHomeConfig mkNixosConfig;
+      inherit (flib)
+        loadModules
+        mkPackages
+        mkHomeConfig
+        mkNixosConfig
+        ;
 
       lib = nixpkgs.lib;
 
@@ -174,19 +185,19 @@
       ];
 
       # Create an attrset of systems to nixpkgs for each system using config.
-      systemPackages = eachSystem (system:
-        mkPackages nixpkgs pkgConfig overlays system);
+      systemPackages = eachSystem (system: mkPackages nixpkgs pkgConfig overlays system);
 
       # Load all of the packages from this flake so they can also be used in the
       # packages overlays.
-      packages = eachSystem (system: mapAttrs (name: p:
-          systemPackages.${system}.callPackage p {}) modules.packages);
+      packages = eachSystem (
+        system: mapAttrs (name: p: systemPackages.${system}.callPackage p { }) modules.packages
+      );
 
       # Load all of the devShells from this flake so they can also be used in
       # the module args.
-      devShells = eachSystem (system:
-        mapAttrs (name: p:
-          import p { pkgs = systemPackages.${system}; }) modules.dev-shells);
+      devShells = eachSystem (
+        system: mapAttrs (name: p: import p { pkgs = systemPackages.${system}; }) modules.dev-shells
+      );
 
       # Args passed to all modules used for configurations.
       extraArgs = { inherit inputs devShells; };
@@ -199,14 +210,12 @@
 
       homeManagerRoles = modules.home-roles;
 
-      homeConfigurations = mapAttrs (
-        mkHomeConfig systemPackages extraArgs) modules.home-configs;
+      homeConfigurations = mapAttrs (mkHomeConfig systemPackages extraArgs) modules.home-configs;
 
       nixosProfiles = modules.nixos-profiles;
 
       nixosRoles = modules.nixos-roles;
 
-      nixosConfigurations = mapAttrs (
-        mkNixosConfig systemPackages extraArgs) modules.nixos-configs;
+      nixosConfigurations = mapAttrs (mkNixosConfig systemPackages extraArgs) modules.nixos-configs;
     };
 }

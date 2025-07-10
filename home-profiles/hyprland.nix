@@ -1,22 +1,11 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 let
   hyprlandPackage = inputs.hyprland.packages.x86_64-linux.hyprland;
-  # swayosdUpdated = pkgs.swayosd.overrideAttrs (oldAttrs: rec {
-  #   pname = "swayosd";
-  #   version = "unstable-2024-03-10";
-  #   src = pkgs.fetchFromGitHub {
-  #     owner = "ErikReider";
-  #     repo = "SwayOSD";
-  #     rev = "a0709bcd89d6ca19889486972bac35e69f1fa8e4";
-  #     sha256 = "sha256-3NJHZv4Ed7haUUmE9JV9Yl4rRnJlPqQFv53Xuw0q+IY=";
-  #   };
-  #   cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
-  #     inherit src;
-  #     name = "${pname}-${version}";
-  #     hash = "sha256-xP2+VH06nl1+RdpfHHywgY6eOuJqYfEMjbtwc/JNuFo=";
-  #   };
-  #   buildInputs = oldAttrs.buildInputs ++ [ pkgs.sassc ];
-  # });
   # This is just a default background image for the lock screen
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
@@ -39,13 +28,13 @@ let
   service-start-command = "service-start";
   service-stop-command = "service-stop";
   serviceRestart = pkgs.writeShellScriptBin service-restart-command ''
-        ${pkgs.systemd}/bin/systemctl list-units --type=service --state=active --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
+    ${pkgs.systemd}/bin/systemctl list-units --type=service --state=active --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
   '';
   serviceStart = pkgs.writeShellScriptBin service-start-command ''
-        ${pkgs.systemd}/bin/systemctl list-units --type=service --state=inactive --state=dead --state=failed --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user start --
+    ${pkgs.systemd}/bin/systemctl list-units --type=service --state=inactive --state=dead --state=failed --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user start --
   '';
   serviceStop = pkgs.writeShellScriptBin service-stop-command ''
-        ${pkgs.systemd}/bin/systemctl list-units --type=service --user --state=active --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user stop --
+    ${pkgs.systemd}/bin/systemctl list-units --type=service --user --state=active --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user stop --
   '';
   wlogout-command = "wlogout-wrapped";
   wlogoutWrapped = pkgs.writeShellScriptBin wlogout-command ''
@@ -163,14 +152,12 @@ in
     };
   };
 
-
   wayland.windowManager.hyprland = {
     enable = true;
     package = hyprlandPackage;
     systemd.enable = true;
     plugins = [ inputs.hy3.packages.x86_64-linux.hy3 ];
-    extraConfig = ''
-    '';
+    extraConfig = '''';
     settings = {
       exec-once = [
         "${pkgs.systemd}/bin/systemctl --user import-environment"
@@ -201,7 +188,7 @@ in
         "$mod, mouse:273, resizewindow"
       ];
       misc = {
-        vrr=1;
+        vrr = 1;
       };
       bind = [
         # Terminal, menu

@@ -1,2 +1,1 @@
-{ inputs, ... }:
-self: super: {  }
+{ inputs, ... }: self: super: { }

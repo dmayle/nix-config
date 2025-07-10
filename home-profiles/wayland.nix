@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ pkgs, inputs, ... }:
 let
   hyprlandPackage = inputs.hyprland.packages.x86_64-linux.hyprland;
   hyprlandPortal = inputs.hyprland.packages.x86_64-linux.xdg-desktop-portal-hyprland;
@@ -32,8 +32,7 @@ in
     '';
   };
   xdg.configFile."hypr/hyprlock.conf" = {
-    text = ''
-    '';
+    text = '''';
   };
 
   # Setup screensaver / lock with swayidle and swaylock
@@ -291,7 +290,10 @@ in
           "hyprland/workspaces"
           "custom/right-blue-background"
         ];
-        modules-center = [ "sway/window" "hyprland/window" ];
+        modules-center = [
+          "sway/window"
+          "hyprland/window"
+        ];
         modules-right = [
           "idle_inhibitor"
           "custom/left-yellow-background"
@@ -322,18 +324,24 @@ in
           };
         };
         battery = {
-            states = {
-                # "good" = 95;
-                warning = 30;
-                critical = 15;
-            };
-            format = "{icon} {capacity}%";
-            format-charging = " {capacity}%";
-            format-plugged = " {capacity}%";
-            format-alt = "{time} {icon}";
-            # "format-good" = "", # An empty format will hide the module
-            # "format-full" = "";
-            format-icons = ["" "" "" "" ""];
+          states = {
+            # "good" = 95;
+            warning = 30;
+            critical = 15;
+          };
+          format = "{icon} {capacity}%";
+          format-charging = " {capacity}%";
+          format-plugged = " {capacity}%";
+          format-alt = "{time} {icon}";
+          # "format-good" = "", # An empty format will hide the module
+          # "format-full" = "";
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
         };
         "battery#bat2" = {
           bat = "BAT2";
@@ -389,7 +397,11 @@ in
             phone = "";
             portable = "";
             car = "";
-            default = [ "🔈" "🔉" "🔊" ];
+            default = [
+              "🔈"
+              "🔉"
+              "🔊"
+            ];
           };
           on-click = "pavucontrol";
         };

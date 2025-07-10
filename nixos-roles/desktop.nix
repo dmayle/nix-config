@@ -1,9 +1,13 @@
-{ inputs, pkgs, ... }: {
-  imports = with inputs.self.nixosModules; with inputs.self.nixosProfiles; [
-    ./base.nix
+{ inputs, pkgs, ... }:
+{
+  imports =
+    with inputs.self.nixosModules;
+    with inputs.self.nixosProfiles;
+    [
+      ./base.nix
 
-    sound
-  ];
+      sound
+    ];
 
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.canon-cups-ufr2 ];

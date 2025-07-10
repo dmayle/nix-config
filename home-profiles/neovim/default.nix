@@ -59,8 +59,8 @@ in
 
     # Rust
     rustfmt # dependency
-    rustc   # dependency
-    cargo   # dependency
+    rustc # dependency
+    cargo # dependency
     rust-analyzer
   ];
 

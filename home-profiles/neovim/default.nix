@@ -225,7 +225,22 @@ in
       lsp_lines-nvim
 
       # AI Tools
-      avante-nvim
+      {
+        plugin = avante-nvim;
+        type = "lua";
+        config = ''
+          require("avante_lib").load()
+          require("avante").setup({
+            provider = "ollama",
+            providers = {
+              ollama = {
+                endpoint = "http://localhost:11434",
+                model = "hf.co/unsloth/gemma-3-27b-it-GGUF:Q4_K_M",
+              }
+            }
+          })
+        '';
+      }
     ];
 
     extraLuaConfig = builtins.readFile ./init.lua;

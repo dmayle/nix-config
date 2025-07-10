@@ -1,4 +1,11 @@
-{ pkgs, modulesPath, config, inputs, lib, ... }:
+{
+  pkgs,
+  modulesPath,
+  config,
+  inputs,
+  lib,
+  ...
+}:
 
 {
   imports = with inputs.self; [
@@ -6,6 +13,7 @@
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk-config.nix
     inputs.self.nixosRoles.base
+    nixosProfiles.ai
     nixosProfiles.docker
     nixosProfiles.web-servers
   ];
@@ -15,6 +23,13 @@
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
+
+  # Preload AI models specific to this machine
+  services.ollama.loadModels = [
+    "llama3.2:3b"
+    "deepseek-r1:1.5b"
+    "qwen3:30b-a3b"
+  ];
 
   # Setup the machine name
   networking.hostName = "fox";
@@ -48,7 +63,10 @@
 
   users.users.douglas = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = [
+      "wheel"
+      "docker"
+    ];
     hashedPasswordFile = config.sops.secrets."users/douglas".path;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgeON0VkK4mu9XOalV1Alp5vFztuhT8T/g75JpJjFwe douglas@beast"
@@ -59,11 +77,11 @@
   # Setup sops
   sops = {
     defaultSopsFile = ../../secrets/fox.yaml;
-    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets = {
-      "acme/email" = {};
-      "ttyd/username" = {};
-      "ttyd/password" = {};
+      "acme/email" = { };
+      "ttyd/username" = { };
+      "ttyd/password" = { };
       "users/douglas".neededForUsers = true;
     };
   };

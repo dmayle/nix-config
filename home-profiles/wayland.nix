@@ -240,7 +240,7 @@ in
           name = "home_office";
           outputs = [
             {
-              criteria = "HDMI-A-2";
+              criteria = "Technical Concepts Ltd 65R648 Unknown";
               mode = "7680x4320";
               position = "0,0";
               transform = "normal";

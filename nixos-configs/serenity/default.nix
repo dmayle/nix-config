@@ -124,6 +124,9 @@
   };
   nix.settings.allowed-users = [ "@wheel" ];
 
+  # RGB Control
+  services.hardware.openrgb.enable = true;
+
   # Setup sops
   sops = {
     defaultSopsFile = ../../secrets/serenity.yaml;
@@ -143,6 +146,8 @@
     gnomeExtensions.gtile
     # Adds udev rules for access to QMK keyboards
     via
+    # RGB Control
+    openrgb-with-all-plugins
   ];
 
   # Allow via (and http://usevia.app) to access hidraw devices for updating/flashing

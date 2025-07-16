@@ -5,7 +5,7 @@
   ...
 }:
 let
-  hyprlandPackage = inputs.hyprland.packages.x86_64-linux.hyprland;
+  hyprlandPackage = inputs.hyprland.packages.${pkgs.system}.hyprland;
   # This is just a default background image for the lock screen
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
@@ -24,18 +24,24 @@ let
     ];
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.libsForQt5.kguiaddons ];
   });
+  service-control = action: state: pkgs.writeShellScriptBin "service-${action}" ''
+    ${pkgs.systemd}/bin/systemctl list-units --type=service --state=${state} --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user ${action} --
+  '';
   service-restart-command = "service-restart";
   service-start-command = "service-start";
   service-stop-command = "service-stop";
-  serviceRestart = pkgs.writeShellScriptBin service-restart-command ''
-    ${pkgs.systemd}/bin/systemctl list-units --type=service --state=active --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
-  '';
-  serviceStart = pkgs.writeShellScriptBin service-start-command ''
-    ${pkgs.systemd}/bin/systemctl list-units --type=service --state=inactive --state=dead --state=failed --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user start --
-  '';
-  serviceStop = pkgs.writeShellScriptBin service-stop-command ''
-    ${pkgs.systemd}/bin/systemctl list-units --type=service --user --state=active --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user stop --
-  '';
+  serviceRestart = service-control "restart" "active";
+  serviceStart = service-control "start" "inactive";
+  serviceStop = service-control "stop" "active";
+  # serviceRestart = pkgs.writeShellScriptBin service-restart-command ''
+  #   ${pkgs.systemd}/bin/systemctl list-units --type=service --state=active --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
+  # '';
+  # serviceStart = pkgs.writeShellScriptBin service-start-command ''
+  #   ${pkgs.systemd}/bin/systemctl list-units --type=service --state=inactive --state=dead --state=failed --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user start --
+  # '';
+  # serviceStop = pkgs.writeShellScriptBin service-stop-command ''
+  #   ${pkgs.systemd}/bin/systemctl list-units --type=service --user --state=active --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user stop --
+  # '';
   wlogout-command = "wlogout-wrapped";
   wlogoutWrapped = pkgs.writeShellScriptBin wlogout-command ''
     ${pkgs.procps}/bin/pgrep -x "wlogout" > /dev/null && ${pkgs.procps}/bin/pkill -x "wlogout" && exit 0

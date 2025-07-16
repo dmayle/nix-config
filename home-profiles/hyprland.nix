@@ -24,9 +24,11 @@ let
     ];
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.libsForQt5.kguiaddons ];
   });
-  service-control = action: state: pkgs.writeShellScriptBin "service-${action}" ''
-    ${pkgs.systemd}/bin/systemctl list-units --type=service --state=${state} --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user ${action} --
-  '';
+  service-control =
+    action: state:
+    pkgs.writeShellScriptBin "service-${action}" ''
+      ${pkgs.systemd}/bin/systemctl list-units --type=service --state=${state} --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user ${action} --
+    '';
   serviceRestart = service-control "restart" "active";
   serviceStart = service-control "start" "inactive";
   serviceStop = service-control "stop" "active";
@@ -161,7 +163,6 @@ in
       "$menu" = "${pkgs.fuzzel}/bin/fuzzel";
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
-      #monitor = "HDMI-A-1,7680x4320@59.940,0x0,1";
       render = {
         explicit_sync = false;
       };
@@ -217,7 +218,7 @@ in
         "$mod, tab, cyclenext,"
         "$modShift, tab, cyclenext, prev"
         "$mod, tab, bringactivetotop"
-        "$mod, tab, bringactivetotop"
+        "$modShift, tab, bringactivetotop"
 
         # Move focus
         "$mod, left, hy3:movefocus, l"
@@ -275,6 +276,7 @@ in
 
         # Print Screen
         ", Print, exec, ${flameshotGrim}/bin/flameshot gui"
+        "$modShift, c, exec, ${flameshotGrim}/bin/flameshot gui"
 
         # Session helpers
         "$modShift, p, exec, ${pkgs.systemd}/bin/loginctl lock-session"

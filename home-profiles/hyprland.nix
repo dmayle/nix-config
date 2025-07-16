@@ -27,21 +27,9 @@ let
   service-control = action: state: pkgs.writeShellScriptBin "service-${action}" ''
     ${pkgs.systemd}/bin/systemctl list-units --type=service --state=${state} --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user ${action} --
   '';
-  service-restart-command = "service-restart";
-  service-start-command = "service-start";
-  service-stop-command = "service-stop";
   serviceRestart = service-control "restart" "active";
   serviceStart = service-control "start" "inactive";
   serviceStop = service-control "stop" "active";
-  # serviceRestart = pkgs.writeShellScriptBin service-restart-command ''
-  #   ${pkgs.systemd}/bin/systemctl list-units --type=service --state=active --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user restart --
-  # '';
-  # serviceStart = pkgs.writeShellScriptBin service-start-command ''
-  #   ${pkgs.systemd}/bin/systemctl list-units --type=service --state=inactive --state=dead --state=failed --user --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user start --
-  # '';
-  # serviceStop = pkgs.writeShellScriptBin service-stop-command ''
-  #   ${pkgs.systemd}/bin/systemctl list-units --type=service --user --state=active --plain -q | ${pkgs.coreutils}/bin/cut -d' ' -f1 | ${pkgs.fuzzel}/bin/fuzzel --dmenu | ${pkgs.findutils}/bin/xargs ${pkgs.systemd}/bin/systemctl --user stop --
-  # '';
   wlogout-command = "wlogout-wrapped";
   wlogoutWrapped = pkgs.writeShellScriptBin wlogout-command ''
     ${pkgs.procps}/bin/pgrep -x "wlogout" > /dev/null && ${pkgs.procps}/bin/pkill -x "wlogout" && exit 0
@@ -292,9 +280,9 @@ in
         "$modShift, p, exec, ${pkgs.systemd}/bin/loginctl lock-session"
         "$modShift, e, exec, ${wlogoutWrapped}/bin/${wlogout-command}"
 
-        "$modShift, r, exec, ${serviceRestart}/bin/${service-restart-command}"
-        "$modShift, s, exec, ${serviceStart}/bin/${service-start-command}"
-        "$modShift, t, exec, ${serviceStop}/bin/${service-stop-command}"
+        "$modShift, r, exec, ${serviceRestart}/bin/service-restart"
+        "$modShift, s, exec, ${serviceStart}/bin/service-start"
+        "$modShift, t, exec, ${serviceStop}/bin/service-stop"
       ];
       bindle = [
         ",XF86AudioRaiseVolume, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume raise"

@@ -62,6 +62,9 @@ local options = {
   -- Unless I use case in my search string, then case matters
   smartcase     = true,
 
+  -- Trying out better status for AI tools
+  laststatus    = 3,
+
   -- I like to be able to occasionally use the mouse
   mouse         = "a",
 
@@ -598,6 +601,79 @@ require('telescope').setup {
 require('telescope').load_extension('fzf')
 
 -- -----------------------------------------------------------------------------
+-- MCP HUB CONFIG (Tool calling server for agentic AI models)
+-- -----------------------------------------------------------------------------
+
+require("mcphub").setup({
+  -- Explicitly point to mcp-hub binary from this flake
+  -- cmd = "${inputs.mcp-hub.packages.${pkgs.system}.default}/bin/mcp-hub",
+  -- Point to the config file
+  -- config = "${mcpServersConfig}",
+  port = 37373, -- Default MCP Hub port
+  log = {
+    level = vim.log.levels.INFO,
+    to_file = true
+  }
+})
+
+-- -----------------------------------------------------------------------------
+-- CODECOMPANION CONFIG (AI Coding Interface)
+-- -----------------------------------------------------------------------------
+
+require("codecompanion").setup({
+  strategies = {
+    chat = {
+      adapter = 'glm32',
+    },
+    inline = {
+      adapter = 'glm32',
+    },
+    cmd = {
+      adapter = 'glm32',
+    },
+  },
+  adapters = {
+    glm32 = function ()
+      return require('codecompanion.adapters').extend('ollama', {
+        name = "glm32",
+        env = {
+          url = "http://localhost:11434",
+        },
+        schema = {
+          model = {
+            default = 'sammcj/glm-4-32b-0414:q6_k',
+          },
+          num_ctx = {
+            default = 32000,
+          },
+          num_predict = {
+            default = -1,
+          },
+        },
+      })
+    end,
+  },
+  opts = {
+    log_level = 'DEBUG',
+  },
+  extensions = {
+    mcphub = {
+      callback = "mcphub.extensions.codecompanion",
+      opts = {
+        make_vars = true,
+        make_slash_commands = true,
+        show_result_in_chat = true,
+      }
+    }
+  },
+  mappings = {
+    open_chat = "<leader>cc",
+    clear_chat = "<leader>cz",
+    send_selection = "<leader>cs",
+  },
+})
+
+-- -----------------------------------------------------------------------------
 -- CMP CONFIG (Autocomplete suport)
 -- -----------------------------------------------------------------------------
 
@@ -826,6 +902,11 @@ keymap('n', '<leader>xd', function() trouble.toggle("document_diagnostics") end,
 keymap('n', '<leader>xq', function() trouble.toggle("quickfix") end, {})
 keymap('n', '<leader>xl', function() trouble.toggle("loclist") end, {})
 keymap('n', '<leader>xr', function() trouble.toggle("lsp_references") end, {})
+
+-- -----------------------------------------------------------------------------
+-- MCPHub (AI Tool Server Aggregator - Model Context Protocol Hub)
+-- -----------------------------------------------------------------------------
+keymap("n", "<leader>mh", ":MCPHub<CR>", kopts)
 
 -- -----------------------------------------------------------------------------
 -- Clear visual aids so screen copy works

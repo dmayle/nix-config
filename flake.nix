@@ -70,6 +70,14 @@
       url = "github:Tsuzat/NeoSolarized.nvim";
       flake = false;
     };
+    mcp-hub = {
+      url = "github:ravitemer/mcp-hub";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    mcphub-nvim = {
+      url = "github:ravitemer/mcphub.nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nvim-spell-en-utf8-dictionary = {
       url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.utf-8.spl";
       flake = false;

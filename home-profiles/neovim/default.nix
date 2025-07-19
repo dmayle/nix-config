@@ -17,6 +17,34 @@ let
       maintainers = [ "tsuzat" ];
     };
   };
+
+  mcpServersConfig = pkgs.writeTextFile {
+    name = "mcp-servers.json";
+    text = builtins.toJSON {
+      mcpServers = {
+        Hub.url = "http://localhost:37373/mcp";
+        filesystem = {
+          command = "${pkgs.nodejs}/bin/npx";
+          args = [
+            "-y"
+            "@modelcontextprotocol/server-filesystem"
+            "/home/douglas/src"
+          ];
+          autostart = true;
+        };
+        git = {
+          command = "${pkgs.steam-run}/bin/steam-run";
+          args = [
+            "${pkgs.uv}/bin/uvx"
+            "mcp-server-git"
+            "--repository"
+            "/home/douglas/src/nix-config"
+          ];
+          autostart = true;
+        };
+      };
+    };
+  };
 in
 {
 
@@ -62,7 +90,13 @@ in
     rustc # dependency
     cargo # dependency
     rust-analyzer
+
+    # AI / MCP stuff
+    inputs.mcp-hub.packages.${pkgs.system}.default
+    nodejs
   ];
+
+  home.file.".config/mcphub/servers.json".source = mcpServersConfig;
 
   programs.neovim = {
     enable = true;
@@ -225,22 +259,12 @@ in
       lsp_lines-nvim
 
       # AI Tools
-      {
-        plugin = avante-nvim;
-        type = "lua";
-        config = ''
-          require("avante_lib").load()
-          require("avante").setup({
-            provider = "ollama",
-            providers = {
-              ollama = {
-                endpoint = "http://localhost:11434",
-                model = "hf.co/unsloth/gemma-3-27b-it-GGUF:Q4_K_M",
-              }
-            }
-          })
-        '';
-      }
+      render-markdown-nvim # Library dependency
+      nui-nvim # Library dependency
+      mini-icons # Library dependency
+      mini-diff # Library dependency
+      inputs.mcphub-nvim.packages.${pkgs.system}.default
+      codecompanion-nvim
     ];
 
     extraLuaConfig = builtins.readFile ./init.lua;

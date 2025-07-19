@@ -107,6 +107,10 @@ in
       # Command hashing is used by various shell scripts, so enable it
       set -h
 
+      # Home Manager doesn't have a good way to stick these into bash
+      export EDITOR="nvim";
+      export FLAKE_CONFIG_URI="path:${config.home.homeDirectory}/src/nix-config#homeConfigurations.$(hostname)";
+
       # A number of support functions to make tmux work the way I want it to
       function _inside_local_tmux() {
         if [ -n "$TMUX" ]; then

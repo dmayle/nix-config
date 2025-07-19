@@ -23,8 +23,9 @@
     #components = [ "gpg" "pkcs11" "secrets" "ssh" ];
   };
 
+  # Variables to set when not using bash
   home.sessionVariables = {
-    EDITOR = "vi";
+    EDITOR = "nvim";
     FLAKE_CONFIG_URI = "path:${config.home.homeDirectory}/src/nix-config#homeConfigurations.$(hostname)";
   };
 

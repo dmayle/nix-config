@@ -406,7 +406,7 @@ in
           on-click = "pavucontrol";
         };
         tray = {
-          icon-size = 21;
+          icon-size = 36;
         };
         "custom/right-blue-background" = {
           format = "";

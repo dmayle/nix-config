@@ -49,6 +49,19 @@
       setw -g window-status-current-format "#[fg=#eee8d5,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] #I #[fg=#eee8d5,bg=#93a1a1] #W #[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]"
     '';
   };
+  systemd.user.services.tmux = {
+    Unit = {
+      Description = "Tmux session for user dougle";
+    };
+    Install = {
+      WantedBy = [ "multi-user.target" ];
+    };
+    Service = {
+      Type = "forking";
+      ExecStart = "${config.programs.tmux.package}/bin/tmux -L 'outer' -f ${config.xdg.configHome}/tmux/tmux-outer.conf new -d -t group -s 0";
+      ExecStop = "${config.programs.tmux.package}/bin/tmux kill-session -t 0";
+    };
+  };
   xdg.configFile."tmux/tmux-outer.conf".text = ''
     # Outer tmux config
 

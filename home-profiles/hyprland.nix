@@ -65,6 +65,11 @@ let
       --css <(${pkgs.envsubst}/bin/envsubst < $STYLE) \
       --protocol layer-shell
   '';
+  openrgb-launcher = "openrgb-delayed-launch";
+  openrgbDelayedLaunch = pkgs.writeShellScriptBin openrgb-launcher ''
+    # Workaround because openrgb launching too soon won't create a tray icon
+    sleep 0.5 && "${pkgs.openrgb-with-all-plugins}/bin/openrgb" --startminimized
+  '';
 in
 {
   # This is only here because I want to share the package override with a keybinding
@@ -157,6 +162,8 @@ in
     settings = {
       exec-once = [
         "${pkgs.systemd}/bin/systemctl --user import-environment"
+        "${openrgbDelayedLaunch}/bin/${openrgb-launcher}"
+        "${pkgs.blueman}/bin/blueman-applet"
       ];
       "$terminal" = "${pkgs.kitty}/bin/kitty";
       "$fileManager" = "${pkgs.xfce.thunar}/bin/thunar";

@@ -1,5 +1,8 @@
-{ ... }:
+{ pkgs, ... }:
 {
+  environment.systemPackages = with pkgs; [
+    blueman
+  ];
   security.rtkit.enable = true;
 
   services.pulseaudio.enable = false;

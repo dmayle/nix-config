@@ -478,8 +478,6 @@ colorizer.attach_to_buffer(0)
 -- RENDER-MARKDOWN CONFIG (Inline Markdown Display)
 -- -----------------------------------------------------------------------------
 
--- on_attach must be called for each language server
--- require('render-markdown').setup()
 local presets = require("markview.presets")
 require("markview").setup({
   experimental = {

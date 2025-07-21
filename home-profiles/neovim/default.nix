@@ -261,8 +261,6 @@ in
       # AI Tools
       markview-nvim # Library dependency
       nui-nvim # Library dependency
-      mini-icons # Library dependency
-      mini-diff # Library dependency
       inputs.mcphub-nvim.packages.${pkgs.system}.default
       codecompanion-nvim
     ];

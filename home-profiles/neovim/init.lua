@@ -666,7 +666,7 @@ require("codecompanion").setup({
         },
         schema = {
           model = {
-            default = 'sammcj/glm-4-32b-0414:q6_k',
+            default = 'qwen3:4b',
           },
           num_ctx = {
             default = 32000,

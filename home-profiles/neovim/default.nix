@@ -259,7 +259,7 @@ in
       lsp_lines-nvim
 
       # AI Tools
-      render-markdown-nvim # Library dependency
+      markview-nvim # Library dependency
       nui-nvim # Library dependency
       mini-icons # Library dependency
       mini-diff # Library dependency

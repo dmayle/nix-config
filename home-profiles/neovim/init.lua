@@ -475,6 +475,33 @@ colorizer.setup()
 colorizer.attach_to_buffer(0)
 
 -- -----------------------------------------------------------------------------
+-- RENDER-MARKDOWN CONFIG (Inline Markdown Display)
+-- -----------------------------------------------------------------------------
+
+-- on_attach must be called for each language server
+-- require('render-markdown').setup()
+local presets = require("markview.presets")
+require("markview").setup({
+  experimental = {
+    prefer_nvim = true,
+  },
+  preview = {
+    filetypes = { "md", "rmd", "quarto", "markdown", "codecompanion" },
+    ignore_buftypes = {},
+    modes = { "n", "no", "c", "i" },
+    hybrid_modes = { "n", "i" },
+    linewise_hybrid_mode = true,
+    icon_provider = "devicons",
+  },
+  markdown = {
+    headings = presets.headings.arrowed,
+    horizontal_rules = presets.horizontal_rules.arrowed,
+    tables = presets.tables.curved,
+  }
+})
+require("markview.extras.checkboxes").setup()
+
+-- -----------------------------------------------------------------------------
 -- LSP-FORMAT CONFIG (Code formatter)
 -- -----------------------------------------------------------------------------
 

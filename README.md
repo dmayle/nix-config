@@ -3,16 +3,16 @@
 The code for this flake is designed to be as simple and readable as possible.
 It is also designed to support all of the features that I want from a personal
 flake:
- * NixOS configurations for my hosts.
- * Home Manager configurations for my hosts whether or not on NixOS.
- * Development shells for my software projects.
- * Packaged software not yet supported in nixpkgs.
+* NixOS configurations for my hosts.
+* Home Manager configurations for my hosts whether or not on NixOS.
+* Development shells for my software projects.
+* Packaged software not yet supported in nixpkgs.
 
 Additionally, I want to impose some additional contraints upon this flake:
- * Package definitions should be available to system configurations.
- * Development shells should be available to system configurations.
- * Nixpkgs should be configured to my needs and shared across configurations.
- * The packages used by Home Manager on NixOS systems should be in sync.
+* Package definitions should be available to system configurations.
+* Development shells should be available to system configurations.
+* Nixpkgs should be configured to my needs and shared across configurations.
+* The packages used by Home Manager on NixOS systems should be in sync.
 
 ## Flake Structure
 This flake contains a small nix library that supports the needs of a flake. It
@@ -72,7 +72,7 @@ This module contains three functions which are useful to the flake:
    name of the configuration (unused argument but makes this function
    compatible with mapAttrs) and the path to nix module containing a Home
    Manager configuration.
-2. `mkNixosConfig` takes a configured nixpkgs import, an attribute set of module
+3. `mkNixosConfig` takes a configured nixpkgs import, an attribute set of module
    arguments (these become arguments to all modules in the configuration), the
    name of the configuration (unused argument but makes this function
    compatible with mapAttrs) and the path to nix module containing a NixOS
@@ -99,6 +99,6 @@ update them here.  In the meantime, you can read an overview of the process:
 ## On a NixOS system that has been bootstrapped
 3. Use sudo to install this flake's NixOS configuration.
 
-```
+```bash
 F=--extra-experimental-features V="nix-command flakes" bash -c 'nix $F "$V" run home-manager -- $F "$V" switch --flake .#<hostname>'
 ```

@@ -22,7 +22,14 @@
     # Secret management
     # Python dev env management
     uv
+    # Tool for running uv in FHS
+    steam-run
   ];
+
+  home.shellAliases = {
+    suv = "steam-run uv";
+    suvx = "steam-run uvx";
+  };
 
   programs.direnv = {
     enable = true;

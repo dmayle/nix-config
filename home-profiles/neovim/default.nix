@@ -18,6 +18,15 @@ let
     };
   };
 
+  fine-cmdline-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "fine-cmdline-nvim";
+    src = inputs.fine-cmdline-nvim;
+    meta = {
+      homepage = "https://github.com/VonHeikemen/fine-cmdline.nvim";
+      maintainers = [ "VonHeikemen" ];
+    };
+  };
+
   mcpServersConfig = pkgs.writeTextFile {
     name = "mcp-servers.json";
     text = builtins.toJSON {
@@ -145,6 +154,10 @@ in
 
       # Both Indent guides plugins
       indent-blankline-nvim
+
+      # Floating 'Ex' command window
+      nui-nvim # Library dependency
+      fine-cmdline-nvim
 
       #######################################################################
       # ****** UPDATED TEXT/COMMAND FEATURES ******

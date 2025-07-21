@@ -78,6 +78,10 @@
       url = "github:ravitemer/mcphub.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    fine-cmdline-nvim = {
+      url = "github:VonHeikemen/fine-cmdline.nvim";
+      flake = false;
+    };
     nvim-spell-en-utf8-dictionary = {
       url = "file+https://ftp.nluug.nl/vim/runtime/spell/en.utf-8.spl";
       flake = false;

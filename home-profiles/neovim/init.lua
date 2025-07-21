@@ -896,6 +896,12 @@ keymap('n', '<leader>q', vim.diagnostic.setloclist, kopts)
 keymap('n', '<leader>ll', lsp_lines.toggle, kopts)
 
 -- -----------------------------------------------------------------------------
+-- FINE COMMAND LINE (Floating 'Ex' window)
+-- -----------------------------------------------------------------------------
+
+keymap("n", "<CR>", "<cmd>FineCmdline<CR>", kopts)
+
+-- -----------------------------------------------------------------------------
 -- BUFDELETE (Delete buffer without closing window)
 -- -----------------------------------------------------------------------------
 

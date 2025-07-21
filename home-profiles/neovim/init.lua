@@ -660,6 +660,9 @@ require("codecompanion").setup({
     mcphub = {
       callback = "mcphub.extensions.codecompanion",
       opts = {
+        make_tools = true,
+        show_server_tools_in_chat = true,
+        add_mcp_prefix_to_tool_names = false,
         make_vars = true,
         make_slash_commands = true,
         show_result_in_chat = true,
@@ -907,6 +910,12 @@ keymap('n', '<leader>xr', function() trouble.toggle("lsp_references") end, {})
 -- MCPHub (AI Tool Server Aggregator - Model Context Protocol Hub)
 -- -----------------------------------------------------------------------------
 keymap("n", "<leader>mh", ":MCPHub<CR>", kopts)
+
+-- -----------------------------------------------------------------------------
+-- codecompanion (AI Coding Assistant)
+-- -----------------------------------------------------------------------------
+keymap("n", "<leader>cc", ":CodeCompanionChat<CR>", kopts)
+keymap("n", "<leader>ca", ":CodeCompanionActions<CR>", kopts)
 
 -- -----------------------------------------------------------------------------
 -- Clear visual aids so screen copy works

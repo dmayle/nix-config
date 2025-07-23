@@ -184,6 +184,9 @@ in
       # Add bracket mappings for diff conflict markers ]x [x
       conflict-marker-vim
 
+      # Tmux clipboard integration
+      tmux-nvim
+
       #######################################################################
       # ****** UPDATED UI FEATURES ******
       #######################################################################

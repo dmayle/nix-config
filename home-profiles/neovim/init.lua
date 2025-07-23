@@ -456,6 +456,7 @@ require('bufferline').setup()     -- Buffers as 'tabs'
 require('outline').setup {}       -- Code outline window like tagbar.vim
 require('nvim-autopairs').setup() -- Add closing parens, quotes, etc.
 require('ibl').setup()            -- Add indentation visual aids
+require('tmux').setup()           -- Sync yank to tmux copy buffer
 
 
 -- -----------------------------------------------------------------------------

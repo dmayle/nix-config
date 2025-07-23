@@ -24,6 +24,9 @@
     uv
     # Tool for running uv in FHS
     steam-run
+
+    # Cmdline AI coding assistant
+    gemini-cli
   ];
 
   home.shellAliases = {

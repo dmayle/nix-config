@@ -37,7 +37,7 @@ let
           args = [
             "-y"
             "@modelcontextprotocol/server-filesystem"
-            "/home/douglas/src"
+            "/home/douglas/src/aip"
           ];
           autostart = true;
         };
@@ -47,7 +47,7 @@ let
             "${pkgs.uv}/bin/uvx"
             "mcp-server-git"
             "--repository"
-            "/home/douglas/src/nix-config"
+            "/home/douglas/src/aip"
           ];
           autostart = true;
         };

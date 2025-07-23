@@ -648,25 +648,25 @@ require("mcphub").setup({
 require("codecompanion").setup({
   strategies = {
     chat = {
-      adapter = 'glm32',
+      adapter = 'ollama',
     },
     inline = {
-      adapter = 'glm32',
+      adapter = 'ollama',
     },
     cmd = {
-      adapter = 'glm32',
+      adapter = 'ollama',
     },
   },
   adapters = {
-    glm32 = function ()
+    ollama = function ()
       return require('codecompanion.adapters').extend('ollama', {
-        name = "glm32",
+        name = "ollama",
         env = {
           url = "http://localhost:11434",
         },
         schema = {
           model = {
-            default = 'qwen3:4b',
+            default = 'qwen3:32b',
           },
           num_ctx = {
             default = 32000,
@@ -693,11 +693,6 @@ require("codecompanion").setup({
         show_result_in_chat = true,
       }
     }
-  },
-  mappings = {
-    open_chat = "<leader>cc",
-    clear_chat = "<leader>cz",
-    send_selection = "<leader>cs",
   },
 })
 

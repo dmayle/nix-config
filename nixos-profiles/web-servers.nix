@@ -10,29 +10,6 @@ let
   });
 in
 {
-  security.acme = {
-    acceptTerms = true;
-    defaults.email = "dmayle@dmayle.com";
-    # environmentFile = config.sops.secrets."acme/email".path;
-  };
-  services.nginx = {
-    enable = true;
-    virtualHosts = {
-      "fox.mayle.org" = {
-        forceSSL = true;
-        enableACME = true;
-        locations."/" = {
-          proxyPass = "http://localhost:7681/";
-          proxyWebsockets = true;
-          extraConfig = ''
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          '';
-        };
-      };
-    };
-  };
   disabledModules = [ "services/web-servers/ttyd.nix" ];
   imports = [ ./ttyd.nix ];
   services.ttyd = {

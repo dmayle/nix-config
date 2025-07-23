@@ -1,4 +1,11 @@
-{ pkgs, modulesPath, config, inputs, lib, ... }:
+{
+  pkgs,
+  modulesPath,
+  config,
+  inputs,
+  lib,
+  ...
+}:
 
 {
   imports = with inputs.self; [
@@ -14,7 +21,7 @@
     nixosProfiles.cachix-cuda
     nixosProfiles.cachix-nixpkgs-wayland
     nixosProfiles.prometheus
-    # nixsProfiles.web-servers
+    nixosProfiles.web-servers
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -73,7 +80,6 @@
     Option "SidebandSocketPath" "/tmp"
   '';
 
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "gb";
@@ -84,7 +90,12 @@
   services.libinput.enable = true;
 
   services.xserver.enable = true;
-  services.xserver.resolutions = [{ x = 7680; y = 4320; }];
+  services.xserver.resolutions = [
+    {
+      x = 7680;
+      y = 4320;
+    }
+  ];
   services.displayManager.gdm = {
     enable = true;
     wayland = true;
@@ -116,7 +127,15 @@
 
   users.users.douglas = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "sway" "video" "i2c" "docker" "vboxusers" ];
+    extraGroups = [
+      "wheel"
+      "audio"
+      "sway"
+      "video"
+      "i2c"
+      "docker"
+      "vboxusers"
+    ];
     hashedPasswordFile = config.sops.secrets."users/douglas".path;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAgeON0VkK4mu9XOalV1Alp5vFztuhT8T/g75JpJjFwe douglas@beast"
@@ -130,8 +149,10 @@
   # Setup sops
   sops = {
     defaultSopsFile = ../../secrets/serenity.yaml;
-    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets = {
+      "ttyd/username" = { };
+      "ttyd/password" = { };
       "users/douglas".neededForUsers = true;
     };
   };
@@ -154,7 +175,6 @@
   services.udev.extraRules = ''
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0666", TAG+="uaccess", TAG+="udev-acl"
   '';
-
 
   # Very basic neovim config for root because vanilla vim is frustrating when
   # unconfigured

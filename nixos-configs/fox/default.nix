@@ -15,6 +15,7 @@
     inputs.self.nixosRoles.base
     nixosProfiles.ai
     nixosProfiles.docker
+    nixosProfiles.host-reverse-proxy
     nixosProfiles.web-servers
   ];
 
@@ -81,6 +82,25 @@
       "ttyd/username" = { };
       "ttyd/password" = { };
       "users/douglas".neededForUsers = true;
+    };
+  };
+
+  # Machine-specific reverse proxy config
+  services.nginx = {
+    virtualHosts = {
+      "fox.mayle.org" = {
+        forceSSL = true;
+        enableACME = true;
+        locations."/" = {
+          proxyPass = "http://localhost:7681/";
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          '';
+        };
+      };
     };
   };
 

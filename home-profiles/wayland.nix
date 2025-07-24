@@ -9,70 +9,6 @@ let
   };
 in
 {
-  # Test hypridle / hyprlock config
-  xdg.configFile."hypr/hypridle.conf" = {
-    text = ''
-      $lock_cmd = ${pkgs.procps}/bin/pidof hyprlock || ${pkgs.hyprlock}/bin/hyprlock
-
-      general {
-        lock_cmd = $lock_cmd
-        before_sleep_cmd = $lock_cmd
-      }
-
-      listener {
-        timeout = 180 # seconds (3 minutes)
-        on-timeout = $lock_cmd
-      }
-
-      listener {
-        timeout = 240 # seconds (4 minutes)
-        on-timeout # ${hyprlandPackage}/bin/hyprctl dispatch dpms off
-        on-resume # ${hyprlandPackage}/bin/hyprctl dispatch dpms on
-      }
-    '';
-  };
-  xdg.configFile."hypr/hyprlock.conf" = {
-    text = '''';
-  };
-
-  # Setup screensaver / lock with swayidle and swaylock
-  # services.swayidle = {
-  #   package = pkgs.hypridle
-  #   enable = true;
-  #   # events = [
-  #   #   { event = "before-sleep"; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
-  #   #   { event = "after-resume"; command = "${hyprlandPackage}/bin/hyprctl 'output * enable' && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
-  #   #   { event = "lock"; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; }
-  #   # ];
-  #   # timeouts = [
-  #   #   { timeout = 600; command = "${pkgs.swaylock-effects}/bin/swaylock -elfF -s fill -i ${bgNixSnowflake}"; resumeCommand = "${hyprlandPackage}/bin/hyprctl 'output * dpms on; && ${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
-  #   #   { timeout = 900; command = "${hyprlandPackage}/bin/hyprctl 'output * dpms off'"; }
-  #   # ];
-  #   # extraArgs = [
-  #   #   "idlehint 300"
-  #   # ];
-  #   systemdTarget = "hyprland-session.target";
-  # };
-
-  # programs.swaylock = {
-  #   enable = true;
-  #   package = pkgs.swaylock-effects;
-  #   settings = {
-  #     daemonize = true;
-  #     font-size = 24;
-  #     indicator = true;
-  #     indicator-radius = 200;
-  #     indicator-thickness = 20;
-  #     indicator-caps-lock = true;
-  #     indicator-idle-visible = false;
-  #     ignore-empty-password = true;
-  #     clock = true;
-  #     screenshots = true;
-  #     fade-in = 1;
-  #     effect-blur = "5x2";
-  #   };
-  # };
-
   programs.wlogout = {
     enable = true;
     layout = [
@@ -191,6 +127,60 @@ in
         margin: ''${MARGIN}px ''${MARGIN}px ''${MARGIN}px 0;
       }
     '';
+  };
+  programs.hyprlock = {
+    enable = true;
+    settings = {
+      general = {
+        disable_loading_bar = true;
+        grace = 300;
+        hide_cursor = true;
+        no_fade_in = false;
+      };
+      background = [
+        {
+          path = "screenshot";
+          blur_passes = 3;
+          blur_size = 8;
+        }
+      ];
+      input-field = [
+        {
+          size = "200, 50";
+          position = "0, -80";
+          monitor = "";
+          dots_center = true;
+          fade_on_empty = false;
+          font_color = "rgb(202, 211, 245)";
+          inner_color = "rgb(91, 96, 120)";
+          outer_color = "rgb(24, 25, 38)";
+          outline_thickness = 5;
+          placeholder_text = ''<span foreground="##cad3f5">Password...</span>'';
+          shadow_passes = 2;
+        }
+      ];
+    };
+  };
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        after_sleep_cmd = "hyprctl dispatch dpms on";
+        ignore_dbus_inhibit = false;
+        lock_cmd = "hyprlock";
+      };
+      listener = [
+        {
+          timeout = 180;
+          on-timeout = "hyprlock";
+        }
+        {
+          timeout = 1200;
+          on-timeout = "hyprctl dispatch dpms off";
+          on-resume = "hyprctl dispatch dpms on";
+        }
+      ];
+    };
   };
 
   # LXPolkit is a GUI policy kit client that will prompt the user for their

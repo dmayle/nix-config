@@ -60,6 +60,13 @@
       inputs.nixpkgs-lib.follows = "nixpkgs-lib";
     };
     # ##########################################################################
+    # Nixified AI (AI Tools like ComfyUI)
+    # ##########################################################################
+    nixified-ai = {
+      url = "github:nixified-ai/flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # ##########################################################################
     # Neovim inputs (unpackaged plugins and spelling dictionaries)
     # ##########################################################################
     vim-fakeclip = {

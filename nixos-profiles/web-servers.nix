@@ -23,6 +23,7 @@ in
     passwordFile = config.sops.secrets."ttyd/password".path;
     usernameFile = config.sops.secrets."ttyd/username".path;
     clientOptions = {
+      enableZmodem = "true";
       # /* Solarized */
       # @define-color base03 #002b36;
       # @define-color base02 #073642;

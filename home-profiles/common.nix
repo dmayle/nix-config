@@ -31,9 +31,17 @@
 
   nix = {
     package = pkgs.nix;
-    settings.experimental-features = "nix-command flakes";
+    settings = {
+      experimental-features = "nix-command flakes";
+      auto-optimise-store = true;
+    };
     registry = {
       nixpkgs.flake = inputs.nixpkgs;
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
     };
   };
 

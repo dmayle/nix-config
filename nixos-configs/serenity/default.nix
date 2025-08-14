@@ -153,6 +153,7 @@
     secrets = {
       "ttyd/username" = { };
       "ttyd/password" = { };
+      "ai_tokens/hugging_face" = { };
       "users/douglas".neededForUsers = true;
     };
   };

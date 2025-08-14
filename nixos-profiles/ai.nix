@@ -1,9 +1,16 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   services.ollama = {
     enable = true;
     loadModels = [ ];
   };
+  systemd.services.nix-daemon.serviceConfig.EnvironmentFile =
+    config.sops.secrets."ai_tokens/hugging_face".path;
   services.comfyui = {
     enable = true;
     acceleration = "cuda";

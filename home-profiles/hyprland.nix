@@ -170,9 +170,6 @@ in
       "$menu" = "${pkgs.fuzzel}/bin/fuzzel";
       "$mod" = "SUPER";
       "$modShift" = "SUPERSHIFT";
-      render = {
-        explicit_sync = false;
-      };
       debug = {
         disable_logs = false;
       };

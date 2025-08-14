@@ -3,7 +3,7 @@
 {
   home.packages = with pkgs; [
     joycond-cemuhook
-    ryujinx
+    ryubing
 
     # 64 and 32-bit Wine
     wineWowPackages.stable

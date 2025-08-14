@@ -54,7 +54,7 @@
   # I want less to use case-insensitive search by default
   programs.less = {
     enable = true;
-    keys = ''
+    config = ''
       #env
       LESS = -i -R
     '';

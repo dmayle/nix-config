@@ -87,21 +87,10 @@ in
 
   gtk = {
     enable = true;
-    theme = {
-      package = pkgs.numix-solarized-gtk-theme;
-      name = "NumixSolarizedLightMagenta";
-    };
     iconTheme = {
       package = pkgs.numix-icon-theme;
       name = "Numix";
     };
-    font = {
-      name = "Sans";
-      size = 13;
-    };
-    gtk3.extraCss = ''
-      .thunar { font-size: 18pt; }
-    '';
   };
 
   programs.fuzzel = {

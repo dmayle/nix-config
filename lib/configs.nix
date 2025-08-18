@@ -29,6 +29,7 @@ rec {
 
       modules = [
         (import (config))
+        inputs.stylix.homeModules.stylix
       ];
     };
 
@@ -47,6 +48,7 @@ rec {
         inputs.disko.nixosModules.disko
         inputs.sops-nix.nixosModules.sops
         inputs.nixified-ai.nixosModules.comfyui
+        inputs.stylix.nixosModules.stylix
       ];
     };
 }

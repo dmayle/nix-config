@@ -52,7 +52,6 @@
   programs.btop = {
     enable = true;
     settings = {
-      color_theme = "${pkgs.btop}/share/btop/themes/solarized_light.theme";
       vim_keys = true;
     };
   };
@@ -75,6 +74,20 @@
     enable = true;
     enableBashIntegration = true;
     pinentry.package = pkgs.pinentry-curses;
+  };
+
+  # Use stylix for theming
+  stylix = {
+    enable = true;
+    autoEnable = true;
+    polarity = "light";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/solarized-light.yaml";
+    targets = {
+      waybar.enable = false;
+      gtk.extraCss = ''
+        .thunar { font-size: 18pt; }
+      '';
+    };
   };
 
   home.packages = with pkgs; [

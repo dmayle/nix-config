@@ -127,7 +127,6 @@ in
   # SwayOSD shows volume notifications and caps lock changes
   # This is placed here to share a package with keyboard bindings
   services.swayosd = {
-    #package = swayosdUpdated;
     enable = true;
     topMargin = 0.5;
   };

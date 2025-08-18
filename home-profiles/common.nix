@@ -33,7 +33,6 @@
     package = pkgs.nix;
     settings = {
       experimental-features = "nix-command flakes";
-      auto-optimise-store = true;
     };
     registry = {
       nixpkgs.flake = inputs.nixpkgs;
@@ -114,32 +113,4 @@
     enable = true;
     enableBashIntegration = true;
   };
-
-  #
-  # Add a systemd service for ssh-agent
-  # systemd.user.services.ssh-agent = {
-  #   Unit = {
-  #     PartOf = [ "graphical-session.target" ];
-  #     Description = "SSH key agent";
-  #   };
-  #   Install = {
-  #     WantedBy = [ "sway-session.target" ];
-  #   };
-  #   Service = {
-  #     type = "Simple";
-  #     Environment = [ "SSH_AUTH_SOCK=%t/ssh-agent.socket" ];
-  #     ExecStart = "${pkgs.openssh}/bin/ssh-agent -D -a $SSH_AUTH_SOCK";
-  #     Restart = "always";
-  #     RestartSec = 3;
-  #   };
-  # };
-
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
 }

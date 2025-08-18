@@ -448,7 +448,7 @@ in
             car = "";
             default = [ "🔈" "🔉" "🔊" ];
           };
-          on-click = "pavucontrol";
+          on-click = "pwvucontrol";
         };
         tray = {
           icon-size = 21;

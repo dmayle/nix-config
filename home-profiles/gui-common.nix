@@ -10,7 +10,7 @@
     meld
 
     # Volume control used when clicking waybar
-    pavucontrol
+    pwvucontrol
 
     # pipe to and from X clipboard
     xsel

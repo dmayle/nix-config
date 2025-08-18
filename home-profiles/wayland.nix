@@ -393,7 +393,7 @@ in
               "🔊"
             ];
           };
-          on-click = "pavucontrol";
+          on-click = "pwvucontrol";
         };
         tray = {
           icon-size = 36;

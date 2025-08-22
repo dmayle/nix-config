@@ -5,6 +5,40 @@
   ...
 }:
 {
+  services.llama-cpp = {
+    enable = true;
+    package = (pkgs.llama-cpp-vulkan.overrideAttrs (oldAttrs: rec {
+      version = "6210";
+      src = pkgs.fetchFromGitHub {
+        owner = "ggml-org";
+        repo = "llama.cpp";
+        tag = "b${version}";
+        hash = "sha256-yPlFw3fuXvf4+IhOv0nVI9hnuZq73Br6INn8wdOmCOs=";
+        leaveDotGit = true;
+        postFetch = ''
+          git -C "$out" rev-parse --short HEAD > $out/COMMIT
+          find "$out" -name .git -print0 | xargs -0 rm -rf
+        '';
+      };
+    }));
+    model
+    = "/var/lib/llama-cpp/models/unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf";
+    # host = "0.0.0.0";
+    extraFlags = [
+      "--jinja"
+      "-ngl" "99"
+      "--threads" "-1"
+      "--ctx-size" "262144"
+      "--temp" "0.7"
+      "--min-p" "0.0"
+      "--top-p" "0.80"
+      "--top-k" "20"
+      "--repeat-penalty" "1.05"
+      "-ctv" "q4_0"
+      "-ctk" "q4_0"
+      "--flash-attn"
+    ];
+  };
   services.ollama = {
     enable = true;
     loadModels = [ ];

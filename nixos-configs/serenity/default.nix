@@ -49,11 +49,18 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     package = config.boot.kernelPackages.nvidiaPackages.production;
-    powerManagement.enable = true;
-    powerManagement.finegrained = false;
+    powerManagement = {
+      enable = true;
+      finegrained = false;
+    };
     modesetting.enable = true;
     nvidiaSettings = true;
     open = true;
+  };
+
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
   };
 
   hardware.graphics = {
@@ -74,6 +81,9 @@
       mesa
     ];
   };
+
+  # Enable SMU for system monitoring
+  hardware.cpu.amd.ryzen-smu.enable = true;
 
   # Nvidia fixup
   services.xserver.deviceSection = ''
@@ -170,6 +180,8 @@
     via
     # RGB Control
     openrgb-with-all-plugins
+    # Ryzen SMU monitor
+    ryzen-monitor-ng
   ];
 
   # Allow via (and http://usevia.app) to access hidraw devices for updating/flashing

@@ -4,10 +4,8 @@
   pkgs,
   ...
 }:
-{
-  services.llama-cpp = {
-    enable = true;
-    package = (pkgs.llama-cpp-vulkan.overrideAttrs (oldAttrs: rec {
+let
+  myLlama = (pkgs.llama-cpp-vulkan.overrideAttrs (oldAttrs: rec {
       version = "6210";
       src = pkgs.fetchFromGitHub {
         owner = "ggml-org";
@@ -21,11 +19,17 @@
         '';
       };
     }));
+in
+{
+  services.llama-cpp = {
+    enable = true;
+    package = myLlama;
     model
     = "/var/lib/llama-cpp/models/unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf";
     # host = "0.0.0.0";
     extraFlags = [
       "--jinja"
+      "--chat-template-file" "/var/lib/llama-cpp/templates/unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.jinja"
       "-ngl" "99"
       "--threads" "-1"
       "--ctx-size" "262144"
@@ -39,6 +43,8 @@
       "--flash-attn"
     ];
   };
+  environment.systemPackages = [ myLlama ];
+
   services.ollama = {
     enable = true;
     loadModels = [ ];

@@ -93,6 +93,10 @@
   home.packages = with pkgs; [
     # Basic utilities
     file
+    lsof
+    pciutils
+    usbutils
+    unixtools.netstat
 
     # Usefull process tool
     killall

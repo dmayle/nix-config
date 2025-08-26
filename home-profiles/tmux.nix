@@ -112,6 +112,8 @@
 
     # Use GNU screen-style prefix
     set -g prefix C-a
+    # Use the traditional key as a second prefix for browsers that swallow C-a
+    set -g prefix2 C-b
     bind a send-prefix
 
     bind C-a last-window

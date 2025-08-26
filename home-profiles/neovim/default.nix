@@ -196,7 +196,15 @@ in
 
       # File explorer
       # NvimTree (faster NerdTree replacement)
-      nvim-tree-lua
+      # nvim-tree-lua
+
+      # Attempting to try neotree (avante integration)
+      nui-nvim # Library dependency
+      plenary-nvim # Library dependency
+      nvim-window-picker # Optional library dependency
+      nvim-web-devicons # Optional library dependency
+      nvim-lsp-file-operations # Optional library dependencys
+      neo-tree-nvim
 
       # Status bar with coloring
       lualine-nvim
@@ -210,11 +218,11 @@ in
       gitsigns-nvim
 
       # Buffers as 'tabs'
-      nvim-web-devicons # Dependency
+      # nvim-web-devicons # Library ependency (above)
       bufferline-nvim
 
       # Configure fuzzy finder integration
-      plenary-nvim # Library dependency
+      # plenary-nvim # Library dependency (above)
       telescope-nvim
       telescope-fzf-native-nvim
 
@@ -275,10 +283,53 @@ in
       lsp_lines-nvim
 
       # AI Tools
+      {
+        plugin = avante-nvim;
+        type = "lua";
+        config = ''
+          require("avante_lib").load()
+          require("avante").setup({
+            provider = "llamacpp",
+            providers = {
+              llamacpp = {
+                __inherited_from = 'openai',
+                endpoint = "http://localhost:8080/v1",
+                api_key_name = "OPEN_API_KEY",
+                model = "unused",
+                disable_tools = false,
+                stream = true,
+                extra_request_body = {
+                  temperature = 0.7,
+                  max_tokens = 2048,
+                },
+              }
+            },
+            behaviour = {
+              auto_suggestions = false, -- Experimental stage
+              auto_set_highlight_group = true,
+              auto_set_keymaps = true,
+              auto_apply_diff_after_generation = false,
+              support_paste_from_clipboard = false,
+              minimize_diff = true, -- Whether to remove unchanged lines when applying a code block
+            },
+            system_prompt = function()
+              local hub = require("mcphub").get_hub_instance()
+              if hub then
+                return hub:get_active_servers_prompt()
+              end
+            end,
+            custom_tools = function()
+              return {
+                require("mcphub.extensions.avante").mcp_tool(),
+              }
+            end,
+          })
+        '';
+      }
       markview-nvim # Library dependency
       nui-nvim # Library dependency
       inputs.mcphub-nvim.packages.${pkgs.system}.default
-      codecompanion-nvim
+      # codecompanion-nvim
     ];
 
     extraLuaConfig = builtins.readFile ./init.lua;

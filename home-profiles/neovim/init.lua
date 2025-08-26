@@ -539,11 +539,21 @@ require('lualine').setup {
 -- NVIM-TREE CONFIG (File Explorer)
 -- -----------------------------------------------------------------------------
 
-require('nvim-tree').setup({
-  filters = {
-    custom = { '.git', '^bazel-.*$' }
-  }
-})
+-- require('nvim-tree').setup({
+--   filters = {
+--     custom = { '.git', '^bazel-.*$' }
+--   }
+-- })
+
+-- -----------------------------------------------------------------------------
+-- NEO-TREE CONFIG (File Explorer)
+-- -----------------------------------------------------------------------------
+
+-- require('nvim-tree').setup({
+--   filters = {
+--     custom = { '.git', '^bazel-.*$' }
+--   }
+-- })
 
 -- -----------------------------------------------------------------------------
 -- GITSIGNS CONFIG (Git status markers)
@@ -635,6 +645,11 @@ require("mcphub").setup({
   -- cmd = "${inputs.mcp-hub.packages.${pkgs.system}.default}/bin/mcp-hub",
   -- Point to the config file
   -- config = "${mcpServersConfig}",
+  extensions = {
+    avante = {
+      make_slash_commands = true,
+    },
+  },
   port = 37373, -- Default MCP Hub port
   log = {
     level = vim.log.levels.INFO,
@@ -646,56 +661,74 @@ require("mcphub").setup({
 -- CODECOMPANION CONFIG (AI Coding Interface)
 -- -----------------------------------------------------------------------------
 
-require("codecompanion").setup({
-  strategies = {
-    chat = {
-      adapter = 'ollama',
-    },
-    inline = {
-      adapter = 'ollama',
-    },
-    cmd = {
-      adapter = 'ollama',
-    },
-  },
-  adapters = {
-    ollama = function ()
-      return require('codecompanion.adapters').extend('ollama', {
-        name = "ollama",
-        env = {
-          url = "http://localhost:11434",
-        },
-        schema = {
-          model = {
-            default = 'qwen3:32b',
-          },
-          num_ctx = {
-            default = 32000,
-          },
-          num_predict = {
-            default = -1,
-          },
-        },
-      })
-    end,
-  },
-  opts = {
-    log_level = 'DEBUG',
-  },
-  extensions = {
-    mcphub = {
-      callback = "mcphub.extensions.codecompanion",
-      opts = {
-        make_tools = true,
-        show_server_tools_in_chat = true,
-        add_mcp_prefix_to_tool_names = false,
-        make_vars = true,
-        make_slash_commands = true,
-        show_result_in_chat = true,
-      }
-    }
-  },
-})
+-- require("codecompanion").setup({
+--   strategies = {
+--     chat = {
+--       adapter = 'qwen3coder',
+--     },
+--     inline = {
+--       adapter = 'qwen3coder',
+--     },
+--     cmd = {
+--       adapter = 'qwen3coder',
+--     },
+--   },
+--   handlers = {
+--     chat_output = function(self, data)
+--       local openai = require("codecompanion.adapters.openai")
+--       local result = openai.handlers.chat_output(self, data)
+--       if result ~= nil then
+--         result.output.role = "llm"
+--       end
+--       return result
+--     end,
+--   },
+--   adapters = {
+--     qwen3coder = function ()
+--       return require('codecompanion.adapters').extend('ollama', {
+--         name = "qwen3coder",
+--         env = {
+--           url = "http://localhost:8080",
+--         },
+--       })
+--     end,
+--     -- ollama = function ()
+--     --   return require('codecompanion.adapters').extend('ollama', {
+--     --     name = "ollama",
+--     --     env = {
+--     --       url = "http://localhost:11434",
+--     --     },
+--     --     schema = {
+--     --       model = {
+--     --         default = 'qwen3:32b',
+--     --       },
+--     --       num_ctx = {
+--     --         default = 32000,
+--     --       },
+--     --       num_predict = {
+--     --         default = -1,
+--     --       },
+--     --     },
+--     --   })
+--     -- end,
+--   },
+--   opts = {
+--     log_level = 'DEBUG',
+--   },
+--   extensions = {
+--     mcphub = {
+--       callback = "mcphub.extensions.codecompanion",
+--       opts = {
+--         make_tools = true,
+--         show_server_tools_in_chat = true,
+--         add_mcp_prefix_to_tool_names = false,
+--         make_vars = true,
+--         make_slash_commands = true,
+--         show_result_in_chat = true,
+--       }
+--     }
+--   },
+-- })
 
 -- -----------------------------------------------------------------------------
 -- CMP CONFIG (Autocomplete suport)
@@ -941,8 +974,8 @@ keymap("n", "<leader>mh", ":MCPHub<CR>", kopts)
 -- -----------------------------------------------------------------------------
 -- codecompanion (AI Coding Assistant)
 -- -----------------------------------------------------------------------------
-keymap("n", "<leader>cc", ":CodeCompanionChat<CR>", kopts)
-keymap("n", "<leader>ca", ":CodeCompanionActions<CR>", kopts)
+-- keymap("n", "<leader>cc", ":CodeCompanionChat<CR>", kopts)
+-- keymap("n", "<leader>ca", ":CodeCompanionActions<CR>", kopts)
 
 -- -----------------------------------------------------------------------------
 -- Clear visual aids so screen copy works
@@ -985,17 +1018,25 @@ keymap("i", "<C-,>", function() append_to_line(",") end, kopts)
 -- NVIM-TREE (Toggle, focus, find current file)
 -- -----------------------------------------------------------------------------
 
-local nvim_tree = require('nvim-tree.api').tree
-keymap("n", "<leader>nt", nvim_tree.toggle, kopts)
-keymap("n", "<leader>nn", nvim_tree.focus, kopts)
+-- local nvim_tree = require('nvim-tree.api').tree
+-- keymap("n", "<leader>nt", nvim_tree.toggle, kopts)
+-- keymap("n", "<leader>nn", nvim_tree.focus, kopts)
+--
+-- keymap("n", "<leader>nf", function()
+--   nvim_tree.find_file {
+--     open = true,
+--     focus = true,
+--     update_root = true,
+--   }
+-- end, kopts)
 
-keymap("n", "<leader>nf", function()
-  nvim_tree.find_file {
-    open = true,
-    focus = true,
-    update_root = true,
-  }
-end, kopts)
+-- -----------------------------------------------------------------------------
+-- NVIM-TREE (Toggle, focus, find current file)
+-- -----------------------------------------------------------------------------
+
+keymap("n", "<leader>nt", ":Neotree filesystem left toggle<CR>", kopts)
+keymap("n", "<leader>nn", ":Neotree focus<CR>", kopts)
+keymap("n", "<leader>nf", ":Neotree filesystem reveal left<CR>", kopts)
 
 -- -----------------------------------------------------------------------------
 -- (C)reate (F)ile under cursor (for when `gf` doesn't work)

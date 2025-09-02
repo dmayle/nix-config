@@ -22,12 +22,14 @@
     # Secret management
     # Python dev env management
     uv
+
     # Tool for running uv in FHS
     steam-run
 
     # Cmdline AI coding assistant
     gemini-cli
 
+    # Some tools for memory testing
     (mlc.overrideAttrs (oldAttrs: rec {
       version = "3.11b";
       src = pkgs.fetchurl {
@@ -35,6 +37,9 @@
         sha256 = "sha256-XVq9J9FFr1nVZMnFOTgwGgggXwdbm9QfL5K0yO/rKCQ=";
       };
     }))
+    y-cruncher
+
+    # Some VR dev tools (connecting VR to this machine)
   ];
 
   home.shellAliases = {

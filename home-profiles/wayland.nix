@@ -9,6 +9,8 @@ let
   };
 in
 {
+  services.flameshot.enable = true;
+
   programs.wlogout = {
     enable = true;
     layout = [

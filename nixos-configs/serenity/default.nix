@@ -19,6 +19,7 @@
     nixosProfiles.sound
     nixosProfiles.games
     nixosProfiles.cachix-cuda
+    nixosProfiles.cachix-devenv
     nixosProfiles.cachix-nixpkgs-wayland
     nixosProfiles.prometheus
     nixosProfiles.web-servers
@@ -67,18 +68,19 @@
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
-      vaapiVdpau
+      cudaPackages.cudatoolkit
       libvdpau-va-gl
-      nvidia-vaapi-driver
-      vulkan-validation-layers
       mesa
+      nvidia-vaapi-driver
+      vaapiVdpau
+      vulkan-validation-layers
     ];
     extraPackages32 = with pkgs.pkgsi686Linux; [
-      vaapiVdpau
       libvdpau-va-gl
-      nvidia-vaapi-driver
-      vulkan-validation-layers
       mesa
+      nvidia-vaapi-driver
+      vaapiVdpau
+      vulkan-validation-layers
     ];
   };
 
@@ -138,13 +140,14 @@
   users.users.douglas = {
     isNormalUser = true;
     extraGroups = [
-      "wheel"
       "audio"
-      "sway"
-      "video"
-      "i2c"
       "docker"
+      "i2c"
+      "plugdev"
+      "sway"
       "vboxusers"
+      "video"
+      "wheel"
     ];
     hashedPasswordFile = config.sops.secrets."users/douglas".path;
     openssh.authorizedKeys.keys = [
@@ -177,6 +180,7 @@
     canon-cups-ufr2
     gnomeExtensions.gtile
     # Adds udev rules for access to QMK keyboards
+    qmk
     via
     # RGB Control
     openrgb-with-all-plugins
@@ -185,9 +189,11 @@
   ];
 
   # Allow via (and http://usevia.app) to access hidraw devices for updating/flashing
-  services.udev.extraRules = ''
-    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0666", TAG+="uaccess", TAG+="udev-acl"
-  '';
+  hardware.keyboard.qmk.enable = true;
+  # services.udev.extraRules = ''
+  #   KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0666", TAG+="uaccess", TAG+="udev-acl"
+  # '';
+  services.udev.packages = with pkgs; [ via ];
 
   # Very basic neovim config for root because vanilla vim is frustrating when
   # unconfigured

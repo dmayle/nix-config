@@ -1,8 +1,13 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
-  imports =
-    [ "${inputs.nixpkgs}/nixos/modules/installer/scan/not-detected.nix" ];
+  imports = [ "${inputs.nixpkgs}/nixos/modules/installer/scan/not-detected.nix" ];
 
   boot.initrd.availableKernelModules = [
     "nvme"
@@ -14,7 +19,10 @@
   ];
 
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [
+    "kvm-amd"
+    "v4l2loopback"
+  ];
   boot.blacklistedKernelModules = [ "cdc_ether" ];
   boot.extraModulePackages = [ ];
   boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_15;
@@ -23,15 +31,15 @@
     "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
   ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-id/md-name-any:raid0-part1";
-      fsType = "xfs";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-id/md-name-any:raid0-part1";
+    fsType = "xfs";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-partlabel/disk-disk0-ESP";
-      fsType = "vfat";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-partlabel/disk-disk0-ESP";
+    fsType = "vfat";
+  };
 
   # swapDevices =
   #   [ { device = "/dev/disk/by-label/swap"; }

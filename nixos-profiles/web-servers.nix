@@ -15,15 +15,11 @@ in
   services.ttyd = {
     enable = true;
     package = ttyd;
-    # for client cert verification:
-    # caFile = ./foo;
-    # enableSSL = true;
     checkOrigin = true;
     writeable = true;
-    passwordFile = config.sops.secrets."ttyd/password".path;
-    usernameFile = config.sops.secrets."ttyd/username".path;
     clientOptions = {
       enableZmodem = "true";
+      enableTrzsz = "true";
       # /* Solarized */
       # @define-color base03 #002b36;
       # @define-color base02 #073642;

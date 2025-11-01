@@ -276,7 +276,7 @@ in
             status = "disable";
           }
           {
-            criteria = "Technical Concepts Ltd 65R648 0x00000000";
+            criteria = "Samsung Electric Company SAMSUNG 0x01000E00";
             mode = "3840x2160";
             position = "0,0";
             transform = "normal";

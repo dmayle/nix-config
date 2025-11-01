@@ -17,4 +17,6 @@
     dedicatedServer.openFirewall = true;
     extraCompatPackages = with pkgs; [ steam-play-none ];
   };
+  # VR
+  programs.alvr.enable = true;
 }

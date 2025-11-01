@@ -27,7 +27,7 @@
     hyprland = {
       type = "git";
       url = "https://github.com/hyprwm/hyprland";
-      ref = "refs/tags/v0.50.1";
+      ref = "refs/tags/v0.51.1";
       submodules = true;
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
@@ -35,7 +35,7 @@
     hy3 = {
       type = "git";
       url = "https://github.com/outfoxxed/hy3";
-      ref = "refs/tags/hl0.50.0";
+      ref = "refs/tags/hl0.51.0";
       inputs.hyprland.follows = "hyprland";
     };
     # ##########################################################################

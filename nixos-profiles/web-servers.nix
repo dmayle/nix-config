@@ -7,6 +7,9 @@ let
       rev = "27c033fe046420d5308119d20220b7d009f3176f";
       sha256 = "sha256-qBOH6iwB1cG6qf/dGEZqoeMw6ytym/9YQks4EYVhB8g=";
     };
+    cmakeFlags = [
+      "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+    ];
   });
 in
 {

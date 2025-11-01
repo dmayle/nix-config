@@ -30,13 +30,13 @@
     gemini-cli
 
     # Some tools for memory testing
-    (mlc.overrideAttrs (oldAttrs: rec {
-      version = "3.11b";
-      src = pkgs.fetchurl {
-        url = "https://downloadmirror.intel.com/834254/mlc_v${version}.tgz";
-        sha256 = "sha256-XVq9J9FFr1nVZMnFOTgwGgggXwdbm9QfL5K0yO/rKCQ=";
-      };
-    }))
+    # (mlc.overrideAttrs (oldAttrs: rec {
+    #   version = "3.11b";
+    #   src = pkgs.fetchurl {
+    #     url = "https://downloadmirror.intel.com/834254/mlc_v${version}.tgz";
+    #     sha256 = "sha256-XVq9J9FFr1nVZMnFOTgwGgggXwdbm9QfL5K0yO/rKCQ=";
+    #   };
+    # }))
     y-cruncher
 
     # Some VR dev tools (connecting VR to this machine)
@@ -55,17 +55,20 @@
 
   programs.git = {
     enable = true;
-    package = pkgs.writeTextDir "/git" "";
-    userName = "Douglas Mayle";
-    userEmail = "douglas@mayle.org";
-    diff-so-fancy = {
-      enable = true;
-    };
-    extraConfig = {
+    settings = {
+      user = {
+        email = "douglas@mayle.org";
+        name = "Douglas Mayle";
+      };
       pull = {
         rebase = true;
       };
       init.defaultBranch = "main";
     };
+    package = pkgs.writeTextDir "/git" "";
+  };
+  programs.diff-so-fancy = {
+    enable = true;
+    enableGitIntegration = true;
   };
 }

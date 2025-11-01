@@ -198,7 +198,7 @@ in
       WantedBy = [ "hyprland-session.target" ];
     };
     Service = {
-      ExecStart = "${pkgs.lxde.lxsession}/bin/lxpolkit";
+      ExecStart = "${pkgs.lxsession}/bin/lxpolkit";
       Restart = "always";
       RestartSec = 3;
     };
@@ -229,7 +229,7 @@ in
           name = "home_office";
           outputs = [
             {
-              criteria = "Technical Concepts Ltd 65R648 Unknown";
+              criteria = "Samsung Electric Company SAMSUNG";
               mode = "7680x4320";
               position = "0,0";
               transform = "normal";
@@ -654,7 +654,7 @@ in
   };
   home.packages = with pkgs; [
     waybar
-    lxde.lxsession
+    lxsession
     grim
     slurp
     i2c-tools

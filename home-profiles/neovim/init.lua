@@ -833,23 +833,24 @@ cmp.setup({
 -- LSP CONFIG
 -- -----------------------------------------------------------------------------
 
-local lspconfig = require('lspconfig')
-
 -- -----------------------------------------------------------------------------
 -- LANGUAGE SERVERS (Default Configurations)
 -- -----------------------------------------------------------------------------
 
-lspconfig.nil_ls.setup {}
-lspconfig.pyright.setup {}
-lspconfig.rust_analyzer.setup {}
--- Use ts_ls instead
-lspconfig.ts_ls.setup {}
+vim.lsp.config("nil_ls", {})
+vim.lsp.enable({"nil_ls"})
+vim.lsp.config("pyright", {})
+vim.lsp.enable({"pyright"})
+vim.lsp.config("rust_analyzer", {})
+vim.lsp.enable({"rust_analyzer"})
+vim.lsp.config("ts_ls", {})
+vim.lsp.enable({"ts_ls"})
 
 -- -----------------------------------------------------------------------------
 -- LUA LANGUAGE SERVERS (Recognize vim global)
 -- -----------------------------------------------------------------------------
 
-lspconfig.lua_ls.setup {
+vim.lsp.config("lua_ls", {
   settings = {
     Lua = {
       diagnostics = {
@@ -857,7 +858,8 @@ lspconfig.lua_ls.setup {
       },
     },
   },
-}
+})
+vim.lsp.enable({"lua_ls"})
 
 -- -----------------------------------------------------------------------------
 -- KEY MAPPINGS

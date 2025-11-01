@@ -29,6 +29,9 @@
     # Cmdline AI coding assistant
     gemini-cli
 
+    # Docker Image Browser
+    dive
+
     # Some tools for memory testing
     # (mlc.overrideAttrs (oldAttrs: rec {
     #   version = "3.11b";

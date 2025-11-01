@@ -204,6 +204,8 @@
     defaultEditor = true;
   };
 
+  programs.nix-ld.enable = true;
+
   environment.variables.EDITOR = "nvim";
   environment.etc.inputrc.text = lib.mkAfter ''
     set editing-mode vi

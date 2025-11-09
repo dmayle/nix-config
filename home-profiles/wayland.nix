@@ -173,7 +173,7 @@ in
       };
       listener = [
         {
-          timeout = 180;
+          timeout = 600;
           on-timeout = "hyprlock";
         }
         {

@@ -23,6 +23,8 @@ in
     clientOptions = {
       enableZmodem = "true";
       enableTrzsz = "true";
+      closeOnDisconnect = "false";
+      rendererType="webgl";
       # /* Solarized */
       # @define-color base03 #002b36;
       # @define-color base02 #073642;

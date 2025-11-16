@@ -26,7 +26,7 @@
     firefox
     tree-sitter
     vulkan-tools
-    glxinfo
+    mesa-demos
     pamixer
     pulseaudio
     qownnotes

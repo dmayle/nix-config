@@ -65,6 +65,7 @@
     stylix = {
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
     # ##########################################################################
     # Nixified AI (AI Tools like ComfyUI)
@@ -72,6 +73,8 @@
     nixified-ai = {
       url = "github:nixified-ai/flake";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.hercules-ci-effects.follows = "hercules-ci-effects";
     };
     # ##########################################################################
     # Neovim inputs (unpackaged plugins and spelling dictionaries)
@@ -87,10 +90,12 @@
     mcp-hub = {
       url = "github:ravitemer/mcp-hub";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
     mcphub-nvim = {
       url = "github:ravitemer/mcphub.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
     fine-cmdline-nvim = {
       url = "github:VonHeikemen/fine-cmdline.nvim";
@@ -142,6 +147,14 @@
     nixpkgs-lib = {
       url = "github:nix-community/nixpkgs.lib";
     };
+    hercules-ci-effects = {
+      url = "github:hercules-ci/hercules-ci-effects";
+      inputs.flake-parts.follows = "flake-parts";
+    };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
+    };
     flake-utils = {
       url = "github:numtide/flake-utils";
       inputs.systems.follows = "systems";
@@ -149,6 +162,7 @@
     nix-eval-jobs = {
       url = "github:nix-community/nix-eval-jobs";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
     lib-aggregate = {
       url = "github:nix-community/lib-aggregate";

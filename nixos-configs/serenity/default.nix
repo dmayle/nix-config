@@ -72,14 +72,14 @@
       libvdpau-va-gl
       mesa
       nvidia-vaapi-driver
-      vaapiVdpau
+      libva-vdpau-driver
       vulkan-validation-layers
     ];
     extraPackages32 = with pkgs.pkgsi686Linux; [
       libvdpau-va-gl
       mesa
       nvidia-vaapi-driver
-      vaapiVdpau
+      libva-vdpau-driver
       vulkan-validation-layers
     ];
   };

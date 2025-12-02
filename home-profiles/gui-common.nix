@@ -19,7 +19,7 @@
     libreoffice
 
     # Add Godoto Game Development engine
-    godot_4
+    # godot_4
 
     kitty
     google-chrome
@@ -29,7 +29,6 @@
     mesa-demos
     pamixer
     pulseaudio
-    qownnotes
     xdg-utils
   ];
 

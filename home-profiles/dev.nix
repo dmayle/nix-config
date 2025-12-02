@@ -27,7 +27,23 @@
     steam-run
 
     # Cmdline AI coding assistant
-    gemini-cli
+    (gemini-cli.overrideAttrs (oldAttrs: rec {
+      version = "0.18.4";
+      src = fetchFromGitHub {
+        owner = "google-gemini";
+        repo = "gemini-cli";
+        tag = "v${version}";
+        hash = "sha256-TSHL3X+p74yFGTNFk9r4r+nnul2etgVdXxy8x9BjsRg=";
+        # hash = "sha256-zfORrAMVozHiUawWiy3TMT+pjEaRJ/DrHeDFPJiCp38=";
+      };
+      npmDepsHash = "sha256-2Z6YrmUHlYKRU3pR0ZGwQbBgzNFqakBB6LYZqf66nSs=";
+      # npmDepsHash = "sha256-dKaKRuHzvNJgi8LP4kKsb68O5k2MTqblQ+7cjYqLqs0=";
+      npmDeps = pkgs.fetchNpmDeps {
+        inherit src;
+        name = "gemini-cli-${version}-npm-deps";
+        hash = npmDepsHash;
+      };
+    }))
 
     # Docker Image Browser
     dive

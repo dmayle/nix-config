@@ -251,10 +251,10 @@ in
       };
     };
     xdgOpenUsePortal = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-      #hyprlandPortal
-    ];
+    # extraPortals = with pkgs; [
+    #   # xdg-desktop-portal-gtk
+    #   hyprlandPortal
+    # ];
     configPackages = [ hyprlandPackage ];
   };
   systemd.user.services.plugged_in_suspend_inhibitor = {
@@ -273,14 +273,11 @@ in
         position = "top";
         height = 48;
         modules-left = [
-          "sway/mode"
           "hyprland/submap"
-          "sway/workspaces"
           "hyprland/workspaces"
           "custom/right-blue-background"
         ];
         modules-center = [
-          "sway/window"
           "hyprland/window"
         ];
         modules-right = [
@@ -341,20 +338,6 @@ in
           format-ethernet = "🛰️ {ifname}: {ipaddr}/{cidr}";
           format-disconnected = "DISCONNECTED";
           tooltip = false;
-        };
-        "sway/mode" = {
-          format = "⚠️ <span style=\"italic\">{}</span>";
-          tooltip = false;
-        };
-        "sway/window" = {
-          format = "{}";
-          max-length = 30;
-          tooltip = false;
-        };
-        "sway/workspaces" = {
-          all-outputs = false;
-          disable-scroll = false;
-          format = " {name} ";
         };
         "hyprland/submap" = {
           format = "⚠️ <span style=\"italic\">{}</span>";
